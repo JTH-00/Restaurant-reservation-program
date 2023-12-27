@@ -1,6 +1,6 @@
 # Restaurant-reservation-program
 
-## Reference Site
+## 역할
 
 | 이름   | 역할  |
 | ------ | ------ |
