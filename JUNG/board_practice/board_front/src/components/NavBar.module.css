@@ -1,0 +1,201 @@
+.navbar {
+  position: absolute;
+  top: 55px;
+  left: 0px;
+  width: 1440px;
+  height: 161px;
+  text-align: center;
+  font-size: var(--font-size-base);
+  color: var(--color-red-100);
+  font-family: var(--font-inter);
+}
+.line {
+  position: absolute;
+  height: 1.24%;
+  width: 100%;
+  top: 98.76%;
+  right: 0%;
+  bottom: 0%;
+  left: 0%;
+  background-color: var(--color-red-200);
+}
+.link {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.click {
+  position: absolute;
+  height: 20.5%;
+  width: 73.61%;
+  top: 78.26%;
+  right: 13.75%;
+  bottom: 1.24%;
+  left: 12.64%;
+  color: var(--color-black);
+  display: flex;
+  flex-direction: row;
+}
+.icon {
+  position: absolute;
+  height: 17.83%;
+  width: 12.08%;
+  top: 23.6%;
+  right: 7.5%;
+  bottom: 58.57%;
+  left: 80.42%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+.div1 {
+  position: absolute;
+  height: 100%;
+  width: 43.86%;
+  top: 0%;
+  left: 0%;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.div2 {
+  position: absolute;
+  height: 100%;
+  width: 35.09%;
+  top: 0%;
+  left: 64.91%;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  color: var(--color-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.userChild {
+  position: absolute;
+  height: 88.13%;
+  width: 0.88%;
+  top: 5.63%;
+  right: 46.05%;
+  bottom: 6.25%;
+  left: 53.07%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+  object-fit: contain;
+}
+.user {
+  position: absolute;
+  height: 9.94%;
+  width: 7.92%;
+  top: 0%;
+  right: 7.57%;
+  bottom: 90.06%;
+  left: 84.51%;
+  font-size: var(--font-size-xs);
+}
+.searchChild {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0%;
+  right: 0%;
+  bottom: 0%;
+  left: 0%;
+  border-radius: var(--br-36xl);
+  background-color: var(--color-gray);
+  border: 1px solid var(--color-red-100);
+  box-sizing: border-box;
+}
+.vectorIcon {
+  position: absolute;
+  height: 41.64%;
+  width: 6.26%;
+  top: 29.46%;
+  right: 5.34%;
+  bottom: 28.9%;
+  left: 88.4%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+.search {
+  position: absolute;
+  height: 43.85%;
+  width: 34.72%;
+  top: 16.27%;
+  right: 32.64%;
+  bottom: 39.88%;
+  left: 32.64%;
+}
+.groupChild {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0%;
+  right: 0%;
+  bottom: 0%;
+  left: 0%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+.image2Icon {
+  position: absolute;
+  height: 85.02%;
+  width: 85%;
+  top: 7.97%;
+  right: 7.05%;
+  bottom: 7%;
+  left: 7.95%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+  object-fit: cover;
+}
+.groupWrapper {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0%;
+  right: 0%;
+  bottom: 0%;
+  left: 0%;
+}
+.logoInner {
+  position: absolute;
+  height: 100%;
+  width: 21.46%;
+  top: 0%;
+  right: 78.54%;
+  bottom: 0%;
+  left: 0%;
+}
+.tablesnap {
+  position: absolute;
+  height: 22.71%;
+  width: 82.44%;
+  top: 54.59%;
+  left: 17.56%;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo {
+  position: absolute;
+  height: 25.71%;
+  width: 14.24%;
+  top: 24.84%;
+  right: 77.64%;
+  bottom: 49.44%;
+  left: 8.13%;
+  font-size: var(--font-size-5xl);
+}
