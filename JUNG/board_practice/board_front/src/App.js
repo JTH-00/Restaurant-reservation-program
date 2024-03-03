@@ -5,7 +5,7 @@ import {
   useNavigationType,
   useLocation,
 } from "react-router-dom";
-import Frame from "./pages/Frame";
+import Board from "./pages/Board";
 
 function App() {
   const action = useNavigationType();
@@ -45,7 +45,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Frame />} />
+      <Route path="/" element={<Board />} />
     </Routes>
   );
 }

@@ -2,11 +2,11 @@ import Paging from "../components/paging";
 import BoardList from "../components/boardlist";
 import Menu from "../components/menu";
 import NavBar from "../components/navbar";
-import styles from "./Frame.module.css";
+import styles from "./Board.module.css";
 
-const Frame = () => {
+const Board = () => {
   return (
-    <div className={styles.frame}>
+    <div className={styles.board}>
       <NavBar />
       <Menu />
       <BoardList />
@@ -15,4 +15,4 @@ const Frame = () => {
   );
 };
 
-export default Frame;
+export default Board;
