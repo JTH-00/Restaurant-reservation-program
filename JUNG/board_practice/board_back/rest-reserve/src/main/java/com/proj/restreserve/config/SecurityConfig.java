@@ -32,20 +32,20 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)  //csrf 차단 == token 사용
 
-                .exceptionHandling((exceptionHandling) -> //컨트롤러의 예외처리를 담당하는 exception handler와는 다름.
+                .exceptionHandling((exceptionHandling) -> //컨트롤러의 예외처리
                         exceptionHandling
                                 .accessDeniedHandler(jwtAccessDeniedHandler)
                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션을 사용하지 않기 때문에 STATELESS로 설정
-                .authorizeHttpRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한을 설정하겠다.
-                        .requestMatchers("/api/signup").permitAll()
-                        .requestMatchers("/api/authenticate").permitAll()
-                        .requestMatchers("/api/user/{useremail}").hasAuthority("ROLE_ADMIN")
+                .authorizeHttpRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한을 설정
+                        .requestMatchers("/api/user/signup").permitAll() //사용자 전체 혀용
+                        .requestMatchers("/api/user/login").permitAll() //사용자 전체 혀용
+                        .requestMatchers("/api/user/{useremail}").hasAuthority("ROLE_ADMIN") //업주만 허용
                         .anyRequest().authenticated() // 그 외 인증 없이 접근X
                 )
-                .with(new JwtSecurityConfig(tokenProvider), customizer -> {});
+                .with(new JwtSecurityConfig(tokenProvider), customizer -> {}); //filterChain 등록
 
 
         return http.build();

@@ -69,6 +69,7 @@ public class TokenProvider implements InitializingBean {
                 .compact(); //토큰을 문자열 형태로 반환
     }
 
+
     // 토큰으로 클레임을 만들고 이를 이용해 유저 객체를 만들어서 최종적으로 authentication 객체를 리턴
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
