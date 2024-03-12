@@ -1,0 +1,67 @@
+@charset "utf-8";
+@import "../../../scss/variables.scss";
+
+.introduce_wrapper {
+  .miniInfo_wrapper {
+    margin-top: 10px;
+    span {
+      height: 50px;
+      color: #49627a;
+      font-weight: 600;
+    }
+    p {
+      height: 10px;
+    }
+    margin-bottom: 40px;
+  }
+}
+.ceoInfo_wrapper {
+  button {
+    cursor: pointer;
+    width: 1202px;
+    display: flex;
+    border: none;
+    background-color: white;
+    img {
+      position: relative;
+      left: 50%;
+      top: 17px;
+    }
+  }
+}
+
+.addressInfo_wrapper {
+  display: flex;
+  width: 1202px;
+  height: 30px;
+  h5 {
+    position: relative;
+    top: -17px;
+    color: rgba(0, 0, 0, 0.5);
+  }
+  button {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #1273e4;
+    border: none;
+    background-color: white;
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+.line {
+  width: 1202px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.takeTime {
+  margin-top: -10px;
+  p {
+    height: 5px;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
