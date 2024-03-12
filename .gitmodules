@@ -1,0 +1,3 @@
+[submodule "Restaurant-reservation-program"]
+	path = Restaurant-reservation-program
+	url = https://github.com/hamseungwan2023/Restaurant-reservation-program.git
