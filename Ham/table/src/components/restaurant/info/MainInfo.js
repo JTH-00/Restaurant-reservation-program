@@ -5,10 +5,11 @@ import goldStar from "../../../assets/goldStar.png";
 import { categories } from "../../../contentData/categories";
 import { restaurantImg } from "../../../contentData/restaurantInfo";
 import ReserveModal from "../../modal/ReserveModal";
+import TakeOutModal from "../../modal/TakeOutModal";
 
 const MainInfo = ({ restaurantDetail }) => {
   const [reserveModalOpen, setReserveModal] = useState(false);
-  const [takeOutModal, setTakeOutModal] = useState(false);
+  const [takeOutModalOpen, setTakeOutModal] = useState(false);
 
   const restaurantOpenArray = Object.entries(restaurantDetail.restaurantOpen);
 
@@ -18,6 +19,8 @@ const MainInfo = ({ restaurantDetail }) => {
     const currentDayIndex = currentDate.getDay();
     return days[currentDayIndex];
   };
+
+  console.log(takeOutModalOpen);
 
   const dayOfWeek = {
     sun: "일",
@@ -74,7 +77,8 @@ const MainInfo = ({ restaurantDetail }) => {
             <button onClick={() => setTakeOutModal(true)}>포장하기</button>
           </div>
         </div>
-        {reserveModalOpen && <ReserveModal />}
+        {reserveModalOpen && <ReserveModal setIsOpen={setReserveModal} />}
+        {takeOutModalOpen && <TakeOutModal setIsOpen={setTakeOutModal} />}
       </div>
       <div className={styles.basicInfo_wrapoer}>
         <div className={styles.division}>
