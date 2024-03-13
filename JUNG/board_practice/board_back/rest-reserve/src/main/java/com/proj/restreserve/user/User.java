@@ -13,14 +13,14 @@ import java.util.Set;
 public class User {
 
     @Id
-    @Column(name = "userhash")
+    @Column(name = "userid")
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String userhash;
+    private String userid;
 
     @Column(name = "useremail", unique = true, nullable = false)
     private String useremail;
 
-    @Column(name ="passowrd", nullable = false)
+    @Column(name ="password", nullable = false)
     private String password;
 
     @Column(name ="username", nullable = false)
