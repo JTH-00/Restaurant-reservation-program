@@ -25,8 +25,6 @@ public class Review {
     @Column(nullable = false)
     private int scope;
 
-    @OneToOne(mappedBy = "review", fetch = FetchType.LAZY)//양방향 관계 매핑
-    private Payment payment;
 
     @ManyToOne(fetch =FetchType.LAZY)
     @JoinColumn(name="userid", nullable = false)

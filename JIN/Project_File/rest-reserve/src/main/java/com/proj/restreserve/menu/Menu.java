@@ -1,5 +1,6 @@
 package com.proj.restreserve.menu;
 
+import com.proj.restreserve.category.Category;
 import com.proj.restreserve.restaurant.Restaurant;
 import jakarta.persistence.*;
 import lombok.Data;

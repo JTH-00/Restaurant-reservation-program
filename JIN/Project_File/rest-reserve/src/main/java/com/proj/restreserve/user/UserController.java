@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @GetMapping("/user/{useremail}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> getUserInfo(@PathVariable String useremail) {
         return ResponseEntity.ok(userService.getUserWithAuthorities(useremail).get());
     }

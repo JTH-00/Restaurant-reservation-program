@@ -40,7 +40,7 @@ public class Payment {//결제 테이블,이용 내역 조회에도 사용
     @OneToMany(mappedBy = "paymentid", fetch = FetchType.LAZY)//구매한 메뉴들을 PaymentMenu를 통해 컬렉션 저장
     private Set<PaymentMenu> paymentMenus = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="reviewid", nullable = false)
     private Review review;
 }
