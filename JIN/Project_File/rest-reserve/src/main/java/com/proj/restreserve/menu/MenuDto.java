@@ -1,8 +1,6 @@
 package com.proj.restreserve.menu;
 
-import com.proj.restreserve.restaurant.Restaurant;
-import com.proj.restreserve.restaurant.RestaurantDto;
-import jakarta.persistence.*;
+import com.proj.restreserve.category.CategoryDto;
 import lombok.Data;
 
 @Data

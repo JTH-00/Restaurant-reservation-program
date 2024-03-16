@@ -20,7 +20,7 @@ public class RestaurantDto {
     private Boolean stopsales;
     private String cookingtime;
     private String vibe;
-    private String adress;
+    private String address;
     private Boolean ban;
     private UserDto userid;
 }

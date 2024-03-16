@@ -1,5 +1,6 @@
 package com.proj.restreserve.restaurant;
 
+import com.proj.restreserve.pageload.PageloadDto;
 import com.proj.restreserve.pageload.PageloadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class RestraurantController {
     private final RestaurantService restaurantService;
     private final PageloadService pageloadService;
     @GetMapping("/rest/{restaurantid}")
-    public ResponseEntity<Map<String,Object>> showRestaurant(@PathVariable String restaurantid){
+    public ResponseEntity<PageloadDto> showRestaurant(@PathVariable String restaurantid){
         return ResponseEntity.ok(pageloadService.pageload(restaurantid));//레스토랑 상세 페이지
     }
 }

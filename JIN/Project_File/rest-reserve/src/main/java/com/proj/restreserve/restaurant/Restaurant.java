@@ -43,15 +43,15 @@ public class Restaurant {
     private String vibe;
 
     @Column(nullable = false)
-    private String adress;
+    private String address;
 
     @Column(nullable = false)
     private Boolean ban;
 
-    @OneToOne(fetch =FetchType.LAZY)
-    @JoinColumn(name="userid",
-            @Column(nullable = false)
+    @Column(nullable = false)
     private Boolean stopsales;
-nullable = false)
+
+    @ManyToOne(fetch =FetchType.LAZY)
+    @JoinColumn(name="userid", nullable = false)
     private User userid;
 }
