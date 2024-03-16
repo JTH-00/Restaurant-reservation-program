@@ -39,10 +39,9 @@ public class SecurityConfig {
                 )
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션을 사용하지 않기 때문에 STATELESS로 설정
-                .authorizeHttpRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한을 설정
+                .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/user/signup").permitAll() //사용자 전체 혀용
                         .requestMatchers("/api/user/login").permitAll() //사용자 전체 혀용
-                        .requestMatchers("/api/user/{useremail}").hasAuthority("ROLE_ADMIN") //업주만 허용
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") //업주만 허용
                         .anyRequest().authenticated() // 그 외 인증 없이 접근X
                 )

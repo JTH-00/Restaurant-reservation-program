@@ -46,7 +46,7 @@ public class UserService {
         user.setUseremail(userDto.getUseremail());
         user.setPhone(userDto.getPhone());
         user.setRole(Role.ROLE_USER);
-        user.setBan(true);
+        user.setBan(false);
 
         return userRepository.save(user);
     }
@@ -141,7 +141,6 @@ public class UserService {
             User user = userRepository.findByUseremail(currentUseremail.get());
             if (user != null) {
                 // 사용자 정보 업데이트 로직
-                user.setUseremail(userDto.getUseremail());
                 user.setUsername(userDto.getUsername());
                 user.setPhone(userDto.getPhone());
 

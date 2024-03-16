@@ -70,7 +70,7 @@ public class UserController {
     }
 
 
-    @PostMapping(value = "/logout")
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest servletRequest){
         userService.logout();
         return ResponseEntity.ok().body("로그아웃");
