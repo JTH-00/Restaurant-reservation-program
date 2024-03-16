@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/signup").permitAll() //사용자 전체 혀용
                         .requestMatchers("/api/user/login").permitAll() //사용자 전체 혀용
                         .requestMatchers("/api/user/{useremail}").hasAuthority("ROLE_ADMIN") //업주만 허용
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") //업주만 허용
                         .anyRequest().authenticated() // 그 외 인증 없이 접근X
                 )
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {}); //filterChain 등록

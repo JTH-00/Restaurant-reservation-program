@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private org.springframework.security.core.userdetails.User createUser(String userEmail, User user) {
-        if (!user.getBan()) {
+        if (user.getBan()) {
             throw new RuntimeException(userEmail + " -> 활성화되어 있지 않습니다.");
         }
 

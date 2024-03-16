@@ -1,8 +1,13 @@
 package com.proj.restreserve.restaurant;
 
+import com.proj.restreserve.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
-/*
+
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @Table(name="restaurant")
@@ -10,7 +15,7 @@ public class Restaurant {
 
     @Id
     @Column(name="restaurantid")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String restaurantid;
 
     @Column(name = "title",nullable = false)
@@ -19,38 +24,40 @@ public class Restaurant {
     @Column(name = "category",nullable = false)
     private String category;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "closeddays",nullable = false)
+    private String closeddays;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "opentime",nullable = false)
+    private Time opentime;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "closetime",nullable = false)
+    private Time closetime;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "content",nullable = false)
+    private String content;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "phone",nullable = false)
+    private String phone;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "stopsales",nullable = false)
+    private Boolean stopsales;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "cookingtime",nullable = false)
+    private String cookingtime;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "ban",nullable = false)
+    private Boolean ban;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "vibe",nullable = false)
+    private String vibe;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @Column(name = "address",nullable = false)
+    private String address;
 
-    @Column(name = "closedays",nullable = false)
-    private String closedays;
+    @ManyToOne
+    @JoinColumn(name="userid")
+    private User user;
 
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
 }
-*/
