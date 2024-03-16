@@ -5,6 +5,8 @@ import { restaurantArray } from "../contentData/restaurantInfo";
 import goldStar from "../assets/goldStar.png";
 import grayStar from "../assets/grayStar.png";
 import { imageData } from "../contentData/imageData";
+import { Link } from "react-router-dom";
+
 const Main = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -41,7 +43,7 @@ const Main = () => {
         <div className={styles.restaurantList_wrapper}>
           {restaurantArray.map((restaurant, i) => (
             <div className={styles.restaurant_wrapper} key={restaurant[0]}>
-              <a href={`/restaurant/${restaurant[5]}`}>
+              <Link to={`/restaurant/${restaurant[5]}`}>
                 <h3>
                   {restaurant[0]} ({restaurant[1]})
                 </h3>
@@ -51,14 +53,14 @@ const Main = () => {
                   src={restaurant[2]}
                   alt={restaurant[0]}
                 />
-              </a>
+              </Link>
             </div>
           ))}
         </div>
         <div className={styles.restaurantList_wrapper}>
           {restaurantArray.map((restaurant, i) => (
             <div className={styles.restaurant_wrapper} key={restaurant[0]}>
-              <a href={`/restaurant/${restaurant[5]}`}>
+              <Link to={`/restaurant/${restaurant[5]}`}>
                 <h3>
                   {restaurant[0]} ({restaurant[1]})
                 </h3>
@@ -68,7 +70,7 @@ const Main = () => {
                   src={restaurant[2]}
                   alt={restaurant[0]}
                 />
-              </a>
+              </Link>
             </div>
           ))}
         </div>

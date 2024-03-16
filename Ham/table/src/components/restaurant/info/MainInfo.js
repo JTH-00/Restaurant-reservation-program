@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import styles from "./mainInfo.module.scss";
 import goldStar from "../../../assets/goldStar.png";
@@ -90,7 +91,7 @@ const MainInfo = ({ restaurantDetail }) => {
           <img src={goldStar}></img>
           <h3>5.0</h3>
           <p>{restaurantDetail.reviewCounter}명 평가</p>
-          <a href="/">리뷰보기</a>
+          <Link to="/">리뷰보기</Link>
         </div>
       </div>
     </div>

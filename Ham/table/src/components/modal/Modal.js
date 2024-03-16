@@ -15,7 +15,7 @@ const Modal = ({ modalData, setIsOpen }) => {
         <header className={styles.header_wrap}>
           <p>{modalData[0]} 작성</p>
         </header>
-        <div className={styles.body}>
+        <div className={styles.body_wrapper}>
           <div className={styles.line}></div>
           <div className={styles.restaurant}>
             <img src={modalData[5]}></img>
@@ -23,17 +23,20 @@ const Modal = ({ modalData, setIsOpen }) => {
             <span>{modalData[2]}</span>
           </div>
           <div className={styles.line}></div>
-          <div className={styles.info_header}>
-            <h3>{modalData[0]}는 이렇게 써주세요</h3>
-          </div>
+
           {modalData[0] == "신고" ? (
             <div>
+              <div className={styles.info_header}>
+                <h3>{modalData[0]}작성 은 이렇게 써주세요</h3>
+              </div>
               <div className={styles.info_body}>
-                <p>매장의 불편을 느꼈던</p>
-                <p style={{ color: "#ff3114" }}>
-                  음식의 맛 • 매장의 서비스 • 매장의 분위기
-                </p>
-                <p>등을 설명해주세요</p>
+                <div className={styles.info_text}>
+                  <p>
+                    매장의 불편을 느꼈던
+                    <em>음식의 맛 • 매장의 서비스 • 매장의 분위기</em>
+                    등을 설명해주세요
+                  </p>
+                </div>
               </div>
               <div className={styles.infoImg_wrapper}>
                 {a.map((e) => {
@@ -48,11 +51,19 @@ const Modal = ({ modalData, setIsOpen }) => {
             </div>
           ) : (
             <div>
+              <div className={styles.info_header}>
+                <h3>{modalData[0]}는 이렇게 써주세요</h3>
+              </div>
               <div className={styles.info_body}>
-                <p style={{ color: "#ff3114" }}>
-                  음식의 맛 • 매장의 서비스 • 매장의 분위기
-                </p>
-                등을 설명해주세요 좋았던 점, 아쉬웠던 점도 솔직하게 얘기해주세요
+                <div className={styles.info_text}>
+                  <p>
+                    <em style={{ color: "#ff3114" }}>
+                      음식의 맛 • 매장의 서비스 • 매장의 분위기
+                    </em>
+                    등을 설명해주세요 좋았던 점, 아쉬웠던 점도 솔직하게
+                    얘기해주세요
+                  </p>
+                </div>
               </div>
               <div className={styles.infoImg_wrapper}>
                 {a.map((e) => {
@@ -69,7 +80,7 @@ const Modal = ({ modalData, setIsOpen }) => {
 
           <div className={styles.userInput_wrapper}>
             <p>{modalData[0]}내용</p>
-            <input className={styles.user_input}></input>
+            <textarea className={styles.user_input}></textarea>
           </div>
           <div className={styles.userInput_wrapper}>
             <p>사진첨부</p>

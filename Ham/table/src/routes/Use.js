@@ -44,6 +44,11 @@ const Use = () => {
   console.log("endDateInfo", endDateInfo);
   return (
     <div className={styles.form}>
+      {modalOpen && <Modal setIsOpen={setModalOpen} modalData={modalData} />}
+
+      {reviewModalOpen && (
+        <Modal setIsOpen={setReviewModalOpen} modalData={reviewModalData} />
+      )}
       <div className={styles.use_header}>
         <select>
           <option>전체</option>
@@ -103,7 +108,7 @@ const Use = () => {
             <span>구매확정완료</span>
             <a onClick={() => setReviewModalOpen(true)}>리뷰작성</a>
           </div>
-          <div className={styles.body}>
+          <div className={styles.body_wrapper}>
             <div className={styles.card_img}>
               <img src={gogiRestaurant}></img>
             </div>
@@ -117,11 +122,6 @@ const Use = () => {
           </div>
         </div>
       </div>
-
-      {modalOpen && <Modal setIsOpen={setModalOpen} modalData={modalData} />}
-      {reviewModalOpen && (
-        <Modal setIsOpen={setReviewModalOpen} modalData={reviewModalData} />
-      )}
     </div>
   );
 };

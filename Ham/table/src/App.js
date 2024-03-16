@@ -9,6 +9,9 @@ import Cart from "./routes/Cart";
 import MyPage from "./routes/MyPage";
 import Use from "./routes/Use";
 import Reserve from "./routes/Reserve";
+import { AuthProvider } from "./context/AuthContext";
+import Inform from "./routes/Inform";
+import BoardDetail from "./routes/BoardDetail";
 
 const router = createBrowserRouter([
   {
@@ -45,8 +48,20 @@ const router = createBrowserRouter([
         element: <Use />,
       },
       {
-        path: "mypage/reserve/:userId",
+        path: "/mypage/reserve/:userId",
         element: <Reserve />,
+      },
+      {
+        path: "/inform",
+        element: <Inform />,
+      },
+      {
+        path: "/board/inform/:boardId",
+        element: <BoardDetail />,
+      },
+      {
+        path: "/board/event/:eventId",
+        element: <BoardDetail />,
       },
     ],
   },
@@ -55,7 +70,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <div>
-      <RouterProvider router={router} />;
+      <RouterProvider router={router}></RouterProvider>
     </div>
   );
 }

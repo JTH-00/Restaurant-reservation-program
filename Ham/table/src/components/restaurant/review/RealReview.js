@@ -12,7 +12,7 @@ const RealReview = () => {
 
   const imgArr = [restaurantImg.gogi, restaurantImg.cafe];
   const modalData = [
-    "신고 작성",
+    "신고",
     "고기•구이",
     "삼겹살집",
     "700px",
