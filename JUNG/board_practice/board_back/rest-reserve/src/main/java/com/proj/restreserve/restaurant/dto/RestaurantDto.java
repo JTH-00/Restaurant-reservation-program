@@ -1,7 +1,5 @@
-package com.proj.restreserve.restaurant;
+package com.proj.restreserve.restaurant.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.proj.restreserve.user.User;
 import lombok.Data;
 
 import java.sql.Time;

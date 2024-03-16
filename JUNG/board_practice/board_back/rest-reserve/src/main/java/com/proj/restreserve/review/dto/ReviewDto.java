@@ -1,7 +1,5 @@
-package com.proj.restreserve.review;
+package com.proj.restreserve.review.dto;
 
-import com.proj.restreserve.user.User;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;

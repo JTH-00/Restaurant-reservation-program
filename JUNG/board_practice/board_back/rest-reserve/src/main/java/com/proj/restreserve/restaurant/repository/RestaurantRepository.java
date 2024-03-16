@@ -1,5 +1,6 @@
-package com.proj.restreserve.restaurant;
+package com.proj.restreserve.restaurant.repository;
 
+import com.proj.restreserve.restaurant.entity.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

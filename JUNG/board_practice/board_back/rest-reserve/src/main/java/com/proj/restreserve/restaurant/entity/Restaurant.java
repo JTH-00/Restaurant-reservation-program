@@ -1,6 +1,6 @@
-package com.proj.restreserve.restaurant;
+package com.proj.restreserve.restaurant.entity;
 
-import com.proj.restreserve.user.User;
+import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

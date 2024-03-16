@@ -1,13 +1,11 @@
-package com.proj.restreserve.user;
+package com.proj.restreserve.user.service;
 
 import com.proj.restreserve.jwt.SecurityUtil;
-import com.proj.restreserve.restaurant.Restaurant;
-import com.proj.restreserve.restaurant.RestaurantDto;
-import com.proj.restreserve.restaurant.RestaurantImage;
-import com.proj.restreserve.review.Review;
-import com.proj.restreserve.review.ReviewDto;
-import com.proj.restreserve.review.ReviewImage;
-import com.proj.restreserve.review.ReviewRepository;
+import com.proj.restreserve.review.entity.Review;
+import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.review.entity.ReviewImage;
+import com.proj.restreserve.review.repository.ReviewRepository;
+import com.proj.restreserve.user.repository.UserRepository;
 import com.proj.restreserve.visit.Visit;
 import com.proj.restreserve.visit.VisitDto;
 import com.proj.restreserve.visit.VisitRepository;
@@ -21,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

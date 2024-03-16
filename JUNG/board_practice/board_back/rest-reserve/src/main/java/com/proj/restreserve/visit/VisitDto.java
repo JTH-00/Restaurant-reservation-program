@@ -1,8 +1,5 @@
 package com.proj.restreserve.visit;
 
-import com.proj.restreserve.restaurant.Restaurant;
-import com.proj.restreserve.user.User;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;

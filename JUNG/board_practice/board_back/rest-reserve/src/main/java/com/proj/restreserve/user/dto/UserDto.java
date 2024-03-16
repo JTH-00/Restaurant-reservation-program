@@ -1,4 +1,4 @@
-package com.proj.restreserve.user;
+package com.proj.restreserve.user.dto;
 
 import lombok.Data;
 

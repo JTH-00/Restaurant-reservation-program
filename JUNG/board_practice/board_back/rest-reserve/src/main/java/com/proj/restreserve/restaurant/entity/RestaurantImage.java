@@ -1,4 +1,4 @@
-package com.proj.restreserve.restaurant;
+package com.proj.restreserve.restaurant.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

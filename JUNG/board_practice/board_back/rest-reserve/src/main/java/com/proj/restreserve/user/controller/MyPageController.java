@@ -1,20 +1,13 @@
-package com.proj.restreserve.user;
+package com.proj.restreserve.user.controller;
 
-import com.proj.restreserve.restaurant.RestaurantDto;
-import com.proj.restreserve.review.ReviewDto;
-import com.proj.restreserve.visit.Visit;
+import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.user.service.UserService;
 import com.proj.restreserve.visit.VisitDto;
-import com.proj.restreserve.visit.VisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

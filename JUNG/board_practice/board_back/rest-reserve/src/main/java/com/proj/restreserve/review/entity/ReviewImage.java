@@ -1,4 +1,4 @@
-package com.proj.restreserve.review;
+package com.proj.restreserve.review.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

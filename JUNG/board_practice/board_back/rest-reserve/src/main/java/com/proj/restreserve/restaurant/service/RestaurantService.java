@@ -1,7 +1,12 @@
-package com.proj.restreserve.restaurant;
+package com.proj.restreserve.restaurant.service;
 
-import com.proj.restreserve.user.User;
-import com.proj.restreserve.user.UserRepository;
+import com.proj.restreserve.restaurant.dto.RestaurantDto;
+import com.proj.restreserve.restaurant.entity.Restaurant;
+import com.proj.restreserve.restaurant.entity.RestaurantImage;
+import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
+import com.proj.restreserve.restaurant.repository.RestaurantRepository;
+import com.proj.restreserve.user.entity.User;
+import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

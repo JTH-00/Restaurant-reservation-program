@@ -1,4 +1,4 @@
-package com.proj.restreserve.review;
+package com.proj.restreserve.review.service;
 
 import org.springframework.stereotype.Service;
 

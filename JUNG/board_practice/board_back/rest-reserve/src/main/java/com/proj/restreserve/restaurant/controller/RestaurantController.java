@@ -1,7 +1,8 @@
-package com.proj.restreserve.restaurant;
+package com.proj.restreserve.restaurant.controller;
 
-import com.proj.restreserve.user.User;
-import jakarta.validation.Valid;
+import com.proj.restreserve.restaurant.entity.Restaurant;
+import com.proj.restreserve.restaurant.dto.RestaurantDto;
+import com.proj.restreserve.restaurant.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

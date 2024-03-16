@@ -1,7 +1,6 @@
-package com.proj.restreserve.review;
+package com.proj.restreserve.review.entity;
 
-import com.proj.restreserve.restaurant.RestaurantImage;
-import com.proj.restreserve.user.User;
+import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

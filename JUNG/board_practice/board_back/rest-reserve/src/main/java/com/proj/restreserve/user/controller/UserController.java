@@ -1,9 +1,9 @@
-package com.proj.restreserve.user;
+package com.proj.restreserve.user.controller;
 
 import com.proj.restreserve.jwt.JwtFilter;
 import com.proj.restreserve.jwt.TokenDto;
 import com.proj.restreserve.jwt.TokenProvider;
-import com.proj.restreserve.visit.VisitDto;
+import com.proj.restreserve.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

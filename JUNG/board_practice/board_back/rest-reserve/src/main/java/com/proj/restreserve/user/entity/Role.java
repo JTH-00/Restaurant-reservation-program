@@ -1,4 +1,4 @@
-package com.proj.restreserve.user;
+package com.proj.restreserve.user.entity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
