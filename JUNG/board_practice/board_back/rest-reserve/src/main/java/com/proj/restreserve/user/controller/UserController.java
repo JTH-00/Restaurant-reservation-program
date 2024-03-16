@@ -3,6 +3,8 @@ package com.proj.restreserve.user.controller;
 import com.proj.restreserve.jwt.JwtFilter;
 import com.proj.restreserve.jwt.TokenDto;
 import com.proj.restreserve.jwt.TokenProvider;
+import com.proj.restreserve.user.dto.UserDto;
+import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

@@ -37,6 +37,7 @@ public class RestaurantService {
         // 사용자 인증 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String useremail = authentication.getName();
+
         User user = userRepository.findByUseremail(useremail);
 
         // 가게 정보 설정

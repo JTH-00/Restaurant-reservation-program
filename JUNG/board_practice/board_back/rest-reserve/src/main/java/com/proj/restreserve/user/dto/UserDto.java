@@ -1,5 +1,6 @@
 package com.proj.restreserve.user.dto;
 
+import com.proj.restreserve.user.entity.Role;
 import lombok.Data;
 
 @Data

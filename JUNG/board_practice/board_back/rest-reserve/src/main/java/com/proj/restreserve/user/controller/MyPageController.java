@@ -1,6 +1,9 @@
 package com.proj.restreserve.user.controller;
 
 import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.user.dto.UserDto;
+import com.proj.restreserve.user.entity.User;
+import com.proj.restreserve.user.service.MyPageService;
 import com.proj.restreserve.user.service.UserService;
 import com.proj.restreserve.visit.VisitDto;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +20,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/user")
 public class MyPageController {
 
-    private final UserService userService;
+    private final MyPageService myPageService;
 
     @GetMapping("/mypage/use")
     public ResponseEntity<List<VisitDto>> visitRestaur(){
 
-        List<VisitDto> visitDtos = userService.MyRegistInfo().stream()
+        List<VisitDto> visitDtos = myPageService.MyRegistInfo().stream()
                 .filter(visitDto -> visitDto.getVisitcheck())
                 .collect(Collectors.toList());
 
@@ -32,7 +35,7 @@ public class MyPageController {
     @GetMapping("/mypage/reserve")
     public ResponseEntity<List<VisitDto>> reserveRestaur(){
 
-        List<VisitDto> visitDtos = userService.MyRegistInfo().stream()
+        List<VisitDto> visitDtos = myPageService.MyRegistInfo().stream()
                 .filter(visitDto -> !visitDto.getVisitcheck())
                 .collect(Collectors.toList());
 
@@ -42,14 +45,14 @@ public class MyPageController {
     @GetMapping("/mypage/review")
     public ResponseEntity<List<ReviewDto>> reviewRestaur(){
 
-        List<ReviewDto> reviewDtos = userService.MyReviewInfo();
+        List<ReviewDto> reviewDtos = myPageService.MyReviewInfo();
 
         return ResponseEntity.ok(reviewDtos);
     }
 
     @PostMapping("/mypage/info")
     public ResponseEntity<String> entermodifyInfo(@RequestBody UserDto userDto) {
-        Optional<User> optionalUser = userService.getMyUserPassword(userDto.getPassword());
+        Optional<User> optionalUser = myPageService.getMyUserPassword(userDto.getPassword());
         if (optionalUser.isPresent()) {
             // 비밀번호가 일치하는 경우
             return ResponseEntity.ok("비밀번호 일치");
@@ -61,14 +64,14 @@ public class MyPageController {
 
     @PostMapping("/mypage/info/modify")
     public ResponseEntity<UserDto> modifyInfo(@RequestBody UserDto userDto) {
-            userService.modifyUserInfo(userDto);
+        myPageService.modifyUserInfo(userDto);
             return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/mypage/info/modify/password")
     public ResponseEntity<?> modifyPassword(@RequestParam String currentPassword, @RequestParam String newPassword, @RequestParam String newPasswordConfirm) {
         try {
-            userService.modifyUserPassword(currentPassword, newPassword, newPasswordConfirm);
+            myPageService.modifyUserPassword(currentPassword, newPassword, newPasswordConfirm);
             return ResponseEntity.ok("비밀번호가 성공적으로 수정되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
