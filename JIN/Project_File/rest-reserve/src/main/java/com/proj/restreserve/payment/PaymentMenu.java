@@ -20,4 +20,7 @@ public class PaymentMenu {//payment와 menu의 중간 테이블로 구매한 메
     @ManyToOne
     @JoinColumn(name = "menuid")
     private Menu menuid;
+
+    @Column(name="count")
+    private int count;
 }

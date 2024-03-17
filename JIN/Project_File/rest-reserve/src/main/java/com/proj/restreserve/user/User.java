@@ -15,7 +15,7 @@ public class User {
     @Id
     @Column(name = "userid")
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String userhash;
+    private String userid;
 
     @Column(name = "useremail", unique = true, nullable = false)
     private String useremail;

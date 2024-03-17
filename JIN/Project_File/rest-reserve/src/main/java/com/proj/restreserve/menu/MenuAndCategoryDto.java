@@ -8,6 +8,7 @@ import java.util.Set;
 
 
 @Data
+
 public class MenuAndCategoryDto {
     private List<MenuDto> menuDtoList;
     private Set<CategoryDto> CategoryList;

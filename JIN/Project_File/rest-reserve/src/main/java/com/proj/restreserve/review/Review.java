@@ -5,7 +5,9 @@ import com.proj.restreserve.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,8 +27,14 @@ public class Review {
     @Column(nullable = false)
     private int scope;
 
-
     @ManyToOne(fetch =FetchType.LAZY)
     @JoinColumn(name="userid", nullable = false)
     private User userid;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewImage> reviewimages = new ArrayList<>(); // 연관된 이미지들
+
+    @ManyToOne(fetch =FetchType.LAZY)
+    @JoinColumn(name="paymentid", nullable = false)
+    private Payment payment;
 }

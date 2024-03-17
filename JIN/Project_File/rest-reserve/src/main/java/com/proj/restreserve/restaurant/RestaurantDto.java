@@ -1,8 +1,6 @@
 package com.proj.restreserve.restaurant;
 
-import com.proj.restreserve.user.User;
-import com.proj.restreserve.user.UserDto;
-import jakarta.persistence.*;
+import com.proj.restreserve.detailpage.DetailAndReviewPageUserDto;
 import lombok.Data;
 
 import java.sql.Time;
@@ -22,5 +20,5 @@ public class RestaurantDto {
     private String vibe;
     private String address;
     private Boolean ban;
-    private UserDto userid;
+    private DetailAndReviewPageUserDto userid;
 }

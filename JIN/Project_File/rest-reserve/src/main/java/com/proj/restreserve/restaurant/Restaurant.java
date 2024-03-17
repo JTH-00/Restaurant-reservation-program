@@ -3,6 +3,7 @@ package com.proj.restreserve.restaurant;
 import com.proj.restreserve.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.sql.Time;
 
@@ -45,10 +46,12 @@ public class Restaurant {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @ColumnDefault("false")
+    @Column(columnDefinition = "TINYINT(1)", nullable = false)
     private Boolean ban;
 
-    @Column(nullable = false)
+    @ColumnDefault("false")
+    @Column(columnDefinition = "TINYINT(1)", nullable = false)
     private Boolean stopsales;
 
     @ManyToOne(fetch =FetchType.LAZY)
