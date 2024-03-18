@@ -1,5 +1,7 @@
 package com.proj.restreserve.review.dto;
 
+import com.proj.restreserve.payment.entity.Payment;
+import com.proj.restreserve.visit.entity.Visit;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -12,7 +14,7 @@ public class ReviewDto {
     private String content;
     private LocalDate date;
     private String userid;
-    private String paymentid;
-    private String visitid;
+    private Payment payment;
+    private Visit visit;
     private List<String> imageLinks;
 }

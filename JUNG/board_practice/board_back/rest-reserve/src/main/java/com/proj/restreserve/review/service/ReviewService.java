@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public class ReviewService {
     private final PaymentRepository paymentRepository;
 
     @Transactional
-    public ReviewDto writereview(ReviewDto reviewDto, List<MultipartFile> files) {
+    public Review writereview(ReviewDto reviewDto, List<MultipartFile> files) {
         // 리뷰 정보 저장
         Review review = new Review();
         // 사용자 인증 정보 가져오기
@@ -49,11 +48,11 @@ public class ReviewService {
         Visit visit = null;
         Payment payment = null;
 
-        if (reviewDto.getVisitid() != null) {
-            visit = visitRepository.findById(reviewDto.getVisitid())
+        if (reviewDto.getVisit() != null) {
+            visit = visitRepository.findById(reviewDto.getVisit().getVisitid())
                     .orElseThrow(() -> new IllegalArgumentException("해당하는 방문 정보가 없습니다."));
-        } else if (reviewDto.getPaymentid() != null) {
-            payment = paymentRepository.findById(reviewDto.getPaymentid())
+        } else if (reviewDto.getPayment() != null) {
+            payment = paymentRepository.findById(reviewDto.getPayment().getPaymentid())
                     .orElseThrow(() -> new IllegalArgumentException("해당하는 결제 정보가 없습니다."));
         }
         // 리뷰 작성
@@ -65,7 +64,7 @@ public class ReviewService {
         review.setVisit(visit);
 
         // 리뷰 이미지 업로드 경로 설정
-        String projectPath = System.getProperty("user.dir")+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "reviewfiles";
+        String projectPath = System.getProperty("user.dir")+ File.separator+"JUNG"+ File.separator+"board_practice"+ File.separator +"board_back"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "reviewfiles";
 
         List<ReviewImage> reviewImages = new ArrayList<>();
 
@@ -102,24 +101,13 @@ public class ReviewService {
         review = reviewRepository.save(review);
 
         // 리뷰 이미지 정보 저장
-        reviewImages.forEach(reviewImageRepository::save);
+        for (ReviewImage reviewImage : reviewImages) {
+            reviewImage.setReview(review); // 이미지 정보에 리뷰 정보 설정
+            reviewImageRepository.save(reviewImage);
+        }
+        review.setReviewimages(reviewImages);
 
-        return convertToDto(review);
+        return review;
     }
-    //Review -> Visit -> User 순환 참조가 발생하여 JSON 직렬화 과정에서 무한 루프 해결을 위해 Review 엔티티를 ReviewDto 데이터 전송 객체(DTO)로 변환하는 메서드 사용
-    public ReviewDto convertToDto(Review review) {
-        ReviewDto dto = new ReviewDto();
-        dto.setReviewid(review.getReviewid());
-        dto.setScope(review.getScope());
-        dto.setContent(review.getContent());
-        dto.setDate(review.getDate());
-        dto.setUserid(review.getUser().getUserid());
-        if (review.getVisit() != null) dto.setVisitid(review.getVisit().getVisitid());
-        if (review.getPayment() != null) dto.setPaymentid(review.getPayment().getPaymentid());
-        List<String> imageLinks = review.getReviewimages().stream()
-                .map(ReviewImage::getImagelink)
-                .collect(Collectors.toList());
-        dto.setImageLinks(imageLinks);
-        return dto;
-    }
+
 }

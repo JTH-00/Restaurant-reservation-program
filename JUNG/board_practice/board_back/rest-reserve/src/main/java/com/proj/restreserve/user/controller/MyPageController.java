@@ -83,8 +83,7 @@ public class MyPageController {
     }
 
     @PostMapping("/mypage/use/write/review")
-    public ResponseEntity<ReviewDto> writereview(@ModelAttribute ReviewDto reviewDto, @RequestParam("files") List<MultipartFile> files) {
-        ReviewDto responseDto = reviewService.writereview(reviewDto, files);
-        return ResponseEntity.ok(responseDto);
+    public ResponseEntity<Review> signup(@ModelAttribute ReviewDto reviewDto, @RequestParam("files") List<MultipartFile> files) {
+        return ResponseEntity.ok(reviewService.writereview(reviewDto, files));
     }
 }

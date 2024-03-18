@@ -1,5 +1,6 @@
 package com.proj.restreserve.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class RestaurantImage {
 
     @ManyToOne
     @JoinColumn(name = "restaurantid")
+    @JsonBackReference
     private Restaurant restaurant;
 }
 

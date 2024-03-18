@@ -1,5 +1,6 @@
 package com.proj.restreserve.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -59,6 +60,7 @@ public class Restaurant {
     private User user;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
 
 

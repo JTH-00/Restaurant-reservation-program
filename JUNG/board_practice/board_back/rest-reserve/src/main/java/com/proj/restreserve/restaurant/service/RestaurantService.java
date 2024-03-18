@@ -5,6 +5,7 @@ import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.entity.RestaurantImage;
 import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
+import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,7 @@ public class RestaurantService {
         restaurant.setAddress(restaurantDto.getAddress());
 
         // 가게 이미지 업로드 경로 설정
-        String projectPath = System.getProperty("user.dir")+ File.separator + File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "files";
+        String projectPath = System.getProperty("user.dir")+ File.separator+"JUNG"+ File.separator+"board_practice"+ File.separator +"board_back"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "files";
 
         List<RestaurantImage> restaurantImages = new ArrayList<>();
 
@@ -92,7 +93,11 @@ public class RestaurantService {
         restaurant = restaurantRepository.save(restaurant);
 
         // 가게 이미지 정보 저장
-        restaurantImages.forEach(restaurantImageRepository::save);
+        for (RestaurantImage restaurantImage : restaurantImages) {
+            restaurantImage.setRestaurant(restaurant); // 이미지 정보에 리뷰 정보 설정
+            restaurantImageRepository.save(restaurantImage);
+        }
+        restaurant.setRestaurantimages(restaurantImages);
 
         return restaurant;
     }
