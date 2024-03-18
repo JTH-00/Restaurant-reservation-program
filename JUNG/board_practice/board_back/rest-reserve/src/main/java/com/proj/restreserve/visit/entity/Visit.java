@@ -1,6 +1,7 @@
-package com.proj.restreserve.visit;
+package com.proj.restreserve.visit.entity;
 
 import com.proj.restreserve.restaurant.entity.Restaurant;
+import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;

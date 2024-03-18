@@ -12,5 +12,7 @@ public class ReviewDto {
     private String content;
     private LocalDate date;
     private String userid;
+    private String paymentid;
+    private String visitid;
     private List<String> imageLinks;
 }

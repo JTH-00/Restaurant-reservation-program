@@ -1,4 +1,4 @@
-package com.proj.restreserve.visit;
+package com.proj.restreserve.visit.dto;
 
 import lombok.Data;
 

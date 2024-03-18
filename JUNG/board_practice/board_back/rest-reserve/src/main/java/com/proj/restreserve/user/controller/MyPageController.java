@@ -1,15 +1,17 @@
 package com.proj.restreserve.user.controller;
 
 import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.review.entity.Review;
+import com.proj.restreserve.review.service.ReviewService;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.service.MyPageService;
-import com.proj.restreserve.user.service.UserService;
-import com.proj.restreserve.visit.VisitDto;
+import com.proj.restreserve.visit.dto.VisitDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 public class MyPageController {
 
     private final MyPageService myPageService;
+
+    private final ReviewService reviewService;
 
     @GetMapping("/mypage/use")
     public ResponseEntity<List<VisitDto>> visitRestaur(){
@@ -76,5 +80,11 @@ public class MyPageController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/mypage/use/write/review")
+    public ResponseEntity<ReviewDto> writereview(@ModelAttribute ReviewDto reviewDto, @RequestParam("files") List<MultipartFile> files) {
+        ReviewDto responseDto = reviewService.writereview(reviewDto, files);
+        return ResponseEntity.ok(responseDto);
     }
 }

@@ -27,7 +27,6 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
-
     private final UserRepository userRepository;
 
     @Transactional
@@ -56,7 +55,7 @@ public class RestaurantService {
         restaurant.setAddress(restaurantDto.getAddress());
 
         // 가게 이미지 업로드 경로 설정
-        String projectPath = System.getProperty("user.dir")+ File.separator + "board_back" + File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "files";
+        String projectPath = System.getProperty("user.dir")+ File.separator + File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "files";
 
         List<RestaurantImage> restaurantImages = new ArrayList<>();
 

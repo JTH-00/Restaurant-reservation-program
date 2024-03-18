@@ -1,5 +1,6 @@
 package com.proj.restreserve.review.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,5 +16,6 @@ public class ReviewImage {
 
     @ManyToOne
     @JoinColumn(name = "reviewid")
+    @JsonBackReference
     private Review review;
 }

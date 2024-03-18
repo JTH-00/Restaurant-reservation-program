@@ -5,6 +5,7 @@ import com.proj.restreserve.jwt.TokenDto;
 import com.proj.restreserve.jwt.TokenProvider;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
+import com.proj.restreserve.user.repository.UserRepository;
 import com.proj.restreserve.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -30,12 +31,13 @@ public class UserController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@Valid @RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.signup(userDto));
+    public ResponseEntity<String> signup(@Valid @RequestBody UserDto userDto) {
+        return ResponseEntity.ok().body("회원가입 완료");
     }
 
     @PostMapping("/login")
@@ -56,8 +58,10 @@ public class UserController {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
+            User user = userRepository.findByUseremail(userDto.getUseremail());
+            String username = user.getUsername();
             // Return token in response body
-            return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(new TokenDto(jwt,username), httpHeaders, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Authentication failed: ", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
