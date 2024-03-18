@@ -15,6 +15,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +35,7 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)  //csrf 차단 == token 사용
+                .cors(AbstractHttpConfigurer::disable)
 
                 .exceptionHandling((exceptionHandling) -> //컨트롤러의 예외처리
                         exceptionHandling
@@ -51,6 +56,16 @@ public class SecurityConfig {
         return http.build();
     }
 
+    CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); // 허용할 origin
+            config.setAllowCredentials(true);
+            return config;
+        };
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
