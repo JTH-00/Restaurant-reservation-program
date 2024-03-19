@@ -1,7 +1,7 @@
 package com.proj.restreserve.jwt;
 
-import com.proj.restreserve.user.User;
-import com.proj.restreserve.user.UserRepository;
+import com.proj.restreserve.user.entity.User;
+import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
