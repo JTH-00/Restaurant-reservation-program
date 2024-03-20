@@ -3,6 +3,13 @@ package com.proj.restreserve.user.controller;
 import com.proj.restreserve.jwt.JwtFilter;
 import com.proj.restreserve.jwt.TokenDto;
 import com.proj.restreserve.jwt.TokenProvider;
+import com.proj.restreserve.report.dto.ReportRestaurantDto;
+import com.proj.restreserve.report.entity.ReportRestaurant;
+import com.proj.restreserve.report.service.ReportService;
+import com.proj.restreserve.restaurant.entity.Restaurant;
+import com.proj.restreserve.restaurant.repository.RestaurantRepository;
+import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
@@ -20,6 +27,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +42,9 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final ReportService reportService;
+
+    private final RestaurantRepository restaurantRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -81,5 +94,9 @@ public class UserController {
         return ResponseEntity.ok().body("로그아웃");
     }
 
+    @PostMapping("/report/{restaurantid}")
+    public ResponseEntity<ReportRestaurant> reportrestaurant(@ModelAttribute ReportRestaurantDto reportRestaurantDto, @PathVariable("restaurantid") String restaurantid, @RequestParam("files") List<MultipartFile> files) {
+        return ResponseEntity.ok(reportService.reportRestaurant(reportRestaurantDto, files,restaurantid));
+    }
 
 }

@@ -43,7 +43,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한을 설정
                         .requestMatchers("/api/user/signup").permitAll() //사용자 전체 혀용
                         .requestMatchers("/api/user/login").permitAll() //사용자 전체 혀용
-                        .requestMatchers("/api/user/{useremail}").hasAuthority("ROLE_ADMIN") //업주만 허용
                         .requestMatchers("api/user/rest/{restaurantid}").permitAll()//레스토랑
                         .anyRequest().authenticated() // 그 외 인증 없이 접근X
                 )
