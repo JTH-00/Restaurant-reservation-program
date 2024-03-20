@@ -1,15 +1,34 @@
 import styles from "./reserve.module.scss";
-
+import React, { useEffect } from "react";
 import gogiRestaurant from "../assets/gogiRestaurant.png";
+import axios from "axios";
+import { baseUrl } from "../context/AuthContext";
 
 const Reserve = () => {
+  useEffect(() => {
+    userReserved();
+  }, []);
+
+  const userReserved = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`/api/user/mypage/reserve`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      console.log("success");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className={styles.form}>
       <div className={styles.reserve_header}>
         <h1>예약내역</h1>
-        <div className={styles.line}></div>
       </div>
-
       <div className={styles.reserve_cardList}>
         <div className={styles.reserve_card}>
           <img

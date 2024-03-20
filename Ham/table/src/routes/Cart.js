@@ -6,14 +6,29 @@ import gogiRestaurant from "../assets/gogiRestaurant.png";
 import add from "../assets/add.png";
 import minus from "../assets/minus.png";
 import x from "../assets/X.png";
+import axios from "axios";
+
 const Cart = () => {
-  const [isContain, setIsContain] = useState(true);
+  const [isContain, setIsContain] = useState(false);
   const [count, setCount] = useState(1);
   const [price, setPrice] = useState(23000);
 
-  let no = 1231232;
-  let a = no.toLocaleString();
-  console.log(a);
+  const getCartList = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(
+        "/api/user/cart",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className={styles.form}>

@@ -12,6 +12,7 @@ import Reserve from "./routes/Reserve";
 import { AuthProvider } from "./context/AuthContext";
 import Inform from "./routes/Inform";
 import BoardDetail from "./routes/BoardDetail";
+import RestaurantList from "./routes/RestaurantList";
 
 const router = createBrowserRouter([
   {
@@ -36,19 +37,19 @@ const router = createBrowserRouter([
         element: <Restaurant />,
       },
       {
-        path: "/cart/:userId",
+        path: "/cart/:user",
         element: <Cart />,
       },
       {
-        path: "/myPage/:userId",
+        path: "/myPage/:user",
         element: <MyPage />,
       },
       {
-        path: "/mypage/use/:userId",
+        path: "/mypage/use/:user",
         element: <Use />,
       },
       {
-        path: "/mypage/reserve/:userId",
+        path: "/mypage/reserve/:user",
         element: <Reserve />,
       },
       {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "/board/event/:eventId",
         element: <BoardDetail />,
+      },
+      {
+        path: "/restaurantList",
+        element: <RestaurantList />,
       },
     ],
   },

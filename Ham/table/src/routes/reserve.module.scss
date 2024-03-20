@@ -2,26 +2,18 @@
 @import "../scss/variables.scss";
 
 .form {
+  display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   margin-bottom: 50px;
 }
 .reserve_header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
+  width: 892px;
+  border-bottom: 1px solid black;
   h1 {
     font-size: 20px;
     height: 20px;
-  }
-  .line {
-    height: 1px;
-    width: 892px;
-    background-color: black;
-    margin-bottom: 20px;
   }
 }
 

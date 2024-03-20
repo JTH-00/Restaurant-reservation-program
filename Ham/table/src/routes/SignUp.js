@@ -1,8 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
 import styles from "./signUp.module.scss";
+import { useUser } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const { user, signUpUser } = useUser();
+  console.log(user);
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -11,9 +15,8 @@ const SignUp = () => {
     callNumber: "",
   });
 
-  const [userLogin, setUserLogin] = useState(false);
-
   const { email, password, confirmPw, username, callNumber } = input;
+  const navigate = useNavigate();
 
   const checkInput = (e) => {
     const { name, value } = e.target;
@@ -23,17 +26,13 @@ const SignUp = () => {
     });
   };
 
-  const userSignUp = async () => {
-    try {
-      const response = await axios.post("/api/user/signup", {
-        email,
-        password,
-        username,
-        callNumber,
-      });
-      setUserLogin(true);
-    } catch (err) {
-      console.error(err);
+  const onClickSignUp = () => {
+    if (password == confirmPw) {
+      signUpUser(email, password, username, callNumber);
+      // navigate("/");
+    } else {
+      alert("비밀번호가 일치하지 않습니다.");
+      setInput("");
     }
   };
 
@@ -92,7 +91,10 @@ const SignUp = () => {
             placeholder="전화번호를 입력하세요"
           ></input>
         </div>
-        <button className={styles.signUp_button} onClick={() => userSignUp}>
+        <button
+          className={styles.signUp_button}
+          onClick={() => onClickSignUp()}
+        >
           가입하기
         </button>
       </div>

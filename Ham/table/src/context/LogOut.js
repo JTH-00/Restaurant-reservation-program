@@ -1,15 +1,12 @@
+import axios from "axios";
 import { useUser } from "./AuthContext";
 
 const Logout = () => {
-  const { user, updateUser } = useUser();
-
-  const handleLogOut = (e) => {
-    updateUser(null);
-  };
+  const { logoutUser } = useUser();
 
   return (
     <div>
-      <button onClick={(e) => handleLogOut()}>로그아웃</button>
+      <button onClick={(e) => logoutUser(e)}>로그아웃</button>
     </div>
   );
 };

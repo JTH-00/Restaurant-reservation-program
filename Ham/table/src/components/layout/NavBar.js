@@ -18,12 +18,11 @@ const NavBar = () => {
   const [isHover, setIsHover] = useState(false);
   const [isCartOn, setIsCartOn] = useState(true);
   const userId = 1;
-
   return (
     <div className={styles.form}>
       {user ? (
         <div className={styles.service_wrapper}>
-          <p className={styles.redText}>{user.username} 님</p>
+          <p className={styles.redText}>{user} 님</p>
           <Logout />
         </div>
       ) : (
@@ -57,14 +56,14 @@ const NavBar = () => {
             </button>
           </div>
           <div className={styles.nav_wrapper}>
-            <Link to="/cart/:userId" className={styles.cart_inner}>
+            <Link to={`/cart/${user}`} className={styles.cart_inner}>
               <img src={cart} width={30} />
               {isCartOn && <span>2</span>}
             </Link>
             <a>
               <img src={bell} width={30} />
             </a>
-            <Link to={`/myPage/${userId}`}>
+            <Link to={`/myPage/${user}`}>
               <img src={userImg} width={30} />
             </Link>
           </div>
@@ -87,8 +86,8 @@ const NavBar = () => {
           )}
 
           <Link to={"/inform"}>공지사항/이벤트</Link>
-          <Link to={`/mypage/use/${userId}}`}>이용내역</Link>
-          <Link to={`/mypage/reserve/${userId}`}>예약내역</Link>
+          <Link to={`/mypage/use/${user}`}>이용내역</Link>
+          <Link to={`/mypage/reserve/${user}`}>예약내역</Link>
         </div>
 
         {isHover && (

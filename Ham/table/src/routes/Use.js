@@ -6,6 +6,24 @@ import useDateInfo from "../hooks/dayHook";
 import imgCal from "../assets/imgCal.png";
 import gogiRestaurant from "../assets/gogiRestaurant.png";
 import Modal from "../components/modal/Modal";
+import axios from "axios";
+
+const modalData = [
+  "신고",
+  "고기•구이",
+  "삼겹살집",
+  "700px",
+  "700px",
+  gogiRestaurant,
+];
+const reviewModalData = [
+  "리뷰",
+  "고기•구이",
+  "삼겹살집",
+  "700px",
+  "700px",
+  gogiRestaurant,
+];
 
 const Use = () => {
   const [startOpen, setStartOpen] = useState(false);
@@ -23,25 +41,26 @@ const Use = () => {
     setEndDate(endValue);
   }, [startValue, endValue]);
 
-  const modalData = [
-    "신고",
-    "고기•구이",
-    "삼겹살집",
-    "700px",
-    "700px",
-    gogiRestaurant,
-  ];
-  const reviewModalData = [
-    "리뷰",
-    "고기•구이",
-    "삼겹살집",
-    "700px",
-    "700px",
-    gogiRestaurant,
-  ];
+  const getUsedData = async () => {
+    const token = localStorage.getItem("token");
 
-  console.log("startDateInfo", startDateInfo);
-  console.log("endDateInfo", endDateInfo);
+    try {
+      const response = await axios.get(
+        "/api/user/mypage/use",
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className={styles.form}>
       {modalOpen && <Modal setIsOpen={setModalOpen} modalData={modalData} />}
@@ -49,6 +68,9 @@ const Use = () => {
       {reviewModalOpen && (
         <Modal setIsOpen={setReviewModalOpen} modalData={reviewModalData} />
       )}
+      <div className={styles.used_header}>
+        <h1>이용내역</h1>
+      </div>
       <div className={styles.use_header}>
         <select>
           <option>전체</option>

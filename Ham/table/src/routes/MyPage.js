@@ -1,12 +1,15 @@
 import styles from "./myPage.module.scss";
 import { useParams } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import gogiRestaurant from "../assets/gogiRestaurant.png";
 import goldStar from "../assets/goldStar.png";
 import warning from "../assets/warning.png";
 import arrow from "../assets/arrow.png";
 import PasswordModal from "../components/modal/PasswordModal";
+import axios from "axios";
+import { myPageHook } from "../hooks/myPage";
+import { useUser } from "../context/AuthContext";
 
 const MyPage = () => {
   const [isItem, setIsItem] = useState(false);
@@ -15,13 +18,57 @@ const MyPage = () => {
   const [confirmUser, setConfirmUser] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [input, setInput] = useState({
+    userPw: "",
+    username: "",
+    phone: "",
+  });
+  const { userPw, username, phone } = input;
   const { userId } = useParams();
+  const { confirmUserHook } = myPageHook();
+  const { updateUser } = useUser();
+
+  const checkInput = (e) => {
+    const { name, value } = e.target;
+    setInput({
+      ...input,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (activeButton == "리뷰 내역") {
+      userReview();
+    }
+  }, []);
+  const confirmHandle = () => {
+    confirmUserHook(userPw);
+    setConfirmUser(true);
+  };
+
+  const updateHandle = () => {
+    updateUser(username, phone);
+  };
+
+  const userReview = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`/api/user/mypage/review`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      console.log("success");
+    } catch (err) {
+      console.error(err);
+      console.log("fail");
+    }
+  };
 
   const handleClick = (buttonName) => {
     setActiveButton(buttonName);
   };
-
-  console.log(activeButton);
 
   return (
     <div className={styles.form}>
@@ -176,8 +223,12 @@ const MyPage = () => {
                     회원님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 한번
                     확인해주세요.
                   </p>
-                  <input placeholder="비밀번호를 입력해주세요."></input>
-                  <button onClick={(e) => setConfirmUser(true)}>확인</button>
+                  <input
+                    name="userPw"
+                    onChange={checkInput}
+                    placeholder="비밀번호를 입력해주세요."
+                  ></input>
+                  <button onClick={(e) => confirmHandle()}>확인</button>
                 </div>
               ) : (
                 <div className={styles.infoUpdate}>
@@ -193,13 +244,24 @@ const MyPage = () => {
                   </div>
                   <div className={styles.userInfo_wrapper}>
                     <p>이름</p>
-                    <input placeholder="함승완"></input>
+                    <input
+                      name="username"
+                      onChange={checkInput}
+                      placeholder="함승완"
+                    ></input>
                   </div>
                   <div className={styles.userInfo_wrapper}>
                     <p>전화번호</p>
-                    <input placeholder="전화번호"></input>
+                    <input
+                      name="phone"
+                      onChange={checkInput}
+                      placeholder="전화번호"
+                    ></input>
                   </div>
-                  <button className={styles.update_button}>
+                  <button
+                    className={styles.update_button}
+                    onClick={(e) => updateHandle()}
+                  >
                     회원정보 수정
                   </button>
                 </div>

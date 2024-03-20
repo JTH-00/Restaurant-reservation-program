@@ -5,16 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/AuthContext";
 
 const Login = () => {
-  const { user, updateUser } = useUser();
-  console.log(user);
+  const { user, loginUser } = useUser();
+  // console.log(user);
 
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
-
-  const [isUserLogin, setIsUserLogin] = useState(false);
-  const [userData, setUserData] = useState({});
 
   const { email, password } = input;
 
@@ -28,25 +25,8 @@ const Login = () => {
     });
   };
 
-  const userLogin = async () => {
-    try {
-      const response = await axios.post("/api/user/login", {
-        email,
-        password,
-      });
-      setIsUserLogin(true);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const temporaryLogin = (e) => {
-    //임시로그인
-    const loggedIn = {
-      id: 1,
-      username: "hamsuengwan",
-    };
-    updateUser(loggedIn);
+  const userLogin = (e) => {
+    loginUser(email, password);
     navigate("/");
   };
 
@@ -67,7 +47,7 @@ const Login = () => {
         onChange={checkInput}
         placeholder="비밀번호를 입력하세요"
       ></input>
-      <button className={styles.loginBtn} onClick={(e) => temporaryLogin(e)}>
+      <button className={styles.loginBtn} onClick={(e) => userLogin(e)}>
         로그인
       </button>
       <button className={styles.signUpBtn} onClick={() => navigate("/signup")}>
