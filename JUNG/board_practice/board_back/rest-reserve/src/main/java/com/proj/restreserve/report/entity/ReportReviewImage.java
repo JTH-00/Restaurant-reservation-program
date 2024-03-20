@@ -6,16 +6,16 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "reportrestimage")
-public class ReportRestaurantImage {
+@Table(name = "reportreviewimage")
+public class ReportReviewImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String reportreviewid;
+    private String reportreviewimageid;
 
     private String imagelink;
 
     @ManyToOne
-    @JoinColumn(name="reportrestaurantid")
+    @JoinColumn(name="reportreviewid")
     @JsonBackReference
-    private ReportRestaurant reportRestaurant;
+    private ReportReview reportReview;
 }

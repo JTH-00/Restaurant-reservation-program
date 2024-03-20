@@ -4,7 +4,9 @@ import com.proj.restreserve.jwt.JwtFilter;
 import com.proj.restreserve.jwt.TokenDto;
 import com.proj.restreserve.jwt.TokenProvider;
 import com.proj.restreserve.report.dto.ReportRestaurantDto;
+import com.proj.restreserve.report.dto.ReportReviewDto;
 import com.proj.restreserve.report.entity.ReportRestaurant;
+import com.proj.restreserve.report.entity.ReportReview;
 import com.proj.restreserve.report.service.ReportService;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
@@ -94,9 +96,13 @@ public class UserController {
         return ResponseEntity.ok().body("로그아웃");
     }
 
-    @PostMapping("/report/{restaurantid}")
+    @PostMapping("/report/restaurant/{restaurantid}")
     public ResponseEntity<ReportRestaurant> reportrestaurant(@ModelAttribute ReportRestaurantDto reportRestaurantDto, @PathVariable("restaurantid") String restaurantid, @RequestParam("files") List<MultipartFile> files) {
         return ResponseEntity.ok(reportService.reportRestaurant(reportRestaurantDto, files,restaurantid));
     }
 
+    @PostMapping("/report/review/{reviewid}")
+    public ResponseEntity<ReportReview> reportreview(@ModelAttribute ReportReviewDto reportReviewDto, @PathVariable("reviewid") String reviewid, @RequestParam("files") List<MultipartFile> files) {
+        return ResponseEntity.ok(reportService.reportReview(reportReviewDto, files,reviewid));
+    }
 }
