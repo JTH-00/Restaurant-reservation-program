@@ -26,7 +26,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.eventlist());
     }
 
-    @GetMapping("/user/board/event/{eventid}")
+    @GetMapping("/user/board/event/detail/{eventid}")
     public ResponseEntity <List<EventDto>> eventdetail(@PathVariable("eventid") String eventid){
         List<EventDto> eventDtos = boardService.eventdetail(eventid);
         return ResponseEntity.ok(eventDtos);
