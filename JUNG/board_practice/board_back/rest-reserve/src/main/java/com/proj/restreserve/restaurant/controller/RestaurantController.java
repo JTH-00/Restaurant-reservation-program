@@ -24,7 +24,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/admin/registration")
-    public ResponseEntity<Restaurant> signup(@ModelAttribute RestaurantDto restaurantDto, @RequestParam("files") List<MultipartFile> files) {
+    public ResponseEntity<Restaurant> registrestaurant(@ModelAttribute RestaurantDto restaurantDto, @RequestParam("files") List<MultipartFile> files) {
         return ResponseEntity.ok(restaurantService.regist(restaurantDto, files));
     }
 }
