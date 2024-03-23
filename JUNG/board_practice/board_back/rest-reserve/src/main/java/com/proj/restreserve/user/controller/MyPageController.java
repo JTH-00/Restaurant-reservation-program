@@ -56,7 +56,7 @@ public class MyPageController {
 
     @PostMapping("/mypage/info")
     public ResponseEntity<String> entermodifyInfo(@RequestBody UserDto userDto) {
-        Optional<User> optionalUser = myPageService.getMyUserPassword(userDto.getPassword());
+        Optional<User> optionalUser = myPageService.enterUserInfo(userDto.getPassword());
         if (optionalUser.isPresent()) {
             // 비밀번호가 일치하는 경우
             return ResponseEntity.ok("비밀번호 일치");

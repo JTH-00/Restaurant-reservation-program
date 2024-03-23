@@ -1,6 +1,7 @@
 package com.proj.restreserve.board.controller;
 
 import com.proj.restreserve.board.dto.EventDto;
+import com.proj.restreserve.board.dto.NoticeDto;
 import com.proj.restreserve.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,11 @@ public class BoardController {
         return ResponseEntity.ok(boardService.writeevent(eventDto,files));
     }
 
+    @PostMapping("/admin/write/notice")
+    public ResponseEntity<?> writenotice(@ModelAttribute NoticeDto noticeDto, @RequestParam("files")List<MultipartFile> files){
+        return ResponseEntity.ok(boardService.writenotice(noticeDto,files));
+    }
+
     @GetMapping("/user/board/event")
     public ResponseEntity <List<EventDto>> eventlist(){
         return ResponseEntity.ok(boardService.eventlist());
@@ -30,5 +36,16 @@ public class BoardController {
     public ResponseEntity <List<EventDto>> eventdetail(@PathVariable("eventid") String eventid){
         List<EventDto> eventDtos = boardService.eventdetail(eventid);
         return ResponseEntity.ok(eventDtos);
+    }
+
+    @GetMapping("/user/board/notice")
+    public ResponseEntity <List<NoticeDto>> noticelist(){
+        return ResponseEntity.ok(boardService.noticelist());
+    }
+
+    @GetMapping("/user/board/notice/detail/{noticeid}")
+    public ResponseEntity <List<NoticeDto>> noticedetail(@PathVariable("noticeid") String noticeid){
+        List<NoticeDto> noticeDtos = boardService.noticedetail(noticeid);
+        return ResponseEntity.ok(noticeDtos);
     }
 }

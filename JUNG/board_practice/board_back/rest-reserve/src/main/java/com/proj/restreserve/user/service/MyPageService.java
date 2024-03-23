@@ -86,7 +86,7 @@ public class MyPageService {
     }
 
     @Transactional
-    public Optional<User> getMyUserPassword(String password) {
+    public Optional<User> enterUserInfo(String password) {
         Optional<String> currentUseremail = SecurityUtil.getCurrentUseremail();
         if (currentUseremail.isPresent()) {
             Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUseremail(currentUseremail.get()));

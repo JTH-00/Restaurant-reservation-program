@@ -19,7 +19,7 @@ public class RestaurantController {
 
     @GetMapping("/restaurant/list")
     public ResponseEntity <List<RestaurantDto>> restaurantlist(){
-        List<RestaurantDto> restaurantDtos = restaurantService.findRestaurant();
+        List<RestaurantDto> restaurantDtos = restaurantService.restaurantAll();
         return ResponseEntity.ok(restaurantDtos);
     }
 

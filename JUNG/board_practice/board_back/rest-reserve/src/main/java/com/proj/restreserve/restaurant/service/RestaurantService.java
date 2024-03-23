@@ -102,7 +102,7 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public List<RestaurantDto> findRestaurant() {
+    public List<RestaurantDto> restaurantAll() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
         return restaurants.stream().map(restaurant -> {
             RestaurantDto restaurantDto = new RestaurantDto();
