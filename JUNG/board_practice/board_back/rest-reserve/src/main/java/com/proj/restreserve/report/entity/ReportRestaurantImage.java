@@ -10,7 +10,7 @@ import lombok.Data;
 public class ReportRestaurantImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String reportreviewid;
+    private String reportrestimageid;
 
     private String imagelink;
 
