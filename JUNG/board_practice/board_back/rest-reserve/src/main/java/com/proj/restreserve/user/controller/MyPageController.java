@@ -1,5 +1,7 @@
 package com.proj.restreserve.user.controller;
 
+import com.proj.restreserve.restaurant.dto.FavoritesDto;
+import com.proj.restreserve.restaurant.entity.Favorites;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.service.ReviewService;
@@ -34,6 +36,12 @@ public class MyPageController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(visitDtos);
+    }
+
+    @GetMapping("/mypage/like")
+    public ResponseEntity<List<FavoritesDto>> favoriterests(){
+        List<FavoritesDto> favoritesDtos = myPageService.Myfavorites();
+        return ResponseEntity.ok(favoritesDtos);
     }
 
     @GetMapping("/mypage/reserve")

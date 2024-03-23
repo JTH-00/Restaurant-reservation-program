@@ -1,8 +1,10 @@
 package com.proj.restreserve.restaurant.service;
 
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
+import com.proj.restreserve.restaurant.entity.Favorites;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.entity.RestaurantImage;
+import com.proj.restreserve.restaurant.repository.FavoritesRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
 import com.proj.restreserve.review.entity.ReviewImage;
@@ -19,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,7 @@ public class RestaurantService {
     private final RestaurantImageRepository restaurantImageRepository;
     private final UserRepository userRepository;
 
+    private final FavoritesRepository favoritesRepository;
     @Transactional
     public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files) {
         // 가게 정보 저장
@@ -123,6 +127,34 @@ public class RestaurantService {
 
             return restaurantDto;
         }).collect(Collectors.toList());
+    }
+
+    public void addFavoriteRestaurant(String restaurantid) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String useremail = authentication.getName();
+
+        User user = userRepository.findByUseremail(useremail);
+
+
+        // 사용자와 레스토랑을 찾아옴
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantid);
+        if (restaurantOptional.isEmpty()) {
+            throw new IllegalArgumentException("Restaurant not found");
+        }
+
+        Restaurant restaurant = restaurantOptional.get();
+
+        // 이미 사용자가 해당 레스토랑을 좋아하는지 확인
+        boolean isAlreadyFavorite = favoritesRepository.existsByUserAndRestaurant(user, restaurant);
+        if (isAlreadyFavorite) {
+            throw new IllegalStateException("Restaurant already added to favorites");
+        }
+
+        // Favorites 엔티티 생성 후 저장
+        Favorites favorites = new Favorites();
+        favorites.setUser(user);
+        favorites.setRestaurant(restaurant);
+        favoritesRepository.save(favorites);
     }
 }
 

@@ -63,5 +63,4 @@ public class Restaurant {
     @JsonManagedReference
     private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
 
-
 }

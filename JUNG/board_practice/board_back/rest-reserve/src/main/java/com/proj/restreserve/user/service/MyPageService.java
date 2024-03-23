@@ -1,6 +1,9 @@
 package com.proj.restreserve.user.service;
 
 import com.proj.restreserve.jwt.SecurityUtil;
+import com.proj.restreserve.restaurant.dto.FavoritesDto;
+import com.proj.restreserve.restaurant.entity.Favorites;
+import com.proj.restreserve.restaurant.repository.FavoritesRepository;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.entity.ReviewImage;
@@ -30,6 +33,7 @@ public class MyPageService {
     private final VisitRepository visitRepository;
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FavoritesRepository favoritesRepository;
 
 
     @Transactional
@@ -55,6 +59,22 @@ public class MyPageService {
             }
 
             return visitDto;
+        }).collect(Collectors.toList());
+    }
+
+    public List<FavoritesDto> Myfavorites() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String useremail = authentication.getName();
+
+        User user = userRepository.findByUseremail(useremail);
+
+        List<Favorites> favoritesList = favoritesRepository.findByUser(user);
+        return favoritesList.stream().map(favorite -> {
+            FavoritesDto favoritesDto = new FavoritesDto();
+            favoritesDto.setFavoritesid(favorite.getFavoritesid());
+            favoritesDto.setUser(favorite.getUser());
+            favoritesDto.setRestaurant(favorite.getRestaurant());
+            return favoritesDto;
         }).collect(Collectors.toList());
     }
 
