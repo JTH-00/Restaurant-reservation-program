@@ -35,15 +35,18 @@ public class ReviewService {
     private final VisitRepository visitRepository;
     private final PaymentRepository paymentRepository;
 
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
+        String useremail = authentication.getName();
+        return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
+    }
+
     @Transactional
     public Review writereview(ReviewDto reviewDto, List<MultipartFile> files) {
         // 리뷰 정보 저장
         Review review = new Review();
         // 사용자 인증 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
-
-        User user = userRepository.findByUseremail(useremail);
+        User user = getCurrentUser();
         // 방문 정보 또는 결제 정보 가져오기
         Visit visit = null;
         Payment payment = null;

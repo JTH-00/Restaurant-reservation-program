@@ -59,7 +59,7 @@ public class Restaurant {
     @JoinColumn(name="userid")
     private User user;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
 

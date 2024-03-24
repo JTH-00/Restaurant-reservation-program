@@ -35,14 +35,16 @@ public class MyPageService {
     private final PasswordEncoder passwordEncoder;
     private final FavoritesRepository favoritesRepository;
 
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
+        String useremail = authentication.getName();
+        return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
+    }
 
     @Transactional
     public List<VisitDto> MyRegistInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
 
-        User user = userRepository.findByUseremail(useremail);
-
+        User user = getCurrentUser();
         List<Visit> visits = visitRepository.findByUser(user);
 
         return visits.stream().map(visit -> {
@@ -63,12 +65,10 @@ public class MyPageService {
     }
 
     public List<FavoritesDto> Myfavorites() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
 
-        User user = userRepository.findByUseremail(useremail);
-
+        User user = getCurrentUser();
         List<Favorites> favoritesList = favoritesRepository.findByUser(user);
+
         return favoritesList.stream().map(favorite -> {
             FavoritesDto favoritesDto = new FavoritesDto();
             favoritesDto.setFavoritesid(favorite.getFavoritesid());
@@ -80,11 +80,8 @@ public class MyPageService {
 
     @Transactional
     public List<ReviewDto> MyReviewInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();         // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
-        String useremail = authentication.getName();
 
-        User user = userRepository.findByUseremail(useremail);        // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
-
+        User user = getCurrentUser();
         List<Review> reviews = reviewRepository.findByUser(user);
 
         return reviews.stream().map(review -> {
@@ -134,21 +131,16 @@ public class MyPageService {
 
 
     public void modifyUserPassword(String currentPassword, String newPassword, String newPasswordConfirm) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();         // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
-        String useremail = authentication.getName();
 
-        User user = userRepository.findByUseremail(useremail);        // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
-
+        User user = getCurrentUser();
 
         if (user == null) {
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
-
         // 현재 비밀번호가 일치하는지 확인
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
-
         // 새 비밀번호와 새 비밀번호 확인이 일치하는지 확인
         if (!newPassword.equals(newPasswordConfirm)) {
             throw new IllegalArgumentException("새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");

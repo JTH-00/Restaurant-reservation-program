@@ -7,7 +7,6 @@ import com.proj.restreserve.restaurant.entity.RestaurantImage;
 import com.proj.restreserve.restaurant.repository.FavoritesRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
-import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,15 +33,19 @@ public class RestaurantService {
     private final UserRepository userRepository;
 
     private final FavoritesRepository favoritesRepository;
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
+        String useremail = authentication.getName();
+        return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
+    }
+
     @Transactional
     public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files) {
         // 가게 정보 저장
         Restaurant restaurant = new Restaurant();
         // 사용자 인증 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
-
-        User user = userRepository.findByUseremail(useremail);
+        User user = getCurrentUser();
 
         // 가게 정보 설정
         restaurant.setTitle(restaurantDto.getTitle());
@@ -124,17 +127,12 @@ public class RestaurantService {
                     .collect(Collectors.toList());
             restaurantDto.setRestaurantimageLinks(imageLinks);
 
-
             return restaurantDto;
         }).collect(Collectors.toList());
     }
 
     public void addFavoriteRestaurant(String restaurantid) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
-
-        User user = userRepository.findByUseremail(useremail);
-
+        User user = getCurrentUser();
 
         // 사용자와 레스토랑을 찾아옴
         Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantid);
@@ -157,6 +155,3 @@ public class RestaurantService {
         favoritesRepository.save(favorites);
     }
 }
-
-
-

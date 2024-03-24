@@ -43,16 +43,18 @@ public class ReportService {
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
 
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
+        String useremail = authentication.getName();
+        return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
+    }
 
     @Transactional
     public ReportRestaurant reportRestaurant(ReportRestaurantDto reportRestaurantDto, List<MultipartFile> files, String restaurantid) {
         // 리뷰 정보 저장
         ReportRestaurant reportRestaurant = new ReportRestaurant();
         // 사용자 인증 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
-
-        User user = userRepository.findByUseremail(useremail);
+        User user = getCurrentUser();
 
         Restaurant restaurant = restaurantRepository.findById(restaurantid).orElseThrow(() -> new EntityNotFoundException("레스토랑을 찾을 수 없습니다."));
 
@@ -116,10 +118,7 @@ public class ReportService {
         // 리뷰 정보 저장
         ReportReview reportReview = new ReportReview();
         // 사용자 인증 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
-
-        User user = userRepository.findByUseremail(useremail);
+        User user=getCurrentUser();
 
         Review review = reviewRepository.findById(reviewid).orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다."));
 

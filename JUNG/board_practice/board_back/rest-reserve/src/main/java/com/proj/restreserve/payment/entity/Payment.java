@@ -9,8 +9,10 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Table(name = "payment")
 public class Payment {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "paymentid", nullable = false)
     private String paymentid;
 
@@ -22,7 +24,6 @@ public class Payment {
 
     @Column(name = "day", nullable = false)
     private LocalDate day;
-
 
     @ManyToOne
     @JoinColumn(name="restaurantid")
