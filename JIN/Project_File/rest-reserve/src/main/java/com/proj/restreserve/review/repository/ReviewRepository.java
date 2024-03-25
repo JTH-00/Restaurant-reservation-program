@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface ReviewRepository extends JpaRepository<Review,String> {
     @EntityGraph(attributePaths = "userid")
     Page<Review> findByPayment_Restaurantid_Restaurantid(String restaurantid,Pageable pageable);
+
+
 }

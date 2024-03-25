@@ -21,6 +21,7 @@ public class RestaurantDto {
     private String vibe;
     private String address;
     private Boolean ban;
+    private int reviewcount;
     private DetailUserDto userid;
     private List<String> restaurantimageLinks;
 }
