@@ -23,8 +23,8 @@ public class RestaurantService {
     private final EntityManager entityManager;
 
     @Transactional(readOnly = true)
-    public Optional<RestaurantDto> findRestaurant(String restaurantid) {
-        Restaurant restaurant = this.restaurantRepository.findByRestaurantid(restaurantid);
+    public Optional<RestaurantDto> findRestaurant(String restaurantid) {//레스토랑 상세페이지 조회
+        Restaurant restaurant = this.restaurantRepository.findByRestaurantidAndBanFalse(restaurantid);//밴이 안된 레스토랑 매장 조회
         //DTO변환
         RestaurantDto restaurantDto = modelMapper.map(restaurant, RestaurantDto.class);
         // 이미지 파일들의 링크 가져오기
@@ -34,8 +34,8 @@ public class RestaurantService {
         restaurantDto.setRestaurantimageLinks(imageLinks);
         return Optional.ofNullable(restaurantDto);
     }
-
-    public List<RestaurantDto> ShowRestaurantByreview(){
+    @Transactional(readOnly = true)
+    public List<RestaurantDto> ShowRestaurantByreview(){//메인페이지 카테고리별 매장 총 8개 조회
         String list[] = {"족발,보쌈","찜,탕,찌개","치킨","카페,디저트","고기,구이","중식","버거", "돈까스,회,일식","양식","백반,죽,국수","분식","피자","아시안"};
         List<String> categories = Arrays.asList(list);
         Collections.shuffle(categories,new Random()); //셔플 이후 매장 고르기
@@ -74,7 +74,8 @@ public class RestaurantService {
         mainPageRestaurant.add(restaurantDtos);
         return restaurantDtos;
     }
-    public List<RestaurantDto> showRestaurantByRandom(){
+    @Transactional(readOnly = true)
+    public List<RestaurantDto> showRestaurantByRandom(){//메인페이지 랜덤 8개 매장 조회
         List<Restaurant> random8Restaurants = this.restaurantRepository.findRandom8Restaurants();//랜덤 8개 조회
         List<RestaurantDto> random8RestaurantDtos = new ArrayList<>(); //Dto변환 후 넣을 리스트
         
@@ -84,8 +85,8 @@ public class RestaurantService {
         });
         return random8RestaurantDtos;
     }
-
-    public List<List<RestaurantDto>> showMainPage(){
+    @Transactional(readOnly = true)
+    public List<List<RestaurantDto>> showMainPage(){//메인페이지 조회 목록합치기
         List<RestaurantDto> random8Restaurants = showRestaurantByRandom();//랜덤 8개 매장 조회
         List<RestaurantDto> restaurantByReview = ShowRestaurantByreview();//카테고리별 리뷰 많은 순의 매장 8개 조회
 

@@ -64,7 +64,6 @@ public class Restaurant {
     @JoinColumn(name="userid", nullable = false)
     private User userid;
 
-
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
 }
