@@ -1,16 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styles from "./restaurantList.module.scss";
 import KakaoMap from "../components/KakaoMap";
 import { categories, viveCategories } from "../contentData/categories";
 import donkkasRestaurant from "../assets/donkkasRestaurant.png";
 import goldstar from "../assets/goldStar.png";
 import heart from "../assets/heart.png";
+import { useUser } from "../context/AuthContext";
 
 const RestaurantList = () => {
   const [activeButton, setActiveButton] = useState("전체");
   const [viveActiveButton, setviveActiveButton] = useState("");
+  const [resList, setResList] = useState([]);
 
-  console.log(viveActiveButton);
+  const token = localStorage.getItem("token");
+
+  const { userId } = useUser();
+  console.log(userId);
+
+  useEffect(() => {
+    getRes();
+  }, []);
+
+  const getRes = async () => {
+    try {
+      const response = await axios.get("/api/user/restaurant/list", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setResList(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const ddipRes = async (resId) => {
+    console.log(resId);
+    try {
+      const response = await axios.post(
+        `/api/user/restaurant/list/favorite/${resId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleClick = (buttonName) => {
     setActiveButton(buttonName);
@@ -19,6 +59,36 @@ const RestaurantList = () => {
   const viveClick = (buttonName) => {
     setviveActiveButton(buttonName);
   };
+
+  const list = resList.map((e) => {
+    return (
+      <div className={styles.restaurant_card}>
+        <img src={donkkasRestaurant} width={277} height={200}></img>
+        <div className={styles.card_info}>
+          <p>
+            {e.category} • {e.address}
+          </p>
+          <h3>{e.title}</h3>
+          <p>
+            운영시간: {e.opentime} ~ {e.closetime}{" "}
+          </p>
+          <img
+            width={20}
+            height={20}
+            src={goldstar}
+            style={{ marginTop: "12px" }}
+          ></img>
+          <span style={{ fontSize: "14px", fontWeight: "bold" }}>4.5</span>
+          <span>(6)</span>
+          <p style={{ color: "black" }}> {e.content}</p>
+        </div>
+        <div>
+          <img onClick={() => ddipRes(e.restaurantid)} src={heart}></img>
+        </div>
+      </div>
+    );
+  });
+
   return (
     <div className={styles.form}>
       <div className={styles.list_header}>
@@ -82,26 +152,7 @@ const RestaurantList = () => {
           </div>
         </aside>
         <div className={styles.right_side}>
-          <div className={styles.restaurant_card}>
-            <img src={donkkasRestaurant} width={277} height={200}></img>
-            <div className={styles.card_info}>
-              <p>일식 • 부천 심곡동</p>
-              <h3>돈까스집</h3>
-              <p>운영시간: 10:00 ~ 22:00</p>
-              <img
-                width={20}
-                height={20}
-                src={goldstar}
-                style={{ marginTop: "12px" }}
-              ></img>
-              <span style={{ fontSize: "14px", fontWeight: "bold" }}>4.5</span>
-              <span>(6)</span>
-              <p style={{ color: "black" }}>정성이 깃든 돈가스 전문점</p>
-            </div>
-            <div>
-              <img src={heart}></img>
-            </div>
-          </div>
+          {list}
           <div className={styles.line}></div>
         </div>
       </div>

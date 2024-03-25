@@ -2,7 +2,6 @@ import styles from "./reserve.module.scss";
 import React, { useEffect } from "react";
 import gogiRestaurant from "../assets/gogiRestaurant.png";
 import axios from "axios";
-import { baseUrl } from "../context/AuthContext";
 
 const Reserve = () => {
   useEffect(() => {

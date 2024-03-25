@@ -7,6 +7,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -31,8 +32,12 @@ export const AuthProvider = ({ children }) => {
         useremail: email,
         password: password,
       });
-      setUser(response.data.username);
-      localStorage.setItem("token", response.data.token);
+      if (response.status === 200) {
+        setUser(response.data.username);
+        localStorage.setItem("token", response.data.token);
+        getUserId();
+      }
+
       console.log(response.data);
     } catch (err) {
       console.error(err);
@@ -73,8 +78,23 @@ export const AuthProvider = ({ children }) => {
           },
         }
       );
-      setUser(response.data.username);
+      if (response.status === 200) {
+        setUser(response.data.username);
+      }
       console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getUserId = async () => {
+    try {
+      const response = await axios.get("/api/user/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUserId(response.data.userid);
     } catch (err) {
       console.error(err);
     }
@@ -82,7 +102,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, signUpUser, loginUser, logoutUser, updateUser }}
+      value={{ user, userId, signUpUser, loginUser, logoutUser, updateUser }}
     >
       {children}
     </AuthContext.Provider>

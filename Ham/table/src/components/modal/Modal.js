@@ -1,11 +1,113 @@
+import React, { useState, useEffect } from "react";
+
 import styles from "./modal.module.scss";
+import axios from "axios";
 
 const Modal = ({ modalData, setIsOpen }) => {
+  const [status, setStatus] = useState(modalData[0]);
+  const [input, setInput] = useState("");
+  const [showImages, setShowImages] = useState([]);
+
   const a = [
     [modalData[5], "음식의 맛"],
     [modalData[5], "실제 음식의 사진"],
     [modalData[5], "매장의 분위기"],
   ];
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (status === "리뷰") {
+    }
+  }, []);
+
+  const onChangeHandle = (e) => {
+    setInput(e.target.value);
+  };
+
+  const postReview = async (e) => {
+    // showImages.map((element) => {
+    //   return formData.append("files", element);
+    // });
+    const jsonData = {
+      scope: 45,
+      content: "fdsfasd",
+      date: "2024-03-20",
+      visit: 1,
+    };
+
+    const formData = new FormData();
+    // formData.append("scope", "45");
+    // formData.append("content", "asdasd");
+    // formData.append("date", "2024-03-23");
+    // formData.append("visit", "1");
+    formData.append(
+      "reviewDto",
+      new Blob([JSON.stringify(jsonData)], { type: "application/json" })
+    );
+
+    for (const file of showImages) {
+      formData.append("files", new Blob([file]));
+    }
+
+    try {
+      const response = await axios.post(
+        "/api/user/mypage/use/write/review",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+      console.log(formData);
+    }
+  };
+  const postReport = async () => {
+    const formData = new FormData();
+
+    try {
+      const response = await axios.post(
+        "/api/user/mypage/use/write/review",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 이미지 상대경로 저장
+  const handleAddImages = (event) => {
+    const imageLists = event.target.files;
+    let imageUrlLists = [...showImages];
+
+    for (let i = 0; i < imageLists.length; i++) {
+      const currentImageUrl = URL.createObjectURL(imageLists[i]);
+      imageUrlLists.push(currentImageUrl);
+    }
+
+    if (imageUrlLists.length > 10) {
+      imageUrlLists = imageUrlLists.slice(0, 10);
+    }
+
+    setShowImages(imageUrlLists);
+  };
+
+  // X버튼 클릭 시 이미지 삭제
+  const handleDeleteImage = (id) => {
+    setShowImages(showImages.filter((_, index) => index !== id));
+  };
+
   return (
     <div className={styles.modal_wrap}>
       <div
@@ -80,11 +182,16 @@ const Modal = ({ modalData, setIsOpen }) => {
 
           <div className={styles.userInput_wrapper}>
             <p>{modalData[0]}내용</p>
-            <textarea className={styles.user_input}></textarea>
+            <textarea
+              onChange={onChangeHandle}
+              className={styles.user_input}
+            ></textarea>
           </div>
           <div className={styles.userInput_wrapper}>
             <p>사진첨부</p>
-            <input type="file"></input>
+            <label htmlFor="input-file" onChange={handleAddImages}>
+              <input type="file" id="input-file" multiple />
+            </label>
           </div>
           <div className={styles.imgInfo_wrapper}>
             <p>•사진은 최대 8장까지, 30MB 이하의 이미지만 업로드 가능합니다.</p>
@@ -109,7 +216,8 @@ const Modal = ({ modalData, setIsOpen }) => {
           </button>
           <button
             className={styles.confirm_button}
-            onClick={(e) => setIsOpen(false)}
+            formEncType="multipart/form-data"
+            onClick={postReview}
           >
             등록
           </button>

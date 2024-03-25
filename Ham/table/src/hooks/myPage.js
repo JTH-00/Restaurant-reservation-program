@@ -3,6 +3,43 @@ import qs from "qs";
 
 export const myPageHook = () => {
   const token = localStorage.getItem("token");
+
+  const favoriteRestHook = async () => {
+    try {
+      const response = await axios.get("/api/user/mypage/like", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.length < 0) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
+  const reviewListHook = async () => {
+    try {
+      const response = await axios.get(`/api/user/mypage/review`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.length <= 1) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      console.log("fail");
+      console.error(err);
+    }
+  };
+
   const confirmUserHook = async (password) => {
     try {
       const response = await axios.post(
@@ -17,9 +54,10 @@ export const myPageHook = () => {
         }
       );
       console.log(response.data);
+      return response; // response 반환
     } catch (err) {
-      console.log("password", password);
-      console.error(err);
+      alert(err.response.data);
+      throw err; // 에러 재throw
     }
   };
 
@@ -52,5 +90,5 @@ export const myPageHook = () => {
     }
   };
 
-  return { confirmUserHook, changePwHook };
+  return { confirmUserHook, changePwHook, favoriteRestHook, reviewListHook };
 };

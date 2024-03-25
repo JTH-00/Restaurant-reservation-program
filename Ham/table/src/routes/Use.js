@@ -40,21 +40,18 @@ const Use = () => {
     setStartDate(startValue);
     setEndDate(endValue);
   }, [startValue, endValue]);
+  useEffect(() => {
+    getUsedData();
+  }, []);
 
   const getUsedData = async () => {
     const token = localStorage.getItem("token");
-
     try {
-      const response = await axios.get(
-        "/api/user/mypage/use",
-        {},
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
+      const response = await axios.get("/api/user/mypage/use", {
+        headers: {
+          Authorization: token,
+        },
+      });
       console.log(response.data);
     } catch (err) {
       console.error(err);

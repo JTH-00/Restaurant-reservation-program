@@ -63,7 +63,9 @@ const PasswordModal = ({ setModalOpen }) => {
         >
           취소
         </button>
-        <button className={styles.update_button}>비밀번호변경</button>
+        <button className={styles.update_button} onClick={changePwHandle}>
+          비밀번호변경
+        </button>
       </div>
     </div>
   );

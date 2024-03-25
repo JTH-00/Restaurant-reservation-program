@@ -13,11 +13,10 @@ import cart from "../../assets/cart.png";
 import Logout from "../../context/LogOut";
 
 const NavBar = () => {
-  const { user } = useUser();
+  const { user, userId } = useUser();
 
   const [isHover, setIsHover] = useState(false);
   const [isCartOn, setIsCartOn] = useState(true);
-  const userId = 1;
   return (
     <div className={styles.form}>
       {user ? (
@@ -98,10 +97,10 @@ const NavBar = () => {
           >
             {categories.map((e, i) => {
               return (
-                <a>
-                  <img src={categoriesImg[i]}></img>
+                <Link to={`restaurantList/${i}`}>
+                  <img src={categoriesImg[i]} key={i}></img>
                   {e}
-                </a>
+                </Link>
               );
             })}
           </div>

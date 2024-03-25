@@ -4,8 +4,6 @@ import copy from "../../../assets/copy.png";
 import KakaoMap from "../../KakaoMap";
 
 const IntroduceRes = ({ restaurantDetail }) => {
-  console.log(restaurantDetail);
-
   const handleCopyClipBoard = async (text) => {
     try {
       await navigator.clipboard.writeText(text);

@@ -14,8 +14,12 @@
     left: 30px;
   }
 }
+
 .userReview_flex {
   display: flex;
+  flex-direction: row;
+  justify-content: start;
+  width: 78%;
 }
 
 .logo {
