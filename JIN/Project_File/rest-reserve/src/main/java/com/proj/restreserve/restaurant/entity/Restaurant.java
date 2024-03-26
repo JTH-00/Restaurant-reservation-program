@@ -57,10 +57,12 @@ public class Restaurant {
     @Column(columnDefinition = "TINYINT(1)", nullable = false)
     private Boolean stopsales;
 
+    @Column(nullable = false)
+    private int reviewcount;
+
     @ManyToOne(fetch =FetchType.LAZY)
     @JoinColumn(name="userid", nullable = false)
     private User userid;
-
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
