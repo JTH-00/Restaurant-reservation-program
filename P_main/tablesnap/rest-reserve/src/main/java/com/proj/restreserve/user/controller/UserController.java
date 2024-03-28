@@ -96,13 +96,15 @@ public class UserController {
         return ResponseEntity.ok().body("로그아웃");
     }
 
-    @PostMapping("/report/restaurant/{restaurantid}")
-    public ResponseEntity<ReportRestaurant> reportrestaurant(@ModelAttribute ReportRestaurantDto reportRestaurantDto, @PathVariable("restaurantid") String restaurantid, @RequestParam("files") List<MultipartFile> files) {
+    @PostMapping(value = "/report/restaurant/{restaurantid}", consumes = {"multipart/form-data"})
+    public ResponseEntity<ReportRestaurant> reportrestaurant(
+            @Valid @RequestPart("reportRestaurantDto")ReportRestaurantDto reportRestaurantDto,
+            @RequestPart(value = "files",required = false) List<MultipartFile> files,
+            @PathVariable("restaurantid") String restaurantid) {
         return ResponseEntity.ok(reportService.reportRestaurant(reportRestaurantDto, files,restaurantid));
     }
-
-    @PostMapping("/report/review/{reviewid}")
-    public ResponseEntity<ReportReview> reportreview(@ModelAttribute ReportReviewDto reportReviewDto, @PathVariable("reviewid") String reviewid, @RequestParam("files") List<MultipartFile> files) {
+    @PostMapping(value = "/report/review/{reviewid}", consumes = {"multipart/form-data"})
+    public ResponseEntity<ReportReview> reportreview(@Valid @RequestPart("reportReviewDto") ReportReviewDto reportReviewDto, @PathVariable("reviewid") String reviewid, @RequestPart(value = "files",required = false) List<MultipartFile> files) {
         return ResponseEntity.ok(reportService.reportReview(reportReviewDto, files,reviewid));
     }
 }

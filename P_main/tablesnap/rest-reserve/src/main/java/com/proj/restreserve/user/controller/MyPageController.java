@@ -9,6 +9,7 @@ import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.service.MyPageService;
 import com.proj.restreserve.visit.dto.VisitDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -90,8 +91,10 @@ public class MyPageController {
         }
     }
 
-    @PostMapping("/mypage/use/write/review")
-    public ResponseEntity<Review> writereviewRestaur(@ModelAttribute ReviewDto reviewDto, @RequestParam("files") List<MultipartFile> files) {
+    @PostMapping(value = "/mypage/use/write/review", consumes = {"multipart/form-data"})
+    public ResponseEntity<Review> writeReviewRestaur(
+            @Valid @RequestPart("reviewDto") ReviewDto reviewDto,
+            @RequestPart(value = "files",required = false) List<MultipartFile> files) {
         return ResponseEntity.ok(reviewService.writereview(reviewDto, files));
     }
 }

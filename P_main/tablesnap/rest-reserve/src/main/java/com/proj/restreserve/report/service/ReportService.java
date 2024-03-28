@@ -67,35 +67,37 @@ public class ReportService {
 
 
         // 리뷰 이미지 업로드 경로 설정
-        String projectPath = System.getProperty("user.dir")+ File.separator+"JUNG"+ File.separator+"board_practice"+ File.separator +"board_back"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "reportfiles";
+        String projectPath = System.getProperty("user.dir")+ File.separator+"P_main"+ File.separator+"tablesnap"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "reportfiles";
 
         List<ReportRestaurantImage> reportRestaurantImages = new ArrayList<>();
 
         // 각 파일에 대한 처리
-        for (MultipartFile file : files) {
-            // 이미지 파일이 비어있지 않으면 처리
-            if (!file.isEmpty()) {
-                try {
-                    // 이미지 파일명 생성
-                    UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString() + "_" + file.getOriginalFilename();
+        if (files != null) {
+            for (MultipartFile file : files) {
+                // 이미지 파일이 비어있지 않으면 처리
+                if (!file.isEmpty()) {
+                    try {
+                        // 이미지 파일명 생성
+                        UUID uuid = UUID.randomUUID();
+                        String fileName = uuid.toString() + "_" + file.getOriginalFilename();
 
-                    String reviewImageId = uuid.toString();
-                    File saveFile = new File(projectPath, fileName);
+                        String reviewImageId = uuid.toString();
+                        File saveFile = new File(projectPath, fileName);
 
-                    // 파일 저장
-                    // 랜덤 식별자와 파일명 지정(중복 방지)
-                    file.transferTo(saveFile);
+                        // 파일 저장
+                        // 랜덤 식별자와 파일명 지정(중복 방지)
+                        file.transferTo(saveFile);
 
-                    // 리뷰 이미지 정보 생성
-                    ReportRestaurantImage reportRestaurantImage = new ReportRestaurantImage();
-                    reportRestaurantImage.setReportRestaurant(reportRestaurant);
-                    reportRestaurantImage.setImagelink("images/" + fileName);
+                        // 리뷰 이미지 정보 생성
+                        ReportRestaurantImage reportRestaurantImage = new ReportRestaurantImage();
+                        reportRestaurantImage.setReportRestaurant(reportRestaurant);
+                        reportRestaurantImage.setImagelink("images/" + fileName);
 
-                    // 이미지 정보 저장
-                    reportRestaurantImages.add(reportRestaurantImage);
-                } catch (IOException e) {
-                    throw new RuntimeException("이미지 업로드 중 오류 발생: " + e.getMessage());
+                        // 이미지 정보 저장
+                        reportRestaurantImages.add(reportRestaurantImage);
+                    } catch (IOException e) {
+                        throw new RuntimeException("이미지 업로드 중 오류 발생: " + e.getMessage());
+                    }
                 }
             }
         }
@@ -131,35 +133,37 @@ public class ReportService {
 
 
         // 리뷰 이미지 업로드 경로 설정
-        String projectPath = System.getProperty("user.dir")+ File.separator+"JUNG"+ File.separator+"board_practice"+ File.separator +"board_back"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "reportreviewfiles";
+        String projectPath = System.getProperty("user.dir")+ File.separator+"P_main"+ File.separator+"tablesnap"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "reportfiles";
 
         List<ReportReviewImage> reportReviewImages = new ArrayList<>();
 
         // 각 파일에 대한 처리
-        for (MultipartFile file : files) {
-            // 이미지 파일이 비어있지 않으면 처리
-            if (!file.isEmpty()) {
-                try {
-                    // 이미지 파일명 생성
-                    UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString() + "_" + file.getOriginalFilename();
+        if (files != null) {
+            for (MultipartFile file : files) {
+                // 이미지 파일이 비어있지 않으면 처리
+                if (!file.isEmpty()) {
+                    try {
+                        // 이미지 파일명 생성
+                        UUID uuid = UUID.randomUUID();
+                        String fileName = uuid.toString() + "_" + file.getOriginalFilename();
 
-                    String reviewImageId = uuid.toString();
-                    File saveFile = new File(projectPath, fileName);
+                        String reviewImageId = uuid.toString();
+                        File saveFile = new File(projectPath, fileName);
 
-                    // 파일 저장
-                    // 랜덤 식별자와 파일명 지정(중복 방지)
-                    file.transferTo(saveFile);
+                        // 파일 저장
+                        // 랜덤 식별자와 파일명 지정(중복 방지)
+                        file.transferTo(saveFile);
 
-                    // 리뷰 이미지 정보 생성
-                    ReportReviewImage reportReviewImage = new ReportReviewImage();
-                    reportReviewImage.setReportReview(reportReview);
-                    reportReviewImage.setImagelink("images/" + fileName);
+                        // 리뷰 이미지 정보 생성
+                        ReportReviewImage reportReviewImage = new ReportReviewImage();
+                        reportReviewImage.setReportReview(reportReview);
+                        reportReviewImage.setImagelink("images/" + fileName);
 
-                    // 이미지 정보 저장
-                    reportReviewImages.add(reportReviewImage);
-                } catch (IOException e) {
-                    throw new RuntimeException("이미지 업로드 중 오류 발생: " + e.getMessage());
+                        // 이미지 정보 저장
+                        reportReviewImages.add(reportReviewImage);
+                    } catch (IOException e) {
+                        throw new RuntimeException("이미지 업로드 중 오류 발생: " + e.getMessage());
+                    }
                 }
             }
         }
