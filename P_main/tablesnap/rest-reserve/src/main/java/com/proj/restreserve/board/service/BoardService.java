@@ -185,32 +185,33 @@ public class BoardService {
         }).collect(Collectors.toList());
     }
 
-    public List<EventDto> eventdetail(String eventid) {
-        List<Event> events = eventRepository.findByEventid(eventid);
-        return events.stream().map(event -> {
-            EventDto eventDto = new EventDto();
-            eventDto.setEventid(event.getEventid());
-            eventDto.setTitle(event.getTitle());
-            eventDto.setContent(event.getContent());
-            eventDto.setDate(event.getDate());
-            eventDto.setEventstart(event.getEventstart());
-            eventDto.setEventend(event.getEventend());
+    public EventDto eventdetail(String eventid) {
+        Event event = eventRepository.findById(eventid)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이벤트가 존재하지 않습니다."));
 
+        // EventDto 객체 생성 및 데이터 설정
+        EventDto eventDto = new EventDto();
+        eventDto.setEventid(event.getEventid());
+        eventDto.setTitle(event.getTitle());
+        eventDto.setContent(event.getContent());
+        eventDto.setDate(event.getDate());
+        eventDto.setEventstart(event.getEventstart());
+        eventDto.setEventend(event.getEventend());
 
-            // 이미지 파일들의 정보 가져오기
-            List<String> imageLinks = event.getEventimages().stream()
-                    .map(EventImage::getImagelink)
-                    .collect(Collectors.toList());
-            eventDto.setEventimageLinks(imageLinks);
+        // 이미지 파일들의 정보 가져오기
+        List<String> imageLinks = event.getEventimages().stream()
+                .map(EventImage::getImagelink)
+                .collect(Collectors.toList());
+        eventDto.setEventimageLinks(imageLinks);
 
+        return eventDto; // 수정된 단일 EventDto 반환
 
-            return eventDto;
-        }).collect(Collectors.toList());
     }
 
-    public List<NoticeDto> noticedetail(String noticeid) {
-        List<Notice> notices = noticeRepository.findByNoticeid(noticeid);
-        return notices.stream().map(notice -> {
+    public NoticeDto noticedetail(String noticeid) {
+        Notice notice = noticeRepository.findById(noticeid)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공지가 존재하지 않습니다."));
+
             NoticeDto noticeDto = new NoticeDto();
             noticeDto.setNoticeid(notice.getNoticeid());
             noticeDto.setTitle(notice.getTitle());
@@ -225,6 +226,5 @@ public class BoardService {
 
 
             return noticeDto;
-        }).collect(Collectors.toList());
-    }
+        }
 }

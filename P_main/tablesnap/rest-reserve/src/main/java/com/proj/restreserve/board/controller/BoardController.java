@@ -33,9 +33,9 @@ public class BoardController {
     }
 
     @GetMapping("/user/board/event/detail/{eventid}")
-    public ResponseEntity <List<EventDto>> eventdetail(@PathVariable("eventid") String eventid){
-        List<EventDto> eventDtos = boardService.eventdetail(eventid);
-        return ResponseEntity.ok(eventDtos);
+    public ResponseEntity <EventDto> eventdetail(@PathVariable("eventid") String eventid){
+        EventDto eventDto = boardService.eventdetail(eventid);
+        return ResponseEntity.ok(eventDto);
     }
 
     @GetMapping("/user/board/notice")
@@ -44,8 +44,8 @@ public class BoardController {
     }
 
     @GetMapping("/user/board/notice/detail/{noticeid}")
-    public ResponseEntity <List<NoticeDto>> noticedetail(@PathVariable("noticeid") String noticeid){
-        List<NoticeDto> noticeDtos = boardService.noticedetail(noticeid);
-        return ResponseEntity.ok(noticeDtos);
+    public ResponseEntity <NoticeDto> noticedetail(@PathVariable("noticeid") String noticeid){
+        NoticeDto noticeDto = boardService.noticedetail(noticeid);
+        return ResponseEntity.ok(noticeDto);
     }
 }
