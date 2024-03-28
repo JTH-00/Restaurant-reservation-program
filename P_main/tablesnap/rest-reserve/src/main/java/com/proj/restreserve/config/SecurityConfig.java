@@ -4,6 +4,7 @@ import com.proj.restreserve.jwt.TokenProvider;
 import com.proj.restreserve.jwt.point.JwtAccessDeniedHandler;
 import com.proj.restreserve.jwt.point.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -76,6 +77,10 @@ public class SecurityConfig {
     @Bean //스프링 시큐리티 인증 UserSecurityService와 PasswordEncoder가 자동으로 설정
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
 }

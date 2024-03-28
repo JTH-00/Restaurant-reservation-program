@@ -127,7 +127,7 @@ public class ReviewService {
         sorts.add(Sort.Order.desc("Date")); //날짜기준 내림차순 정렬
         Pageable pageable = PageRequest.of(page-1, 5, Sort.by(sorts));//기본페이지를 1로 두었기에 -1, 5개의 리뷰
 
-        Page<Review> reviewPage= this.reviewRepository.findByPayment_Restaurantid_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        Page<Review> reviewPage= this.reviewRepository.findByPayment_Restaurant_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
         Page<SelectReviewDto> reviewDtos = reviewPage.map(review -> {
             SelectReviewDto selectReviewDto = modelMapper.map(review, SelectReviewDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
             List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회

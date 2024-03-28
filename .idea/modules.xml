@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Restaurant-reservation-program.iml" filepath="$PROJECT_DIR$/.idea/Restaurant-reservation-program.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.proj.rest-reserve.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.proj.rest-reserve.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rest-reserve.main.iml" filepath="$PROJECT_DIR$/.idea/modules/rest-reserve.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tablesnap.rest-reserve.main.iml" filepath="$PROJECT_DIR$/.idea/modules/tablesnap.rest-reserve.main.iml" />
     </modules>
   </component>
 </project>
