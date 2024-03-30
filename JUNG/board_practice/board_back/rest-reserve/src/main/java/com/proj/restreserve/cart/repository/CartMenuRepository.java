@@ -14,4 +14,5 @@ public interface CartMenuRepository extends JpaRepository<CartMenu,Integer> {
     List<CartMenu> findByCart(Cart cart);
 
     Optional<CartMenu> findByCartAndMenu(Cart cart, Menu menu);
+
 }
