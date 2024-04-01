@@ -1,6 +1,6 @@
 package com.proj.restreserve.menu.dto;
 
-import com.proj.restreserve.category.dto.CategoryDto;
+import com.proj.restreserve.menucategory.dto.MenuCategoryDto;
 import lombok.Data;
 
 import java.util.List;
@@ -10,11 +10,11 @@ import java.util.Set;
 @Data
 
 public class MenuAndCategoryDto {
-    private List<MenuDto> menuDtoList;
-    private Set<CategoryDto> CategoryList;
+    private List<SelectMenuDto> selectMenuDtoList;
+    private Set<MenuCategoryDto> CategoryList;
 
-    public MenuAndCategoryDto(Set<CategoryDto> CategoryList, List<MenuDto> menuDtoList){
+    public MenuAndCategoryDto(Set<MenuCategoryDto> CategoryList, List<SelectMenuDto> selectMenuDtoList){
         this.CategoryList = CategoryList;
-        this.menuDtoList = menuDtoList;
+        this.selectMenuDtoList = selectMenuDtoList;
     }
 }

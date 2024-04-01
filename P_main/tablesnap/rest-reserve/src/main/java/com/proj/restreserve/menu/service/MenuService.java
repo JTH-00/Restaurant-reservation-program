@@ -66,7 +66,7 @@ public class MenuService {
                 selectMenuDto.setImagelink(menu.getMenuimages().getMenuimagelink().toString());
             }
             selectMenuDtoList.add(selectMenuDto);
-            categoryList.add(selectMenuDto.getCategoryid());//카테고리 이름을 Set에 저장
+            categoryList.add(selectMenuDto.getMenuCategory());//카테고리 이름을 Set에 저장
         }
         MenuAndCategoryDto MandCDTO = new MenuAndCategoryDto(categoryList, selectMenuDtoList); //카테고리와 메뉴 담은 DTO
         return MandCDTO;

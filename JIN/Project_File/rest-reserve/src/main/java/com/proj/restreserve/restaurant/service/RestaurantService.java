@@ -1,17 +1,26 @@
 package com.proj.restreserve.restaurant.service;
 
+import com.proj.restreserve.detailpage.service.FileUpload;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
+import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
+import com.proj.restreserve.restaurant.entity.Favorites;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.entity.RestaurantImage;
+import com.proj.restreserve.restaurant.repository.FavoritesRepository;
+import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
+import com.proj.restreserve.user.entity.User;
+import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.lang.reflect.Array;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,30 +28,143 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantImageRepository restaurantImageRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final EntityManager entityManager;
+    private final FavoritesRepository favoritesRepository;
+    private final FileUpload fileUpload;
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
+        String useremail = authentication.getName();
+        return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
+    }
+
+    @Transactional
+    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files) {
+        // 가게 정보 저장
+        Restaurant restaurant = new Restaurant();
+        // 사용자 인증 정보 가져오기
+        User user = getCurrentUser();
+
+        // 가게 정보 설정
+        restaurant.setTitle(restaurantDto.getTitle());
+        restaurant.setCategory(restaurantDto.getCategory());
+        restaurant.setCloseddays(restaurantDto.getCloseddays());
+        restaurant.setOpentime(restaurantDto.getOpentime());
+        restaurant.setClosetime(restaurantDto.getClosetime());
+        restaurant.setContent(restaurantDto.getContent());
+        restaurant.setPhone(restaurantDto.getPhone());
+        restaurant.setStopsales(true);
+        restaurant.setCookingtime(restaurantDto.getCookingtime());
+        restaurant.setBan(false);
+        restaurant.setUser(user);
+        restaurant.setVibe(restaurantDto.getVibe());
+        restaurant.setAddress(restaurantDto.getAddress());
+
+        List<RestaurantImage> restaurantImages = new ArrayList<>();
+
+        // 각 파일에 대한 처리
+        for (MultipartFile file : files) {
+            // 이미지 파일이 비어있지 않으면 처리
+            if (!file.isEmpty()) {
+                // 이미지 파일명 생성
+                UUID uuid = UUID.randomUUID();
+                String fileName = uuid.toString() + "_" + file.getOriginalFilename().lastIndexOf(".");//uuid+확장자명으로 이름지정
+                String imageUrl = fileUpload.uploadImageToS3(file,"restaurant",fileName);//파일 업로드
+
+                // 가게 이미지 정보 생성
+                RestaurantImage restaurantImage = new RestaurantImage();
+                restaurantImage.setRestaurant(restaurant);
+                restaurantImage.setImagelink(imageUrl);
+
+                // 이미지 정보 저장
+                restaurantImages.add(restaurantImage);
+            }
+        }
+
+        // 가게 정보 저장
+        restaurantRepository.save(restaurant);
+
+        // 가게 이미지 정보 저장
+        for (RestaurantImage restaurantImage : restaurantImages) {
+            restaurantImage.setRestaurant(restaurant); // 이미지 정보에 리뷰 정보 설정
+            restaurantImageRepository.save(restaurantImage);
+        }
+        restaurant.setRestaurantimages(restaurantImages);
+        restaurantRepository.save(restaurant);//이미지 링크를 출력하기 위해 다시 save
+
+        return restaurant;
+    }
+
+    public List<RestaurantDto> restaurantAll() {
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+        return restaurants.stream().map(restaurant -> {
+            RestaurantDto restaurantDto = new RestaurantDto();
+            restaurantDto.setRestaurantid(restaurant.getRestaurantid());
+            restaurantDto.setCategory(restaurant.getCategory());
+            restaurantDto.setAddress(restaurant.getAddress());
+            restaurantDto.setTitle(restaurant.getTitle());
+            restaurantDto.setContent(restaurant.getContent());
+            restaurantDto.setOpentime(restaurant.getOpentime());
+            restaurantDto.setClosetime(restaurant.getClosetime());
+            restaurantDto.setReviewcount(restaurant.getReviewcount());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = restaurant.getRestaurantimages().stream()
+                    .map(RestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            restaurantDto.setRestaurantimageLinks(imageLinks);
+
+            return restaurantDto;
+        }).collect(Collectors.toList());
+    }
+
+    public void addFavoriteRestaurant(String restaurantid) {
+        User user = getCurrentUser();
+
+        // 사용자와 레스토랑을 찾아옴
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantid);
+        if (restaurantOptional.isEmpty()) {
+            throw new IllegalArgumentException("Restaurant not found");
+        }
+
+        Restaurant restaurant = restaurantOptional.get();
+
+        // 이미 사용자가 해당 레스토랑을 좋아하는지 확인
+        boolean isAlreadyFavorite = favoritesRepository.existsByUserAndRestaurant(user, restaurant);
+        if (isAlreadyFavorite) {
+            throw new IllegalStateException("Restaurant already added to favorites");
+        }
+
+        // Favorites 엔티티 생성 후 저장
+        Favorites favorites = new Favorites();
+        favorites.setUser(user);
+        favorites.setRestaurant(restaurant);
+        favoritesRepository.save(favorites);
+    }
 
     @Transactional(readOnly = true)
-    public Optional<RestaurantDto> findRestaurant(String restaurantid) {//레스토랑 상세페이지 조회
+    public Optional<SelectRestaurantDto> findRestaurant(String restaurantid) {//레스토랑 상세페이지 조회
         Restaurant restaurant = this.restaurantRepository.findByRestaurantidAndBanFalse(restaurantid);//밴이 안된 레스토랑 매장 조회
         //DTO변환
-        RestaurantDto restaurantDto = modelMapper.map(restaurant, RestaurantDto.class);
+        SelectRestaurantDto selectRestaurantDto = modelMapper.map(restaurant, SelectRestaurantDto.class);
         // 이미지 파일들의 링크 가져오기
         List<String> imageLinks = restaurant.getRestaurantimages().stream()
                 .map(RestaurantImage::getImagelink)
                 .collect(Collectors.toList());
-        restaurantDto.setRestaurantimageLinks(imageLinks);
-        return Optional.ofNullable(restaurantDto);
+        selectRestaurantDto.setRestaurantimageLinks(imageLinks);
+        return Optional.ofNullable(selectRestaurantDto);
     }
     @Transactional(readOnly = true)
-    public List<RestaurantDto> ShowRestaurantByreview(){//메인페이지 카테고리별 매장 총 8개 조회
+    public List<SelectRestaurantDto> ShowRestaurantByreview(){//메인페이지 카테고리별 매장 총 8개 조회
         String list[] = {"족발,보쌈","찜,탕,찌개","치킨","카페,디저트","고기,구이","중식","버거", "돈까스,회,일식","양식","백반,죽,국수","분식","피자","아시안"};
         List<String> categories = Arrays.asList(list);
         Collections.shuffle(categories,new Random()); //셔플 이후 매장 고르기
 
-        List<RestaurantDto> restaurantDtos = new ArrayList<>(); // 랜덤으로 선택된 카테고리 매장들
+        List<SelectRestaurantDto> selectRestaurantDtos = new ArrayList<>(); // 랜덤으로 선택된 카테고리 매장들
         for(int i=0; i< Math.min(8, categories.size()); i++) {//8개 이하로 출력
-/*            String selected = ArrayList.get(i);
+            String selected = categories.get(i);
             List<Restaurant> restaurants = this.restaurantRepository.findManyReviewByCategory(selected); //리뷰 많은 순으로 출력
             Restaurant restaurant;
 
@@ -51,46 +173,30 @@ public class RestaurantService {
             } else {
                 continue;
             }
-            RestaurantDto restaurantDto = modelMapper.map(restaurant, RestaurantDto.class);
-            restaurantDtos.add(restaurantDto);*/
-// 둘중 성능 보고 지울예정
-            Query query = entityManager.createQuery(
-                            "SELECT r FROM Restaurant r WHERE r.category = :category ORDER BY r.reviewcount DESC", Restaurant.class)
-                    .setParameter("category", categories.get(i))
-                    .setMaxResults(1); // 결과를 하나만 가져오도록 설정
-
-            List<Restaurant> restaurants = query.getResultList();
-            Restaurant restaurant;
-
-            if (!restaurants.isEmpty()) {
-                restaurant = restaurants.get(0);
-            } else {
-                continue;
-            }
-            RestaurantDto restaurantDto = modelMapper.map(restaurant, RestaurantDto.class);
-            restaurantDtos.add(restaurantDto);
+            SelectRestaurantDto selectRestaurantDto = modelMapper.map(restaurant, SelectRestaurantDto.class);
+            selectRestaurantDtos.add(selectRestaurantDto);
         }
-        List<List<RestaurantDto>> mainPageRestaurant = new ArrayList<>(); //메인페이지에 출력할 용도
-        mainPageRestaurant.add(restaurantDtos);
-        return restaurantDtos;
+        List<List<SelectRestaurantDto>> mainPageRestaurant = new ArrayList<>(); //메인페이지에 출력할 용도
+        mainPageRestaurant.add(selectRestaurantDtos);
+        return selectRestaurantDtos;
     }
     @Transactional(readOnly = true)
-    public List<RestaurantDto> showRestaurantByRandom(){//메인페이지 랜덤 8개 매장 조회
+    public List<SelectRestaurantDto> showRestaurantByRandom(){//메인페이지 랜덤 8개 매장 조회
         List<Restaurant> random8Restaurants = this.restaurantRepository.findRandom8Restaurants();//랜덤 8개 조회
-        List<RestaurantDto> random8RestaurantDtos = new ArrayList<>(); //Dto변환 후 넣을 리스트
-        
+        List<SelectRestaurantDto> random8SelectRestaurantDtos = new ArrayList<>(); //Dto변환 후 넣을 리스트
+
         random8Restaurants.forEach(restaurant -> {//dto변환
-            RestaurantDto restaurantDto = modelMapper.map(restaurant, RestaurantDto.class);
-            random8RestaurantDtos.add(restaurantDto);
+            SelectRestaurantDto selectRestaurantDto = modelMapper.map(restaurant, SelectRestaurantDto.class);
+            random8SelectRestaurantDtos.add(selectRestaurantDto);
         });
-        return random8RestaurantDtos;
+        return random8SelectRestaurantDtos;
     }
     @Transactional(readOnly = true)
-    public List<List<RestaurantDto>> showMainPage(){//메인페이지 조회 목록합치기
-        List<RestaurantDto> random8Restaurants = showRestaurantByRandom();//랜덤 8개 매장 조회
-        List<RestaurantDto> restaurantByReview = ShowRestaurantByreview();//카테고리별 리뷰 많은 순의 매장 8개 조회
+    public List<List<SelectRestaurantDto>> showMainPage(){//메인페이지 조회 목록합치기
+        List<SelectRestaurantDto> random8Restaurants = showRestaurantByRandom();//랜덤 8개 매장 조회
+        List<SelectRestaurantDto> restaurantByReview = ShowRestaurantByreview();//카테고리별 리뷰 많은 순의 매장 8개 조회
 
-        List<List<RestaurantDto>> mainPage = new ArrayList<>(); //하나로 출력하기 위해서 추가로 리스트 선언
+        List<List<SelectRestaurantDto>> mainPage = new ArrayList<>(); //하나로 출력하기 위해서 추가로 리스트 선언
         mainPage.add(random8Restaurants);
         mainPage.add(restaurantByReview);
 

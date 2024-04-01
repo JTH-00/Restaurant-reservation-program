@@ -6,21 +6,21 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="paymentmenu")
-public class PaymentMenu {//payment와 menu의 중간 테이블로 구매한 메뉴 하나를 저장
+@Table(name = "paymentmenu")
+public class PaymentMenu {
     @Id
-    @Column(name = "paymentmenuid")
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "paymentmenuid")
     private String paymentmenuid;
 
     @ManyToOne
-    @JoinColumn(name = "paymentid")
-    private Payment paymentid;
+    @JoinColumn(name="paymentid")
+    private Payment payment;
 
     @ManyToOne
-    @JoinColumn(name = "menuid")
-    private Menu menuid;
+    @JoinColumn(name="menuid")
+    private Menu menu;
 
-    @Column(name="count")
-    private int count;
+    @Column(name = "count")
+    private Integer count;
 }

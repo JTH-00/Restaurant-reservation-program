@@ -1,5 +1,6 @@
 package com.proj.restreserve.menu.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 @Entity
@@ -8,9 +9,9 @@ import lombok.Data;
 public class MenuImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
+    @Column(name = "menuimageid", nullable = false)
     private String menuimageid;
 
-    @Column(nullable = false)
+    @Column(name = "menuimagelink", nullable = false)
     private String menuimagelink;
 }

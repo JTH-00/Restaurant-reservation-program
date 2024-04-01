@@ -48,6 +48,7 @@ public class JwtFilter extends GenericFilterBean {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) { //토큰이 있는지와 "Bearer "로 시작하는지를 검사
             return bearerToken.substring(7); //다음에 오는 실제 토큰을 반환
         }
+
         return null;
     }
 }

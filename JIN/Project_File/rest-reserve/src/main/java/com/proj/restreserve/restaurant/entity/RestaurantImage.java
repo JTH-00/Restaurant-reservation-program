@@ -1,5 +1,6 @@
 package com.proj.restreserve.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,14 +10,13 @@ import lombok.Data;
 public class RestaurantImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
     private String restaurantimageid;
 
-    @Column(nullable = false)
     private String imagelink;
 
-    @ManyToOne(fetch =FetchType.LAZY)
-    @JoinColumn(name = "restaurantid", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "restaurantid")
+    @JsonBackReference
     private Restaurant restaurant;
 }
 

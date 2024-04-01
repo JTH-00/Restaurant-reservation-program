@@ -5,31 +5,31 @@ import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name="payment")
-public class Payment {//결제 테이블,이용 내역 조회에도 사용
+@Table(name = "payment")
+public class Payment {
     @Id
-    @Column(name="paymentid", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "paymentid", nullable = false)
     private String paymentid;
 
-    @Column(nullable = false)
+    @Column(name = "totalprice", nullable = false)
     private String totalprice;
 
-    @Column(nullable = false)
-    private Date day;
-
-    @Column(nullable = false)
+    @Column(name = "paymentcheck", nullable = false)
     private Boolean paymentcheck;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="userid",  nullable = false)
-    private User userid;
+    @Column(name = "day", nullable = false)
+    private LocalDate day;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="restaurantid", nullable = false)
-    private Restaurant restaurantid;
+    @ManyToOne
+    @JoinColumn(name="restaurantid")
+    private Restaurant restaurant;
+
+    @ManyToOne
+    @JoinColumn(name="userid")
+    private User user;
 }
