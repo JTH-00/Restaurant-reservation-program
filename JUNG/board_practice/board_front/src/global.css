@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap");
+body {
+  margin: 0;
+  line-height: normal;
+}
+:root {
+  /* fonts */
+  --font-inter: Inter;
+  --font-noto-sans-kr: "Noto Sans KR";
+  --font-roboto: Roboto;
+
+  /* font sizes */
+  --font-size-5xl: 24px;
+  --font-size-xs: 12px;
+  --font-size-base: 16px;
+  --font-size-mini: 15px;
+  --font-size-14xl: 33px;
+  --font-size-3xl: 22px;
+  --font-size-2xs: 11px;
+  --font-size-smi: 13px;
+  --font-size-sm: 14px;
+
+  /* Colors */
+  --color-white: #fff;
+  --color-red-100: #ff3114;
+  --color-red-200: #ef2a23;
+  --color-gray: rgba(255, 255, 255, 0.1);
+  --color-black: #000;
+  --color-darkslategray: #333;
+  --color-whitesmoke: #eee;
+  --color-darkgray: #999;
+
+  /* Border radiuses */
+  --br-36xl: 55px;
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/JIN/Project_File/rest-reserve" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/JIN/Project_File/rest-reserve" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/JUNG/board_practice/board_back/rest-reserve" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/JUNG/board_practice/board_back/rest-reserve" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/P_main/tablesnap/rest-reserve" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/P_main/tablesnap/rest-reserve" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

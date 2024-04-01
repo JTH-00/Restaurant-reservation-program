@@ -4,8 +4,8 @@
 
 ## 역할
 
-| 이름   | 역할  |
-| ------ | ------ |
-|  | (Front-end)|
-| 정승민 | (Back-end.Front-end) |
+|제목    |내용|
+|------  |---|
+| 정승민 | (Back-end,Front-end) |
 | 진태흠 | (Back-end) |
+| 함승완 | (Front-end) |

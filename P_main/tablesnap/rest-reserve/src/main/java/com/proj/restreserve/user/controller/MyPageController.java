@@ -92,7 +92,7 @@ public class MyPageController {
     }
 
     @PostMapping(value = "/mypage/use/write/review", consumes = {"multipart/form-data"})
-     public ResponseEntity<Review> writeReviewRestaur(
+    public ResponseEntity<Review> writeReviewRestaur(
             @Valid @RequestPart("reviewDto") ReviewDto reviewDto,
             @RequestPart(value = "files",required = false) List<MultipartFile> files) {
         return ResponseEntity.ok(reviewService.writereview(reviewDto, files));

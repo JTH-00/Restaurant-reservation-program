@@ -1,0 +1,63 @@
+.paging {
+  position: absolute;
+  top: 966px;
+  left: 580px;
+  width: 266.3px;
+  height: 29px;
+  text-align: right; /* 숫자를 오른쪽으로 정렬합니다. */
+  font-size: var(--font-size-mini);
+  color: var(--color-darkgray);
+  font-family: var(--font-roboto);
+}
+
+.div {
+  position: absolute; /* 부모 요소를 기준으로 자식 요소의 위치를 지정합니다. */
+  display: inline-block; /* div 요소를 인라인 블록 요소로 설정합니다. */
+  margin-left: 5px; /* 숫자 간의 간격을 설정합니다. */
+}
+.num {
+  position: absolute;
+  width: 100%;
+  top: 0%;
+  left: 0%;
+  letter-spacing: 0.32px;
+  line-height: 26px;
+  display: inline-block;
+}
+
+.nextIcon {
+  position: absolute;
+  height: 84.48%;
+  width: 9.2%;
+  top: 6.21%;
+  right: 0;
+  bottom: 9.31%;
+  left: 90.8%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+.paging .div:nth-child(1) {
+  right: 60%;
+}
+
+.paging .div:nth-child(2) {
+  right: 50%;
+}
+
+.paging .div:nth-child(3) {
+  right: 40%;
+}
+
+.paging .div:nth-child(4) {
+  right: 30%;
+}
+
+.paging .div:nth-child(5) {
+  right: 20%;
+}
+/* 숫자를 무한 반복하도록 설정 */
+.paging .div:nth-child(n) {
+  /* right 값을 계산하여 숫자를 오른쪽으로 정렬하고 무한 반복하도록 설정합니다. */
+  right: calc(60% - (10% * (n*1)));
+}

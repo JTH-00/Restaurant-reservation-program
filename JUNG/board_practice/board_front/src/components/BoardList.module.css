@@ -1,0 +1,41 @@
+.boardlist {
+  position: absolute;
+  top: 261px;
+  left: 384px;
+  width: 906px;
+  height: 666px;
+  text-align: left;
+  font-size: var(--font-size-smi);
+  color: var(--color-darkslategray);
+  font-family: var(--font-noto-sans-kr);
+  display: flex;
+  flex-direction: column; /* 수직으로 정렬 */
+}
+
+.line {
+  position: absolute;
+  height: 1.59%;
+  width: 100%;
+  bottom: 0%;
+  background-color: var(--color-whitesmoke);
+}
+.boardname {
+  position: absolute;
+  width: 100%; /* 너비는 필요에 따라 조정 */
+  top: 50%; /* 요소를 세로 중앙으로 정렬 */
+  transform: translateY(-50%); /* 요소를 세로 중앙으로 정렬 */
+}
+.boarddate {
+  position: absolute;
+  width: 10%; /* 너비는 필요에 따라 조정 */
+  top: 50%; /* 요소를 세로 중앙으로 정렬 */
+  transform: translateY(-50%); /* 요소를 세로 중앙으로 정렬 */
+  right: 0;
+  text-align: right; /* 텍스트를 오른쪽 정렬 */
+}
+.board {
+  position: relative; /* 요소를 절대 위치가 아닌 상대 위치로 변경 */
+  height: 9.46%; /* 높이는 필요에 따라 조정 */
+  width: 100%;
+  margin-bottom: 10px; /* 요소 사이의 간격을 조정 */
+}
