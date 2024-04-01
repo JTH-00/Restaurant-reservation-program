@@ -26,7 +26,7 @@ public class PaymentService {
     private final ModelMapper modelMapper;
 
     public List<PaymentMenuDto> paymentMenusSet (String paymentid){
-        List<PaymentMenu> paymentMenus = this.paymentMenuRepository.findByPaymentid_Paymentid(paymentid);
+        List<PaymentMenu> paymentMenus = this.paymentMenuRepository.findByPayment_Paymentid(paymentid);
 
         List<PaymentMenuDto> paymentMenusDto = new ArrayList<>();//총 메뉴 저장
 

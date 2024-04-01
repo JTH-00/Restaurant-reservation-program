@@ -1,5 +1,6 @@
 package com.proj.restreserve.restaurant.service;
 
+import com.proj.restreserve.detailpage.service.FileUpload;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.entity.Favorites;
@@ -26,13 +27,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RestaurantService {
-
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    
     private final FavoritesRepository favoritesRepository;
+    private final FileUpload fileUpload;
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
@@ -62,42 +62,29 @@ public class RestaurantService {
         restaurant.setVibe(restaurantDto.getVibe());
         restaurant.setAddress(restaurantDto.getAddress());
 
-        // 가게 이미지 업로드 경로 설정
-        String projectPath = System.getProperty("user.dir")+ File.separator+"JUNG"+ File.separator+"board_practice"+ File.separator +"board_back"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "files";
-
         List<RestaurantImage> restaurantImages = new ArrayList<>();
 
         // 각 파일에 대한 처리
         for (MultipartFile file : files) {
             // 이미지 파일이 비어있지 않으면 처리
             if (!file.isEmpty()) {
-                try {
-                    // 이미지 파일명 생성
-                    UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString() + "_" + file.getOriginalFilename();
+                // 이미지 파일명 생성
+                UUID uuid = UUID.randomUUID();
+                String fileName = uuid.toString() + "_" + file.getOriginalFilename().lastIndexOf(".");//uuid+확장자명으로 이름지정
+                String imageUrl = fileUpload.uploadImageToS3(file,"restaurant",fileName);//파일 업로드
 
-                    String restaurantImageId = uuid.toString();
-                    File saveFile = new File(projectPath, fileName);
+                // 가게 이미지 정보 생성
+                RestaurantImage restaurantImage = new RestaurantImage();
+                restaurantImage.setRestaurant(restaurant);
+                restaurantImage.setImagelink(imageUrl);
 
-                    // 파일 저장
-                    // 랜덤 식별자와 파일명 지정(중복 방지)
-                    file.transferTo(saveFile);
-
-                    // 가게 이미지 정보 생성
-                    RestaurantImage restaurantImage = new RestaurantImage();
-                    restaurantImage.setRestaurant(restaurant);
-                    restaurantImage.setImagelink("images/" + fileName);
-
-                    // 이미지 정보 저장
-                    restaurantImages.add(restaurantImage);
-                } catch (IOException e) {
-                    throw new RuntimeException("이미지 업로드 중 오류 발생: " + e.getMessage());
-                }
+                // 이미지 정보 저장
+                restaurantImages.add(restaurantImage);
             }
         }
 
         // 가게 정보 저장
-        restaurant = restaurantRepository.save(restaurant);
+        restaurantRepository.save(restaurant);
 
         // 가게 이미지 정보 저장
         for (RestaurantImage restaurantImage : restaurantImages) {
@@ -105,6 +92,7 @@ public class RestaurantService {
             restaurantImageRepository.save(restaurantImage);
         }
         restaurant.setRestaurantimages(restaurantImages);
+        restaurantRepository.save(restaurant);//이미지 링크를 출력하기 위해 다시 save
 
         return restaurant;
     }

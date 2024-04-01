@@ -1,5 +1,6 @@
 package com.proj.restreserve.review.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,13 +10,12 @@ import lombok.Data;
 public class ReviewImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
     private String reviewimageid;
 
-    @Column(nullable = false)
     private String imagelink;
 
     @ManyToOne
     @JoinColumn(name = "reviewid")
+    @JsonBackReference
     private Review review;
 }

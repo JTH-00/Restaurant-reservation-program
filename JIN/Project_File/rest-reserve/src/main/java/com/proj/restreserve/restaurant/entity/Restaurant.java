@@ -1,6 +1,6 @@
 package com.proj.restreserve.restaurant.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,56 +14,58 @@ import java.util.List;
 @Data
 @Table(name="restaurant")
 public class Restaurant {
+
     @Id
-    @Column(name = "restaurantid")
+    @Column(name="restaurantid")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String restaurantid;
 
-    @Column(nullable = false)
+    @Column(name = "title",nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(name = "category",nullable = false)
     private String category;
 
-    @Column(nullable = false)
+    @Column(name = "closeddays",nullable = false)
     private String closeddays;
 
-    @Column(nullable = false)
+    @Column(name = "opentime",nullable = false)
     private Time opentime;
 
-    @Column(nullable = false)
+    @Column(name = "closetime",nullable = false)
     private Time closetime;
 
-    @Column(nullable = false)
+    @Column(name = "content",nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "phone",nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private String cookingtime;
-
-    @Column(nullable = false)
-    private String vibe;
-
-    @Column(nullable = false)
-    private String address;
-
-    @ColumnDefault("false")
-    @Column(columnDefinition = "TINYINT(1)", nullable = false)
-    private Boolean ban;
-
-    @ColumnDefault("false")
-    @Column(columnDefinition = "TINYINT(1)", nullable = false)
+    @Column(name = "stopsales",nullable = false)
     private Boolean stopsales;
 
+    @Column(name = "cookingtime",nullable = false)
+    private String cookingtime;
+
+    @Column(name = "ban",nullable = false)
+    private Boolean ban;
+
+    @Column(name = "vibe",nullable = false)
+    private String vibe;
+
+    @Column(name = "address",nullable = false)
+    private String address;
+
+    @ColumnDefault("0")
     @Column(nullable = false)
     private int reviewcount;
 
-    @ManyToOne(fetch =FetchType.LAZY)
-    @JoinColumn(name="userid", nullable = false)
-    private User userid;
+    @ManyToOne
+    @JoinColumn(name="userid")
+    private User user;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
+
 }

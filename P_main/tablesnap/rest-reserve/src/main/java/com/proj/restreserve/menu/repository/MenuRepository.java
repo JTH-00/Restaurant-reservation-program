@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu,String>{
-        @EntityGraph(attributePaths = {"menuimageid"})
+        @EntityGraph(attributePaths = {"menuimages"})
         List<Menu> findByRestaurant(Restaurant restaurant);
 }

@@ -1,19 +1,20 @@
 package com.proj.restreserve.review.dto;
 
-import com.proj.restreserve.detailpage.dto.DetailUserDto;
-import com.proj.restreserve.payment.dto.PaymentMenusDto;
+import com.proj.restreserve.payment.entity.Payment;
+import com.proj.restreserve.visit.entity.Visit;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class ReviewDto {
     private String reviewid;
-    private Integer scope;
+    private int scope;
     private String content;
-    private Date date;
-    private DetailUserDto userid;
-    private List<PaymentMenusDto> paymentMenusDtos;
-    private List<String> reviewimagelinks;
+    private LocalDate date;
+    private String userid;
+    private Payment payment;
+    private Visit visit;
+    private List<String> imageLinks;
 }

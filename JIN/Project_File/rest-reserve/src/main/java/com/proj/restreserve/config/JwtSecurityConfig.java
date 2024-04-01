@@ -3,7 +3,8 @@ package com.proj.restreserve.config;
 import com.proj.restreserve.jwt.JwtFilter;
 import com.proj.restreserve.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -18,6 +19,7 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 
         // security 로직에 JwtFilter 등록
         http.addFilterBefore(
+
                 new JwtFilter(tokenProvider),
                 UsernamePasswordAuthenticationFilter.class
         );

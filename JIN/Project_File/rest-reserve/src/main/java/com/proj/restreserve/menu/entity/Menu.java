@@ -1,6 +1,6 @@
 package com.proj.restreserve.menu.entity;
 
-import com.proj.restreserve.category.entity.Category;
+import com.proj.restreserve.menucategory.entity.MenuCategory;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,28 +10,29 @@ import lombok.Data;
 @Table(name="menu")
 public class Menu {
     @Id
-    @Column(nullable = false)
+    @Column(name = "menuid", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String menuid;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "price", nullable = false)
     private String price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="menuimageid", nullable = true)
-    private MenuImage menuimageid;
+    private MenuImage menuimages; // 연관된 이미지들
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="menucategoryid", nullable = false)
-    private Category categoryid;
+    private MenuCategory menuCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="restaurantid", nullable = false)
-    private Restaurant restaurantid;
+    private Restaurant restaurant;
+
 }

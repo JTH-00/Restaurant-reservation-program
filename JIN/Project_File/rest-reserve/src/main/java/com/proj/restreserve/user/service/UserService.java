@@ -22,7 +22,6 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Transactional
     public User signup(UserDto userDto) {
@@ -36,13 +35,9 @@ public class UserService {
         user.setUseremail(userDto.getUseremail());
         user.setPhone(userDto.getPhone());
         user.setRole(Role.ROLE_USER);
-        user.setBan(true);
+        user.setBan(false);
+
         return userRepository.save(user);
-    }
-    // 유저,권한 정보를 가져오는 메소드
-    @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities(String useremail) {
-        return Optional.ofNullable(userRepository.findByUseremail(useremail));
     }
     @Transactional(readOnly = true)
     public Optional<User> getMyUserWithAuthorities() {
@@ -62,4 +57,6 @@ public class UserService {
             logger.info("토큰이 존재하지 않음. 로그인 되어 있지 않음.");
         }
     }
+
+
 }

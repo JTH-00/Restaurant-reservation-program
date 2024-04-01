@@ -1,12 +1,15 @@
 package com.proj.restreserve.review.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proj.restreserve.payment.entity.Payment;
 import com.proj.restreserve.user.entity.User;
+import com.proj.restreserve.visit.entity.Visit;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -14,27 +17,32 @@ import java.util.List;
 @Table(name="review")
 public class Review {
     @Id
-    @Column(nullable = false)
+    @Column(name= "reviewid")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String reviewid;
 
-    @Column(nullable = false)
-    private String content;
-
-    @Column(nullable = false)
-    private Date date;
-
-    @Column(nullable = false)
+    @Column(name = "scope")
     private int scope;
 
-    @ManyToOne(fetch =FetchType.LAZY)
-    @JoinColumn(name="userid", nullable = false)
-    private User userid;
+    @Column(name = "content")
+    private String content;
 
-    @ManyToOne(fetch =FetchType.LAZY)
-    @JoinColumn(name="paymentid", nullable = false)
-    private Payment payment;
+    @Column(name = "date")
+    private LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name="userid")
+    private User user;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ReviewImage> reviewimages = new ArrayList<>(); // 연관된 이미지들
+
+    @ManyToOne
+    @JoinColumn(name = "visitid")
+    private Visit visit;
+
+    @ManyToOne
+    @JoinColumn(name = "paymentid")
+    private Payment payment;
 }

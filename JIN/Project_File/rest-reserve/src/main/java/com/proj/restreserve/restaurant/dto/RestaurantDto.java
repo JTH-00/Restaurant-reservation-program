@@ -1,6 +1,5 @@
 package com.proj.restreserve.restaurant.dto;
 
-import com.proj.restreserve.detailpage.dto.DetailUserDto;
 import lombok.Data;
 
 import java.sql.Time;
@@ -18,10 +17,10 @@ public class RestaurantDto {
     private String phone;
     private Boolean stopsales;
     private String cookingtime;
+    private Boolean ban;
     private String vibe;
     private String address;
-    private Boolean ban;
     private int reviewcount;
-    private DetailUserDto userid;
+    private String userid;
     private List<String> restaurantimageLinks;
 }

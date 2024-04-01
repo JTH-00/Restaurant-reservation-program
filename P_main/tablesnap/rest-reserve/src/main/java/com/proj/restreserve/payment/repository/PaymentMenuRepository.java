@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface PaymentMenuRepository extends JpaRepository <PaymentMenu,String> {
-    @EntityGraph(attributePaths = "paymentid")
-    List<PaymentMenu> findByPaymentid_Paymentid(String paymentid);
+    @EntityGraph(attributePaths = "payment")
+    List<PaymentMenu> findByPayment_Paymentid(String paymentid);
 }

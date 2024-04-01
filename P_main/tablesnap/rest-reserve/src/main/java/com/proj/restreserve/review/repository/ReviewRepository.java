@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review,String> {
     List<Review> findByUser(User user);
-    @EntityGraph(attributePaths = "userid")
-    Page<Review> findByPayment_Restaurantid_Restaurantid(String restaurantid, Pageable pageable);
+    @EntityGraph(attributePaths = "user")
+    Page<Review> findByPayment_Restaurant_Restaurantid(String restaurantid, Pageable pageable);
 }

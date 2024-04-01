@@ -29,11 +29,11 @@ public class Visit {
     @Column(name="visitcustomers",nullable = false)
     private int visitcustomers;
 
-    @ManyToOne(fetch =FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="restaurantid")
     private Restaurant restaurant;
 
-    @ManyToOne(fetch =FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="userid")
     private User user;
 }
