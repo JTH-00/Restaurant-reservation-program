@@ -21,6 +21,7 @@ const FavoriteRest = () => {
       if (data) {
         setDataList(data);
         setIsItem(true);
+        console.log(data);
       } else {
         setIsItem(false);
       }

@@ -35,7 +35,9 @@ export const AuthProvider = ({ children }) => {
       if (response.status === 200) {
         setUser(response.data.username);
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("username", response.data.username);
         getUserId();
+        localStorage.setItem("userid", userId);
       }
 
       console.log(response.data);
@@ -56,6 +58,7 @@ export const AuthProvider = ({ children }) => {
         }
       );
       console.log(response.data);
+      setUserId(null);
       setUser(null);
       localStorage.clear();
     } catch (err) {
@@ -94,15 +97,34 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      localStorage.setItem("userid", response.data.userid);
       setUserId(response.data.userid);
     } catch (err) {
       console.error(err);
     }
   };
 
+  const setTokenUser = async () => {
+    if (token) {
+      setUser(localStorage.getItem("username"));
+      setUserId(localStorage.getItem("userid"));
+    } else {
+      setUser(null);
+      setUserId(null);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, userId, signUpUser, loginUser, logoutUser, updateUser }}
+      value={{
+        user,
+        userId,
+        signUpUser,
+        loginUser,
+        logoutUser,
+        updateUser,
+        setTokenUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

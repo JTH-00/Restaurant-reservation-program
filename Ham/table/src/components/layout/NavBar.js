@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { categories, categoriesImg } from "../../contentData/categories";
 import { Link } from "react-router-dom";
 import { useUser } from "../../context/AuthContext";
@@ -13,7 +13,11 @@ import cart from "../../assets/cart.png";
 import Logout from "../../context/LogOut";
 
 const NavBar = () => {
-  const { user, userId } = useUser();
+  const { user, userId, setTokenUser } = useUser();
+
+  useEffect(() => {
+    setTokenUser();
+  }, []);
 
   const [isHover, setIsHover] = useState(false);
   const [isCartOn, setIsCartOn] = useState(true);

@@ -1,5 +1,4 @@
 import axios from "axios";
-import qs from "qs";
 
 export const myPageHook = () => {
   const token = localStorage.getItem("token");
@@ -66,24 +65,22 @@ export const myPageHook = () => {
     newPassword,
     newPasswordConfirm
   ) => {
-    axios.defaults.paramsSerializer = (params) => {
-      return qs.stringify(params);
-    };
-    const params = {
-      currentPassword: currentPassword,
-      newPassword: newPassword,
-      newPasswordConfirm: newPasswordConfirm,
-    };
+    const params = new URLSearchParams();
+    params.append("currentPassword", currentPassword);
+    params.append("newPassword", newPassword);
+    params.append("newPasswordConfirm", newPasswordConfirm);
+
     try {
       const response = await axios.post(
         `/api/user/mypage/info/modify/password`,
-        { params },
+        params,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+      console.log(response.data);
       // alert(response.data);
     } catch (err) {
       console.error(err);

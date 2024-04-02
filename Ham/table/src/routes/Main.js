@@ -7,6 +7,7 @@ import grayStar from "../assets/grayStar.png";
 import { imageData } from "../contentData/imageData";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/AuthContext";
+import axios from "axios";
 
 const Main = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,6 +19,9 @@ const Main = () => {
     return () => clearInterval(intervalId); // 컴포넌트가 언마운트되면 인터벌 제거
   }, []);
 
+  useEffect(() => {
+    getRest();
+  }, []);
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === imageData.length - 1 ? 0 : prevIndex + 1
@@ -35,6 +39,15 @@ const Main = () => {
     }
     return starScoreArr;
   });
+
+  const getRest = async () => {
+    try {
+      const response = await axios.get("/api/main");
+      console.log(response);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const RestaurantList = ({ title, subTitle }) => {
     return (

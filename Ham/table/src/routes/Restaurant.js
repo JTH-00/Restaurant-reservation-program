@@ -33,9 +33,8 @@ const Restaurant = () => {
   }, []);
 
   const getRestaurant = async () => {
-    setIsLoading(true);
     try {
-      const response = await axios.get("/api/user/rest/1");
+      const response = await axios.get("/api/user/restaurant/1");
       setCategoryDto(response.data.categoryDto);
       setMenuDtoList(response.data.menuDtoList);
       setRestaurantDto(response.data.restaurantDto);

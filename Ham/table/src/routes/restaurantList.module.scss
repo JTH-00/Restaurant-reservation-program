@@ -21,6 +21,13 @@
 .aside_wrapper {
   flex-direction: column;
   width: 288px;
+  .choice_address {
+    background-color: white;
+    border-radius: 10px;
+    width: 288px;
+    height: 30px;
+    font-size: 14px;
+  }
   h1 {
     text-align: start;
     font-size: 24px;

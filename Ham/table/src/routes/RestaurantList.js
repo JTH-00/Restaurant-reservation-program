@@ -7,16 +7,18 @@ import donkkasRestaurant from "../assets/donkkasRestaurant.png";
 import goldstar from "../assets/goldStar.png";
 import heart from "../assets/heart.png";
 import { useUser } from "../context/AuthContext";
+import AddressModal from "../components/modal/AddressModal";
 
 const RestaurantList = () => {
   const [activeButton, setActiveButton] = useState("전체");
   const [viveActiveButton, setviveActiveButton] = useState("");
   const [resList, setResList] = useState([]);
+  const [choiceAddress, setChoiceAddress] = useState("서울");
+  const [isOpen, setIsOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
   const { userId } = useUser();
-  console.log(userId);
 
   useEffect(() => {
     getRes();
@@ -50,6 +52,10 @@ const RestaurantList = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const getAddress = (e) => {
+    setChoiceAddress(e);
   };
 
   const handleClick = (buttonName) => {
@@ -92,11 +98,19 @@ const RestaurantList = () => {
   return (
     <div className={styles.form}>
       <div className={styles.list_header}>
-        <h1>부천심곡매장 4개</h1>
+        <h1>{choiceAddress} 4개</h1>
       </div>
       <div className={styles.list_wrapper}>
         <aside className={styles.aside_wrapper}>
-          <KakaoMap mapWidth={288} mapHeight={172} />
+          {isOpen && (
+            <AddressModal setIsOpen={setIsOpen} getAddress={getAddress} />
+          )}
+          <button
+            onClick={(e) => setIsOpen(true)}
+            className={styles.choice_address}
+          >
+            {choiceAddress}
+          </button>
           <div className={styles.category_all}>
             <h3>카테고리</h3>
             <div

@@ -2,11 +2,16 @@ import React, { useState, useEffect } from "react";
 
 import styles from "./modal.module.scss";
 import axios from "axios";
+import goldStar from "../../assets/goldStar.png";
+import grayStar from "../../assets/grayStar.png";
 
 const Modal = ({ modalData, setIsOpen }) => {
   const [status, setStatus] = useState(modalData[0]);
   const [input, setInput] = useState("");
   const [showImages, setShowImages] = useState([]);
+  const [rating, setRating] = useState(0);
+
+  const date = new Date();
 
   const a = [
     [modalData[5], "음식의 맛"],
@@ -14,78 +19,13 @@ const Modal = ({ modalData, setIsOpen }) => {
     [modalData[5], "매장의 분위기"],
   ];
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    if (status === "리뷰") {
-    }
-  }, []);
-
   const onChangeHandle = (e) => {
     setInput(e.target.value);
   };
 
-  const postReview = async (e) => {
-    // showImages.map((element) => {
-    //   return formData.append("files", element);
-    // });
-    const jsonData = {
-      scope: 45,
-      content: "fdsfasd",
-      date: "2024-03-20",
-      visit: 1,
-    };
-
-    const formData = new FormData();
-    // formData.append("scope", "45");
-    // formData.append("content", "asdasd");
-    // formData.append("date", "2024-03-23");
-    // formData.append("visit", "1");
-    formData.append(
-      "reviewDto",
-      new Blob([JSON.stringify(jsonData)], { type: "application/json" })
-    );
-
-    for (const file of showImages) {
-      formData.append("files", new Blob([file]));
-    }
-
-    try {
-      const response = await axios.post(
-        "/api/user/mypage/use/write/review",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "content-type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log(response.data);
-    } catch (err) {
-      console.error(err);
-      console.log(formData);
-    }
+  const handleStarClick = (index) => {
+    setRating(index + 1);
   };
-  const postReport = async () => {
-    const formData = new FormData();
-
-    try {
-      const response = await axios.post(
-        "/api/user/mypage/use/write/review",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   // 이미지 상대경로 저장
   const handleAddImages = (event) => {
     const imageLists = event.target.files;
@@ -103,9 +43,67 @@ const Modal = ({ modalData, setIsOpen }) => {
     setShowImages(imageUrlLists);
   };
 
-  // X버튼 클릭 시 이미지 삭제
-  const handleDeleteImage = (id) => {
-    setShowImages(showImages.filter((_, index) => index !== id));
+  const postReview = async (e) => {
+    try {
+      const formData = new FormData();
+      formData.append("scope", rating);
+      formData.append("content", input);
+      formData.append("date", "2023-03-10");
+      formData.append("visit", "1");
+
+      if (showImages.length > 0) {
+        for (const file of showImages) {
+          console.log(file);
+          formData.append("files", [file]);
+        }
+      }
+      const response = await axios.post(
+        "/api/user/mypage/use/write/review",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const postReport = async () => {
+    const formData = new FormData();
+    const jsonData = {
+      content: input,
+      date: date,
+      visit: "1",
+    };
+
+    formData.append(
+      "reviewDto",
+      new Blob([JSON.stringify(jsonData)], { type: "application/json" })
+    );
+    if (showImages.length > 0) {
+      for (const file of showImages) {
+        formData.append("files", file);
+      }
+    }
+    try {
+      const response = await axios.post(
+        "/api/user/report/restaurant/1",
+        { formData: formData },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -125,7 +123,6 @@ const Modal = ({ modalData, setIsOpen }) => {
             <span>{modalData[2]}</span>
           </div>
           <div className={styles.line}></div>
-
           {modalData[0] == "신고" ? (
             <div>
               <div className={styles.info_header}>
@@ -152,6 +149,7 @@ const Modal = ({ modalData, setIsOpen }) => {
               </div>
             </div>
           ) : (
+            //리뷰모달
             <div>
               <div className={styles.info_header}>
                 <h3>{modalData[0]}는 이렇게 써주세요</h3>
@@ -179,9 +177,21 @@ const Modal = ({ modalData, setIsOpen }) => {
               </div>
             </div>
           )}
+          {status === "리뷰" && (
+            <div className={styles.star_wrapper}>
+              {[...Array(5)].map((_, index) => (
+                <img
+                  key={index}
+                  src={index < rating ? goldStar : grayStar}
+                  style={{ width: "20px", height: "20px", cursor: "pointer" }}
+                  onClick={() => handleStarClick(index)}
+                />
+              ))}
+            </div>
+          )}
 
           <div className={styles.userInput_wrapper}>
-            <p>{modalData[0]}내용</p>
+            <p>{status} 내용</p>
             <textarea
               onChange={onChangeHandle}
               className={styles.user_input}
@@ -193,6 +203,7 @@ const Modal = ({ modalData, setIsOpen }) => {
               <input type="file" id="input-file" multiple />
             </label>
           </div>
+          <div></div>
           <div className={styles.imgInfo_wrapper}>
             <p>•사진은 최대 8장까지, 30MB 이하의 이미지만 업로드 가능합니다.</p>
             <p>
@@ -217,7 +228,7 @@ const Modal = ({ modalData, setIsOpen }) => {
           <button
             className={styles.confirm_button}
             formEncType="multipart/form-data"
-            onClick={postReview}
+            onClick={status === "신고" ? postReport : postReview}
           >
             등록
           </button>

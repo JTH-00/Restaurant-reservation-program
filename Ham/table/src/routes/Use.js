@@ -49,10 +49,10 @@ const Use = () => {
     try {
       const response = await axios.get("/api/user/mypage/use", {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
+      console.log(response.data, 123);
     } catch (err) {
       console.error(err);
     }
@@ -61,7 +61,6 @@ const Use = () => {
   return (
     <div className={styles.form}>
       {modalOpen && <Modal setIsOpen={setModalOpen} modalData={modalData} />}
-
       {reviewModalOpen && (
         <Modal setIsOpen={setReviewModalOpen} modalData={reviewModalData} />
       )}

@@ -41,7 +41,6 @@ const MyPage = () => {
   };
 
   const confirmHandle = async () => {
-    // async로 변경
     try {
       const response = await confirmUserHook(userPw);
       console.log(response);
