@@ -32,11 +32,6 @@ public class RestaurantController {
         restaurantService.addFavoriteRestaurant(restaurantid);
         return ResponseEntity.ok("Favorite restaurant added successfully.");
     }
-
-    @PostMapping("/admin/registration")
-    public ResponseEntity<Restaurant> registrestaurant(@ModelAttribute RestaurantDto restaurantDto, @RequestParam("files") List<MultipartFile> files) {
-        return ResponseEntity.ok(restaurantService.regist(restaurantDto, files));
-    }
     @GetMapping("/main")
     public ResponseEntity<List<List<SelectRestaurantDto>>> showRestaurant(){
         return ResponseEntity.ok(restaurantService.showMainPage());//레스토랑 상세 페이지
