@@ -10,11 +10,13 @@
 }
 .rightInfo_wrapper {
   display: flex;
-  justify-content: center; /* 수평 중앙 정렬 */
   align-items: start;
   flex-direction: column;
   width: 514px;
+  height: 512px;
   margin-left: 100px;
+  justify-content: space-between;
+
   h2 {
     text-align: center; /* 텍스트 중앙 정렬 */
     margin-top: 1px;
@@ -76,9 +78,7 @@
 }
 
 .total {
-  position: relative;
-  margin-top: 25px;
-  top: -20px;
+  margin-top: 10px;
   height: 20px;
   display: flex;
   img {
@@ -94,20 +94,20 @@
   h3 {
     position: relative;
     top: -3px;
+    margin-right: 10px;
   }
   a {
-    margin-left: 10px;
     position: relative;
     top: 15px;
+    margin-left: 10px;
     color: #1273e4;
   }
 }
 
 .basicInfo_wrapoer {
+  margin-bottom: 50px;
   h2 {
     margin-top: 30px;
     height: 15px;
   }
-  width: 300px;
-  height: 100px;
 }

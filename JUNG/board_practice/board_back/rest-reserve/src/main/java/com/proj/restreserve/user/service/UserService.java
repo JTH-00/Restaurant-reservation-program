@@ -2,8 +2,10 @@ package com.proj.restreserve.user.service;
 
 import com.proj.restreserve.jwt.SecurityUtil;
 import com.proj.restreserve.user.dto.UserDto;
+import com.proj.restreserve.user.entity.BusinessNumber;
 import com.proj.restreserve.user.entity.Role;
 import com.proj.restreserve.user.entity.User;
+import com.proj.restreserve.user.repository.BusinessNumberRepository;
 import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,14 +16,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BusinessNumberRepository businessNumberRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Transactional
     public User signup(UserDto userDto) {
@@ -39,6 +48,7 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
     @Transactional(readOnly = true)
     public Optional<User> getMyUserWithAuthorities() {
         Optional<String> currentUseremail = SecurityUtil.getCurrentUseremail();

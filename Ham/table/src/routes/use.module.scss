@@ -10,6 +10,16 @@
   margin-bottom: 10px;
 }
 
+.used_header {
+  width: 681px;
+  height: 50px;
+  border-bottom: 1px solid black;
+  margin-bottom: 10px;
+  h1 {
+    font-size: 20px;
+  }
+}
+
 .use_header {
   display: flex;
   select {
@@ -100,7 +110,7 @@
         color: #1273e4;
       }
     }
-    .body {
+    .body_wrapper {
       display: flex;
       margin-top: 20px;
       margin-left: 15px;

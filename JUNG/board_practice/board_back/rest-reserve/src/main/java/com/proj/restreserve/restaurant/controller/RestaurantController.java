@@ -13,25 +13,20 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-    @GetMapping("/user/restaurant/list")
+    @GetMapping("/restaurant/list")
     public ResponseEntity <List<RestaurantDto>> restaurantlist(){
         List<RestaurantDto> restaurantDtos = restaurantService.restaurantAll();
         return ResponseEntity.ok(restaurantDtos);
     }
 
-    @PostMapping("/user/restaurant/list/favorite/{restaurantid}")
+    @PostMapping("/restaurant/list/favorite/{restaurantid}")
     public ResponseEntity<String> addFavoriteRestaurant(@PathVariable String restaurantid) {
         restaurantService.addFavoriteRestaurant(restaurantid);
         return ResponseEntity.ok("Favorite restaurant added successfully.");
-    }
-
-    @PostMapping("/admin/registration")
-    public ResponseEntity<Restaurant> registrestaurant(@ModelAttribute RestaurantDto restaurantDto, @RequestParam("files") List<MultipartFile> files) {
-        return ResponseEntity.ok(restaurantService.regist(restaurantDto, files));
     }
 }

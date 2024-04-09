@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -35,6 +34,10 @@ public class User {
 
     @Column(name="ban", nullable = false)
     private Boolean ban;
+
+    @ManyToOne
+    @JoinColumn(name = "businessid")
+    private BusinessNumber businessnumber;
 
     public Set<Role> getRoles() {
         return Collections.singleton(this.role);

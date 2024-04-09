@@ -1,5 +1,6 @@
 package com.proj.restreserve.user.dto;
 
+import com.proj.restreserve.businessnumber.entity.BusinessNumber;
 import com.proj.restreserve.user.entity.Role;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ public class UserDto {
     private String username;
     private String phone;
     private Role role;
+    private String businessid;
     private Boolean ban;
 
 }

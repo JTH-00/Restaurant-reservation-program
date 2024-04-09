@@ -6,6 +6,10 @@
   align-items: center;
   flex-direction: column;
   margin-bottom: 50px;
+
+  button {
+    cursor: pointer;
+  }
 }
 .myPage_wrapper {
   display: flex;

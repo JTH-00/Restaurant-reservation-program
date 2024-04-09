@@ -1,5 +1,6 @@
 package com.proj.restreserve.user.entity;
 
+import com.proj.restreserve.businessnumber.entity.BusinessNumber;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -35,6 +36,10 @@ public class User {
 
     @Column(name="ban", nullable = false)
     private Boolean ban;
+
+    @OneToOne
+    @JoinColumn(name = "businessid")
+    private BusinessNumber businessNumber;
 
     public Set<Role> getRoles() {
         return Collections.singleton(this.role);

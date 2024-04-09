@@ -52,6 +52,7 @@ public class RestaurantController {
             @RequestPart List<String> deleteImageLinks) {
         return ResponseEntity.ok(restaurantService.modifyRestaurant(restaurantid,restaurantDto, files,deleteImageLinks));
     }
+  
     @GetMapping("/main")
     public ResponseEntity<List<List<SelectRestaurantDto>>> showRestaurant(){
         return ResponseEntity.ok(restaurantService.showMainPage());//레스토랑 상세 페이지

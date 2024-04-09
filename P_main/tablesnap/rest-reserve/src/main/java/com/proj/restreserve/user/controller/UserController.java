@@ -39,14 +39,10 @@ import java.util.List;
 public class UserController {
 
     private final TokenProvider tokenProvider;
-
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
     private final UserService userService;
     private final UserRepository userRepository;
     private final ReportService reportService;
-
-    private final RestaurantRepository restaurantRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
