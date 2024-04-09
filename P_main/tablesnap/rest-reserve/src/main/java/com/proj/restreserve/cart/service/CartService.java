@@ -7,20 +7,15 @@ import com.proj.restreserve.cart.repository.CartMenuRepository;
 import com.proj.restreserve.cart.repository.CartRepository;
 import com.proj.restreserve.menu.entity.Menu;
 import com.proj.restreserve.menu.repository.MenuRepository;
-import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
-import com.proj.restreserve.visit.dto.VisitDto;
-import com.proj.restreserve.visit.entity.Visit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -124,14 +119,5 @@ public class CartService {
         cartMenuRepository.deleteById(cartmenuid);
         // CartMenu가 삭제된 후 Cart가 비었는지 확인, 비었다면 Cart 삭제
         checkAndDeleteCartIfEmpty(cartid);
-    }
-
-    public void removeCart(String cartid) {
-        Cart cart=cartRepository.findByCartid(cartid);
-        List<CartMenu> cartMenus = cartMenuRepository.findByCart(cart);
-        for (CartMenu cartMenu : cartMenus) {
-            cartMenuRepository.delete(cartMenu);
-        }
-        cartRepository.deleteById(cartid);
     }
 }

@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/user/signup").permitAll() //사용자 전체 혀용
                         .requestMatchers("/api/user/login").permitAll() //사용자 전체 혀용
-                        .requestMatchers("api/user/rest/{restaurantid}").permitAll()//레스토랑
+                        .requestMatchers("api/user/restaurant/{restaurantid}").permitAll()//레스토랑
                         .requestMatchers("api/main").permitAll()//레스토랑
                         .anyRequest().authenticated() // 그 외 인증 없이 접근X
                 )
@@ -82,5 +82,4 @@ public class SecurityConfig {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
-
 }

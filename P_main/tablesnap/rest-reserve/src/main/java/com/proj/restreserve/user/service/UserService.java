@@ -39,7 +39,6 @@ public class UserService {
 
         return userRepository.save(user);
     }
-
     @Transactional(readOnly = true)
     public Optional<User> getMyUserWithAuthorities() {
         Optional<String> currentUseremail = SecurityUtil.getCurrentUseremail();

@@ -5,13 +5,14 @@ import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @Data
+@DynamicUpdate
 @Table(name="restaurant")
 public class Restaurant {
 
@@ -67,5 +68,4 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<RestaurantImage> restaurantimages = new ArrayList<>(); // 연관된 이미지들
-
 }
