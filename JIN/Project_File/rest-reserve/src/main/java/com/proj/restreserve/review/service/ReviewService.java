@@ -1,10 +1,12 @@
 package com.proj.restreserve.review.service;
 
-import com.proj.restreserve.detailpage.service.FileUpload;
+import com.proj.restreserve.detailpage.service.FileCURD;
 import com.proj.restreserve.payment.dto.PaymentMenuDto;
 import com.proj.restreserve.payment.entity.Payment;
 import com.proj.restreserve.payment.repository.PaymentRepository;
 import com.proj.restreserve.payment.service.PaymentService;
+import com.proj.restreserve.restaurant.entity.Restaurant;
+import com.proj.restreserve.restaurant.repository.RestaurantRepository;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.dto.SelectReviewDto;
 import com.proj.restreserve.review.entity.Review;
@@ -21,18 +23,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +45,9 @@ public class ReviewService {
     private final PaymentRepository paymentRepository;
     private final ModelMapper modelMapper;
     private final PaymentService paymentService;
-    private final FileUpload fileUpload;
+    private final FileCURD fileCURD;
+    private final RestaurantRepository restaurantRepository;
+    private final String useServiceName = "review";//S3 버킷 폴더명
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
         String useremail = authentication.getName();
@@ -54,7 +55,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review writereview(ReviewDto reviewDto, List<MultipartFile> files) {
+    public Review writeReview(ReviewDto reviewDto, List<MultipartFile> files) {
         // 리뷰 정보 저장
         Review review = new Review();
         // 사용자 인증 정보 가져오기
@@ -62,13 +63,16 @@ public class ReviewService {
         // 방문 정보 또는 결제 정보 가져오기
         Visit visit = null;
         Payment payment = null;
+        Restaurant restaurant=null;
 
         if (reviewDto.getVisit() != null) {
             visit = visitRepository.findById(reviewDto.getVisit().getVisitid())
                     .orElseThrow(() -> new IllegalArgumentException("해당하는 방문 정보가 없습니다."));
+            restaurant = visit.getRestaurant();
         } else if (reviewDto.getPayment() != null) {
             payment = paymentRepository.findById(reviewDto.getPayment().getPaymentid())
                     .orElseThrow(() -> new IllegalArgumentException("해당하는 결제 정보가 없습니다."));
+            restaurant = payment.getRestaurant();
         }
         // 리뷰 작성
         review.setScope(reviewDto.getScope());
@@ -77,48 +81,152 @@ public class ReviewService {
         review.setUser(user);
         review.setPayment(payment);
         review.setVisit(visit);
+        //매장 리뷰 카운트 추가, Null에러 반환
+        Objects.requireNonNull(restaurant,"해당 매장을 찾을 수 없습니다.").setReviewcount(restaurant.getReviewcount()+1);
+        //리뷰 이미지에 set하기위해 save 선언
+        reviewRepository.save(review);
 
         List<ReviewImage> reviewImages = new ArrayList<>();
-
         // 각 파일에 대한 처리
         if (files != null) {
             for (MultipartFile file : files) {
                 // 이미지 파일이 비어있지 않으면 처리
                 if (!file.isEmpty()) {
                     UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString() + "_" + file.getOriginalFilename().lastIndexOf(".");//uuid+확장자명으로 이름지정
+                    String fileName = uuid.toString();
 
-                    String imageUrl = fileUpload.uploadImageToS3(file,"review",fileName);//파일 업로드
+                    String imageUrl = fileCURD.uploadImageToS3(file,useServiceName,fileName);//파일 업로드 파일,폴더명,파일일련번호
 
                     // 리뷰 이미지 정보 생성
                     ReviewImage reviewImage = new ReviewImage();
-                    reviewImage.setReviewimageid(uuid.toString());
+                    reviewImage.setReviewimageid(fileName);
                     reviewImage.setReview(review);
                     reviewImage.setImagelink(imageUrl);
 
                     // 이미지 정보 저장
                     reviewImages.add(reviewImage);
+                    reviewImageRepository.save(reviewImage);
                 }
             }
         }
-        // 리뷰 정보 저장
-        reviewRepository.save(review);
-        // 리뷰 이미지 정보 저장
-        for (ReviewImage reviewImage : reviewImages) {
-            reviewImage.setReview(review); // 이미지 정보에 리뷰 정보 설정
-            reviewImageRepository.save(reviewImage);
-        }
-
+        //출력을 위해 삽입
         review.setReviewimages(reviewImages);
-        reviewRepository.save(review); //이미지 링크를 출력하기 위해 다시 save
 
         return review;
     }
-    public Page<SelectReviewDto> getReview(String restaurantid, int page){
-        List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("Date")); //날짜기준 내림차순 정렬
-        Pageable pageable = PageRequest.of(page-1, 5, Sort.by(sorts));//기본페이지를 1로 두었기에 -1, 5개의 리뷰
+    @Transactional
+    public ReviewDto modifyReview(String reviewid, ReviewDto reviewDto, List<MultipartFile> files, List<String> deleteImageLinks){
+        Review review = this.reviewRepository.getReferenceById(reviewid);
+        if(!review.getUser().equals(getCurrentUser())){
+            throw new RuntimeException("올바른 접근이 아닙니다");
+        }
+        // 리뷰 작성
+        review.setScope(reviewDto.getScope());
+        review.setContent(reviewDto.getContent());
 
+        //리뷰 이미지에 set하기위해 save 선언
+        reviewRepository.save(review);
+
+        if (deleteImageLinks != null){
+            for (String deleteImageLink : deleteImageLinks) {
+                //링크의 맨마지막 일련번호를 가져옴
+                int imageidNum = deleteImageLink.lastIndexOf("/");
+                String imageid = deleteImageLink.substring(imageidNum + 1);
+
+                fileCURD.deleteFile(useServiceName,imageid);//버킷 폴더명,이미지 일련번호
+                //orphanRemoval = true가 되어있어 리뷰 엔티티의 연결을 끊어 고아 객체를 삭제
+                review.getReviewimages().removeIf(c -> Objects.equals(c.getReviewimageid(), imageid));
+            }
+        }
+        if(files!=null) {
+            // 각 파일에 대한 처리
+            for (MultipartFile file : files) {
+                // 이미지 파일이 비어있지 않으면 처리
+                if (!file.isEmpty()) {
+                    // 이미지 파일명 생성
+                    UUID uuid = UUID.randomUUID();
+                    String fileName = uuid.toString();
+
+                    String imageUrl = fileCURD.uploadImageToS3(file, useServiceName, fileName);//파일 업로드 파일,폴더명,파일일련번호
+                    // 리뷰 이미지 정보 생성
+                    ReviewImage reviewImage = new ReviewImage();
+                    reviewImage.setReviewimageid(fileName);
+                    reviewImage.setImagelink(imageUrl);
+                    reviewImage.setReview(review);
+                    review.getReviewimages().add(reviewImage);//리뷰에 있는 컬렉션에 리뷰이미지 추가
+                    
+                    reviewImageRepository.save(reviewImage);
+                }
+            }
+        }
+
+        ReviewDto reviewDto1 = modelMapper.map(review,ReviewDto.class);
+        List<String> imagelink = review.getReviewimages().stream()
+                .map(ReviewImage::getImagelink)
+                .collect(Collectors.toList());
+        reviewDto1.setImageLinks(imagelink);
+
+        return reviewDto1;
+    }
+    @Transactional
+    public void deleteReview(String reviewid){
+        Restaurant restaurant =null;
+        Review review = reviewRepository.getReferenceById(reviewid);
+        //리뷰 카운트를 내리기 위해 추출
+        if(review.getPayment()!=null){
+            restaurant = review.getPayment().getRestaurant();
+        }else if(review.getVisit()!=null){
+            restaurant = review.getVisit().getRestaurant();
+        }
+        
+        if(!review.getUser().equals(getCurrentUser())){
+            throw new RuntimeException("올바른 접근이 아닙니다");
+        }
+        List<ReviewImage> reviewImages = reviewImageRepository.findByReview_Reviewid(reviewid); //리뷰와 연관된 이미지들
+
+        for(ReviewImage reviewImage: reviewImages){//S3 업로드된 이미지들 삭제
+            reviewImageRepository.delete(reviewImage);//리뷰이미지 db에서 삭제
+            fileCURD.deleteFile(useServiceName,reviewImage.getReviewimageid());
+        }
+        //매장 리뷰 카운트 추가, Null에러 반환
+        Objects.requireNonNull(restaurant,"해당 매장을 찾을 수 없습니다.").setReviewcount(restaurant.getReviewcount()-1);
+        reviewRepository.deleteById(reviewid);//리뷰 삭제
+    }
+
+    public Page<SelectReviewDto> getReviewAll(String restaurantid, int page, int pageSize, boolean scopecheck){ //전체리뷰(방문,포장) 조회
+        //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
+        Pageable pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
+        Page<Review> reviewPage;
+        if(scopecheck){//true == 별점 높은순, false== 별점 관계 없이
+            reviewPage= this.reviewRepository.findReviewsByRestaurantToDescScope(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        }else{
+            reviewPage= this.reviewRepository.findReviewsByRestaurant(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        }
+        Page<SelectReviewDto> reviewDtos = reviewPage.map(review -> {
+            SelectReviewDto selectReviewDto = modelMapper.map(review, SelectReviewDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
+            if(selectReviewDto.getPayment()!=null){
+            List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
+            selectReviewDto.setPaymentMenuDtos(paymentMenus);//조회한 주문 메뉴를 주입
+            }
+
+            List<String> imagelink = review.getReviewimages().stream()
+                    .map(ReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            selectReviewDto.setIamgeLinks(imagelink);
+            return selectReviewDto;
+        });
+        return reviewDtos;
+    }
+    public Page<SelectReviewDto> getReviewPayment(String restaurantid,int page, int pageSize, boolean scopecheck){ //포장 주문 리뷰 조회
+        List<Sort.Order> sorts = new ArrayList<>();
+            sorts.add(Sort.Order.desc("date")); //날짜기준 내림차순 정렬
+
+        Pageable pageable;
+        if (scopecheck) {
+            pageable = PageRequest.of(page - 1, pageSize, Sort.by("scope").descending());//기본페이지를 1로 두었기에 -1, 별점기준 내림차순
+        }else{
+            pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
+        }
         Page<Review> reviewPage= this.reviewRepository.findByPayment_Restaurant_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
         Page<SelectReviewDto> reviewDtos = reviewPage.map(review -> {
             SelectReviewDto selectReviewDto = modelMapper.map(review, SelectReviewDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
@@ -131,7 +239,64 @@ public class ReviewService {
             selectReviewDto.setIamgeLinks(imagelink);
             return selectReviewDto;
         });
-
         return reviewDtos;
+    }
+    public Page<SelectReviewDto> getReviewVisit(String restaurantid,int page, int pageSize, boolean scopecheck){ // 방문 예약 리뷰 조회
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("date")); //날짜기준 내림차순 정렬
+        Pageable pageable;
+        if (scopecheck) {
+            pageable = PageRequest.of(page - 1, pageSize, Sort.by("scope").descending());//기본페이지를 1로 두었기에 -1, 별점기준 내림차순
+        }else{
+            pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
+        }
+        Page<Review> reviewPage= this.reviewRepository.findByVisit_Restaurant_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        Page<SelectReviewDto> reviewDtos = reviewPage.map(review -> {
+            SelectReviewDto selectReviewDto = modelMapper.map(review, SelectReviewDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
+
+            List<String> imagelink = review.getReviewimages().stream()
+                    .map(ReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            selectReviewDto.setIamgeLinks(imagelink);
+            return selectReviewDto;
+        });
+        return reviewDtos;
+    }
+    public Page<SelectReviewDto> getMyrestaurant(int page, int pageSize, boolean scopecheck){ //자신의 매장 리뷰 보기
+        // 여기에 문자열 받아서 스위치문으로 값 불러오기 할까
+        User user = getCurrentUser();
+        Restaurant restaurant = restaurantRepository.findByUser(user);//현재 로그인한 유저의 매장이 있나 확인
+
+        if(restaurant!=null) {
+            return getReviewAll(restaurant.getRestaurantid(), page, pageSize,scopecheck);
+        } else {
+            // 매장이 없는 경우 처리
+            return Page.empty(); // 빈 페이지 반환
+        }
+    }
+    public Page<SelectReviewDto> Myrestaurant(String restaurantid, int page,int pageSize, String sort){
+        switch(sort){
+            case ("scope")://별점 높은 순과 날짜를 기준으로 리뷰 조회
+                return getReviewAll(restaurantid, page, pageSize, true);
+            case ("visit"):
+                //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
+                return getReviewVisit(restaurantid, page, pageSize, false);
+            case ("payment"):
+                //포장을 날짜 기준으로 조회
+                return getReviewPayment(restaurantid, page, pageSize, false);
+            default:
+                //방문과 포장을 날짜 기준 조회
+                return getReviewAll(restaurantid, page, pageSize, false);
+        }
+    }
+    public Page<SelectReviewDto> sortMyrestaurant(int page,int pageSize, boolean scopecheck, String sort){
+        User user = getCurrentUser();
+        Restaurant restaurant = restaurantRepository.findByUser(user);//현재 로그인한 유저의 매장이 있나 확인
+        if(restaurant!=null) {
+            return Myrestaurant(restaurant.getRestaurantid(),1,10,sort);
+        } else {
+            // 매장이 없는 경우 처리
+            return Page.empty(); // 빈 페이지 반환
+        }
     }
 }
