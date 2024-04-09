@@ -1,7 +1,6 @@
 package com.proj.restreserve.user.controller;
 
 import com.proj.restreserve.restaurant.dto.FavoritesDto;
-import com.proj.restreserve.restaurant.entity.Favorites;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.service.ReviewService;
@@ -92,9 +91,26 @@ public class MyPageController {
     }
 
     @PostMapping(value = "/mypage/use/write/review", consumes = {"multipart/form-data"})
-    public ResponseEntity<Review> writeReviewRestaur(
+     public ResponseEntity<Review> writeReviewRestaur(
             @Valid @RequestPart("reviewDto") ReviewDto reviewDto,
             @RequestPart(value = "files",required = false) List<MultipartFile> files) {
-        return ResponseEntity.ok(reviewService.writereview(reviewDto, files));
+        return ResponseEntity.ok(reviewService.writeReview(reviewDto, files));
+    }
+    @PutMapping(value = "/mypage/use/modify/review", consumes = {"multipart/form-data"})
+    public ResponseEntity<ReviewDto> modifyReviewRestaur(
+            @RequestParam(name="reviewid") String reviewid,
+            @Valid @RequestPart("reviewDto") ReviewDto reviewDto,
+            @RequestPart(value = "files",required = false) List<MultipartFile> files,
+            @RequestPart List<String> deleteImageLinks) {
+        return ResponseEntity.ok(reviewService.modifyReview(reviewid,reviewDto, files,deleteImageLinks));
+    }
+    @PostMapping(value = "/mypage/use/delete/review")
+    public ResponseEntity<?> deleteReviewRestaur(@RequestParam(name="reviewid") String reviewid) {
+        try {
+            reviewService.deleteReview(reviewid);
+            return ResponseEntity.ok("리뷰가 성공적으로 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

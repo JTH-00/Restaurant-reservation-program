@@ -27,8 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MyPageService {
-
+public class MyPageService{
     private final UserRepository userRepository;
     private final VisitRepository visitRepository;
     private final ReviewRepository reviewRepository;

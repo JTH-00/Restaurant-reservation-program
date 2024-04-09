@@ -1,6 +1,7 @@
 package com.proj.restreserve.restaurant.repository;
 
 import com.proj.restreserve.restaurant.entity.Restaurant;
+import com.proj.restreserve.user.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,6 @@ public interface RestaurantRepository extends JpaRepository <Restaurant, String>
 
     @Query(value = "SELECT * FROM Restaurant WHERE ban = false ORDER BY RAND() LIMIT 8", nativeQuery = true)
     List<Restaurant> findRandom8Restaurants();//밴이 안된 레스토랑 무작위 8개
+
+    Restaurant findByUser(User user);
 }
