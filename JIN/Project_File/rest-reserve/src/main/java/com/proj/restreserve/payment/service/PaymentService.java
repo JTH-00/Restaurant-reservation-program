@@ -19,8 +19,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
-    private final UserRepository userRepository;
-
     private final PaymentMenuRepository paymentMenuRepository;
     private final MenuRepository menuRepository;
     private final ModelMapper modelMapper;
@@ -41,10 +39,5 @@ public class PaymentService {
             paymentMenusDto.add(paymentMenuDto);
         }
         return paymentMenusDto;
-    }
-    private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String useremail = authentication.getName();
-        return userRepository.findByUseremail(useremail);
     }
 }

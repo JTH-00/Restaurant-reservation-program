@@ -79,7 +79,6 @@ public class MyPageService{
 
     @Transactional
     public List<ReviewDto> MyReviewInfo(){
-
         User user = getCurrentUser();
         List<Review> reviews = reviewRepository.findByUser(user);
 

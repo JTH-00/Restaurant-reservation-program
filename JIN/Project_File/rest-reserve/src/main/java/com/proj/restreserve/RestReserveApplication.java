@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class RestReserveApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(RestReserveApplication.class, args);
 	}
-
 }

@@ -2,6 +2,7 @@ package com.proj.restreserve.user.controller;
 
 import com.proj.restreserve.restaurant.dto.FavoritesDto;
 import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.review.dto.SelectReviewDto;
 import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.service.ReviewService;
 import com.proj.restreserve.user.dto.UserDto;
@@ -91,13 +92,15 @@ public class MyPageController {
     }
 
     @PostMapping(value = "/mypage/use/write/review", consumes = {"multipart/form-data"})
-     public ResponseEntity<Review> writeReviewRestaur(
+     public ResponseEntity<SelectReviewDto> writeReviewRestaur(
             @Valid @RequestPart("reviewDto") ReviewDto reviewDto,
+            @RequestParam(name="visitid", required = false) String visitid,
+            @RequestParam(name="paymentid", required = false) String paymentid,
             @RequestPart(value = "files",required = false) List<MultipartFile> files) {
-        return ResponseEntity.ok(reviewService.writeReview(reviewDto, files));
+        return ResponseEntity.ok(reviewService.writeReview(visitid,paymentid,reviewDto, files));
     }
     @PutMapping(value = "/mypage/use/modify/review", consumes = {"multipart/form-data"})
-    public ResponseEntity<ReviewDto> modifyReviewRestaur(
+    public ResponseEntity<SelectReviewDto> modifyReviewRestaur(
             @RequestParam(name="reviewid") String reviewid,
             @Valid @RequestPart("reviewDto") ReviewDto reviewDto,
             @RequestPart(value = "files",required = false) List<MultipartFile> files,
@@ -105,7 +108,7 @@ public class MyPageController {
         return ResponseEntity.ok(reviewService.modifyReview(reviewid,reviewDto, files,deleteImageLinks));
     }
     @PostMapping(value = "/mypage/use/delete/review")
-    public ResponseEntity<?> deleteReviewRestaur(@RequestParam(name="reviewid") String reviewid) {
+    public ResponseEntity<String> deleteReviewRestaur(@RequestParam(name="reviewid") String reviewid) {
         try {
             reviewService.deleteReview(reviewid);
             return ResponseEntity.ok("리뷰가 성공적으로 삭제되었습니다.");
