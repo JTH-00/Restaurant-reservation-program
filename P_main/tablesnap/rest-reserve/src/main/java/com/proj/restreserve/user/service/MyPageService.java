@@ -1,6 +1,8 @@
 package com.proj.restreserve.user.service;
 
 import com.proj.restreserve.jwt.SecurityUtil;
+import com.proj.restreserve.payment.entity.Payment;
+import com.proj.restreserve.payment.repository.PaymentRepository;
 import com.proj.restreserve.restaurant.dto.FavoritesDto;
 import com.proj.restreserve.restaurant.entity.Favorites;
 import com.proj.restreserve.restaurant.repository.FavoritesRepository;
@@ -31,6 +33,7 @@ public class MyPageService {
 
     private final UserRepository userRepository;
     private final VisitRepository visitRepository;
+    private final PaymentRepository paymentRepository;
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final FavoritesRepository favoritesRepository;
@@ -54,7 +57,7 @@ public class MyPageService {
             visitDto.setVisitcheck(visit.getVisitcheck());
             visitDto.setVisitcustomers(visit.getVisitcustomers());
             if (visit.getRestaurant() != null) {
-                visitDto.setRestaurantid(visit.getRestaurant().getRestaurantid());
+                visitDto.setRestaurant(visit.getRestaurant());
             }
             if (visit.getUser() != null) {
                 visitDto.setUserid(visit.getUser().getUserid());
