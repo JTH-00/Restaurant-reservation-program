@@ -6,6 +6,24 @@ import useDateInfo from "../hooks/dayHook";
 import imgCal from "../assets/imgCal.png";
 import gogiRestaurant from "../assets/gogiRestaurant.png";
 import Modal from "../components/modal/Modal";
+import axios from "axios";
+
+const modalData = [
+  "신고",
+  "고기•구이",
+  "삼겹살집",
+  "700px",
+  "700px",
+  gogiRestaurant,
+];
+const reviewModalData = [
+  "리뷰",
+  "고기•구이",
+  "삼겹살집",
+  "700px",
+  "700px",
+  gogiRestaurant,
+];
 
 const Use = () => {
   const [startOpen, setStartOpen] = useState(false);
@@ -22,28 +40,33 @@ const Use = () => {
     setStartDate(startValue);
     setEndDate(endValue);
   }, [startValue, endValue]);
+  useEffect(() => {
+    getUsedData();
+  }, []);
 
-  const modalData = [
-    "신고",
-    "고기•구이",
-    "삼겹살집",
-    "700px",
-    "700px",
-    gogiRestaurant,
-  ];
-  const reviewModalData = [
-    "리뷰",
-    "고기•구이",
-    "삼겹살집",
-    "700px",
-    "700px",
-    gogiRestaurant,
-  ];
+  const getUsedData = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get("/api/user/mypage/use", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data, 123);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  console.log("startDateInfo", startDateInfo);
-  console.log("endDateInfo", endDateInfo);
   return (
     <div className={styles.form}>
+      {modalOpen && <Modal setIsOpen={setModalOpen} modalData={modalData} />}
+      {reviewModalOpen && (
+        <Modal setIsOpen={setReviewModalOpen} modalData={reviewModalData} />
+      )}
+      <div className={styles.used_header}>
+        <h1>이용내역</h1>
+      </div>
       <div className={styles.use_header}>
         <select>
           <option>전체</option>
@@ -103,7 +126,7 @@ const Use = () => {
             <span>구매확정완료</span>
             <a onClick={() => setReviewModalOpen(true)}>리뷰작성</a>
           </div>
-          <div className={styles.body}>
+          <div className={styles.body_wrapper}>
             <div className={styles.card_img}>
               <img src={gogiRestaurant}></img>
             </div>
@@ -117,11 +140,6 @@ const Use = () => {
           </div>
         </div>
       </div>
-
-      {modalOpen && <Modal setIsOpen={setModalOpen} modalData={modalData} />}
-      {reviewModalOpen && (
-        <Modal setIsOpen={setReviewModalOpen} modalData={reviewModalData} />
-      )}
     </div>
   );
 };

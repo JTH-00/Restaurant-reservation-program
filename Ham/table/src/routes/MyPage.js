@@ -1,12 +1,14 @@
 import styles from "./myPage.module.scss";
 import { useParams } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-import gogiRestaurant from "../assets/gogiRestaurant.png";
-import goldStar from "../assets/goldStar.png";
-import warning from "../assets/warning.png";
 import arrow from "../assets/arrow.png";
 import PasswordModal from "../components/modal/PasswordModal";
+import axios from "axios";
+import { myPageHook } from "../hooks/myPage";
+import { useUser } from "../context/AuthContext";
+import FavoriteRest from "../components/mypage/FavoriteRest";
+import ReviewList from "../components/mypage/ReviewList";
 
 const MyPage = () => {
   const [isItem, setIsItem] = useState(false);
@@ -14,14 +16,63 @@ const MyPage = () => {
   const [activeButton, setActiveButton] = useState("찜한 매장");
   const [confirmUser, setConfirmUser] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [myEmail, setMyEmail] = useState("");
+  const [myName, setMyName] = useState("");
+  const [myPhone, setMyPhone] = useState("");
 
+  const [input, setInput] = useState({
+    userPw: "",
+    username: "",
+    phone: "",
+  });
+  const { userPw, username, phone } = input;
   const { userId } = useParams();
+  const { confirmUserHook } = myPageHook();
+  const { updateUser } = useUser();
+
+  const token = localStorage.getItem("token");
+
+  const checkInput = (e) => {
+    const { name, value } = e.target;
+    setInput({
+      ...input,
+      [name]: value,
+    });
+  };
+
+  const confirmHandle = async () => {
+    try {
+      const response = await confirmUserHook(userPw);
+      console.log(response);
+      setConfirmUser(true);
+      getUserData();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateHandle = () => {
+    updateUser(username, phone);
+  };
+
+  const getUserData = async () => {
+    try {
+      const response = await axios.get("/api/user/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMyEmail(response.data.useremail);
+      setMyName(response.data.username);
+      setMyPhone(response.data.phone);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleClick = (buttonName) => {
     setActiveButton(buttonName);
   };
-
-  console.log(activeButton);
 
   return (
     <div className={styles.form}>
@@ -83,88 +134,12 @@ const MyPage = () => {
 
           {activeButton == "찜한 매장" && (
             <div>
-              {isItem == true ? (
-                <div className={styles.noneItem_wrapper}>
-                  <img src={warning}></img>
-                  <p>{activeButton}이 존재하지 않습니다</p>
-                </div>
-              ) : (
-                <div className={styles.ddip_card}>
-                  <img
-                    src={gogiRestaurant}
-                    style={{
-                      marginLeft: "15px",
-                      marginTop: "20px",
-                      width: "100px",
-                      height: "100px",
-                    }}
-                  ></img>
-                  <div className={styles.card_content}>
-                    <h3>삼겹살집</h3>
-                    <p>
-                      <img
-                        src={goldStar}
-                        style={{ width: "16px", height: "16px" }}
-                      ></img>
-                      4.9 (13)
-                    </p>
-                    <span>경기도 부천시 원미구 심곡동 부일로 442</span>
-                  </div>
-                  <div className={styles.btn_wrapper}>
-                    <button className={styles.delete}>삭제</button>
-                    <button className={styles.order}>주문하기</button>
-                  </div>
-                </div>
-              )}
+              <FavoriteRest />
             </div>
           )}
           {activeButton == "리뷰 내역" && (
             <div>
-              {isReviewItem == false ? (
-                <div className={styles.noneItem_wrapper}>
-                  <img src={warning}></img>
-                  <p>{activeButton}이 존재하지 않습니다</p>
-                </div>
-              ) : (
-                <div className={styles.ddip_card}>
-                  <img
-                    src={gogiRestaurant}
-                    style={{
-                      marginLeft: "15px",
-                      marginTop: "20px",
-                      width: "100px",
-                      height: "100px",
-                    }}
-                  ></img>
-                  <div className={styles.card_content}>
-                    <h3>삼겹살집</h3>
-                    <div style={{ display: "flex" }}>
-                      <img
-                        src={goldStar}
-                        style={{ width: "16px", height: "16px" }}
-                      ></img>
-                      <img
-                        src={goldStar}
-                        style={{ width: "16px", height: "16px" }}
-                      ></img>
-                      <img
-                        src={goldStar}
-                        style={{ width: "16px", height: "16px" }}
-                      ></img>
-                      <img
-                        src={goldStar}
-                        style={{ width: "16px", height: "16px" }}
-                      ></img>
-                    </div>
-
-                    <span>리뷰내용</span>
-                  </div>
-                  <div className={styles.btn_wrapper}>
-                    <button className={styles.update}>리뷰 수정</button>
-                    <button className={styles.delete}>리뷰 삭제</button>
-                  </div>
-                </div>
-              )}
+              <ReviewList />
             </div>
           )}
           {activeButton == "개인 정보 수정" && (
@@ -176,14 +151,18 @@ const MyPage = () => {
                     회원님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 한번
                     확인해주세요.
                   </p>
-                  <input placeholder="비밀번호를 입력해주세요."></input>
-                  <button onClick={(e) => setConfirmUser(true)}>확인</button>
+                  <input
+                    name="userPw"
+                    onChange={checkInput}
+                    placeholder="비밀번호를 입력해주세요."
+                  ></input>
+                  <button onClick={(e) => confirmHandle()}>확인</button>
                 </div>
               ) : (
                 <div className={styles.infoUpdate}>
                   <div className={styles.userInfo_wrapper}>
                     <p>email</p>
-                    <span>fake@email.com</span>
+                    <span>{myEmail}</span>
                   </div>
                   <div className={styles.userInfo_wrapper}>
                     <p>비밀번호</p>
@@ -193,13 +172,24 @@ const MyPage = () => {
                   </div>
                   <div className={styles.userInfo_wrapper}>
                     <p>이름</p>
-                    <input placeholder="함승완"></input>
+                    <input
+                      name="username"
+                      onChange={checkInput}
+                      placeholder={myName}
+                    ></input>
                   </div>
                   <div className={styles.userInfo_wrapper}>
                     <p>전화번호</p>
-                    <input placeholder="전화번호"></input>
+                    <input
+                      name="phone"
+                      onChange={checkInput}
+                      placeholder={myPhone}
+                    ></input>
                   </div>
-                  <button className={styles.update_button}>
+                  <button
+                    className={styles.update_button}
+                    onClick={(e) => updateHandle()}
+                  >
                     회원정보 수정
                   </button>
                 </div>

@@ -22,7 +22,7 @@ const useDateInfo = () => {
     };
   };
 
-  return { startDateInfo, setStartDate, endDateInfo, setEndDate };
+  return { startDateInfo, setStartDate, endDateInfo, setEndDate, getDateInfo };
 };
 
 export default useDateInfo;

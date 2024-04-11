@@ -1,0 +1,135 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+.form {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 55px;
+  margin-bottom: 10px;
+}
+.list_wrapper {
+  display: flex;
+  width: 1180px;
+}
+.list_header {
+  width: 1180px;
+  text-align: start;
+}
+
+.aside_wrapper {
+  flex-direction: column;
+  width: 288px;
+  .choice_address {
+    background-color: white;
+    border-radius: 10px;
+    width: 288px;
+    height: 30px;
+    font-size: 14px;
+  }
+  h1 {
+    text-align: start;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .category_all {
+    margin-top: 10px;
+    width: 288px;
+    border-top: 1px solid black;
+  }
+  .active {
+    margin-top: 15px;
+
+    button {
+      width: 18px;
+      height: 18px;
+      border-radius: 100px;
+      border: none;
+      background-color: $main100;
+    }
+    span {
+      margin-left: 15px;
+    }
+  }
+  .category_wrapper {
+    margin-top: 15px;
+    button {
+      width: 18px;
+      height: 18px;
+      border-radius: 100px;
+      border: none;
+    }
+    span {
+      margin-left: 15px;
+    }
+  }
+  .vive_all {
+    margin-top: 15px;
+    border-top: 1px solid black;
+    justify-content: center;
+    .vive_wrapper {
+      .vive_row {
+        .default_vive {
+          border-radius: 10px;
+          width: 80px;
+          height: 32px;
+          background-color: white;
+          color: black;
+          border: 1px solid #808080;
+        }
+        .active_vive {
+          border-radius: 10px;
+          width: 80px;
+          height: 32px;
+          background-color: white;
+          color: $main100;
+          border: 1px solid $main100;
+        }
+        display: flex;
+      }
+
+      .vive_row > button {
+        margin-top: 5px;
+        margin-left: 0;
+      }
+
+      .vive_row > button:not(:first-child) {
+        margin-left: 24px;
+      }
+    }
+  }
+}
+
+.right_side {
+  margin-left: 70px;
+  width: 812px;
+}
+.restaurant_card {
+  display: flex;
+  .card_info {
+    width: 450px;
+    margin-left: 40px;
+    h3 {
+      height: 10px;
+    }
+    span {
+      position: relative;
+      top: -5px;
+      margin-left: 2px;
+    }
+    p {
+      height: 0px;
+      color: #808080;
+      font-size: 11px;
+      font-weight: 600;
+    }
+  }
+}
+.line {
+  margin-top: 35px;
+  margin-bottom: 35px;
+  width: 812px;
+  height: 1px;
+  background-color: #808080;
+}

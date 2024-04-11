@@ -23,9 +23,4 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
                 UsernamePasswordAuthenticationFilter.class
         );
     }
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
-
 }

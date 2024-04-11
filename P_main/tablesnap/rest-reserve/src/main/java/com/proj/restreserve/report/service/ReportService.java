@@ -1,6 +1,6 @@
 package com.proj.restreserve.report.service;
 
-import com.proj.restreserve.detailpage.service.FileUpload;
+import com.proj.restreserve.detailpage.service.FileCURD;
 import com.proj.restreserve.report.dto.ReportRestaurantDto;
 import com.proj.restreserve.report.dto.ReportReviewDto;
 import com.proj.restreserve.report.entity.ReportRestaurant;
@@ -25,10 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +42,8 @@ public class ReportService {
     private final ReportReviewImageRepository reportReviewImageRepository;
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
-    private final FileUpload fileUpload;
+    private final FileCURD fileCURD;
+    private final List<String> useServiceName = Arrays.asList("report/restaurant","report/review");//S3버킷 폴더명
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
@@ -76,9 +76,9 @@ public class ReportService {
                 if (!file.isEmpty()) {
                     // 이미지 파일명 생성
                     UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString() + "_" + file.getOriginalFilename().lastIndexOf(".");//uuid+확장자명으로 이름지정
+                    String fileName = uuid.toString();
 
-                    String imageUrl = fileUpload.uploadImageToS3(file,"report/restaurant",fileName);//파일 업로드
+                    String imageUrl = fileCURD.uploadImageToS3(file,useServiceName.get(0),fileName);//파일 업로드 파일,파일폴더명,파일일련번호
                     // 리뷰 이미지 정보 생성
                     ReportRestaurantImage reportRestaurantImage = new ReportRestaurantImage();
                     reportRestaurantImage.setReportRestaurant(reportRestaurant);
@@ -130,9 +130,9 @@ public class ReportService {
                 if (!file.isEmpty()) {
                     // 이미지 파일명 생성
                     UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString() + "_" + file.getOriginalFilename().lastIndexOf(".");//uuid+확장자명으로 이름지정
+                    String fileName = uuid.toString();
 
-                    String imageUrl = fileUpload.uploadImageToS3(file,"report/review",fileName);//파일 업로드
+                    String imageUrl = fileCURD.uploadImageToS3(file,useServiceName.get(1),fileName);//파일 업로드 파일,파일폴더명,파일일련번호
 
                     // 리뷰 이미지 정보 생성
                     ReportReviewImage reportReviewImage = new ReportReviewImage();

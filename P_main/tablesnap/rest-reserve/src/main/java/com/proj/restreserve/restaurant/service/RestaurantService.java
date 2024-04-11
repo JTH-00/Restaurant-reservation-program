@@ -1,6 +1,6 @@
 package com.proj.restreserve.restaurant.service;
 
-import com.proj.restreserve.detailpage.service.FileUpload;
+import com.proj.restreserve.detailpage.service.FileCURD;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.entity.Favorites;
@@ -9,6 +9,7 @@ import com.proj.restreserve.restaurant.entity.RestaurantImage;
 import com.proj.restreserve.restaurant.repository.FavoritesRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
+import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +31,8 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final FavoritesRepository favoritesRepository;
-    private final FileUpload fileUpload;
+    private final FileCURD fileCURD;
+    private final String useServiceName = "restaurant";//S3 버킷 폴더명
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
@@ -62,39 +62,96 @@ public class RestaurantService {
         restaurant.setVibe(restaurantDto.getVibe());
         restaurant.setAddress(restaurantDto.getAddress());
 
+        //레스토랑 이미지에 set하기위해 save 선언
+        restaurantRepository.save(restaurant);
+
         List<RestaurantImage> restaurantImages = new ArrayList<>();
 
         // 각 파일에 대한 처리
-        for (MultipartFile file : files) {
-            // 이미지 파일이 비어있지 않으면 처리
-            if (!file.isEmpty()) {
-                // 이미지 파일명 생성
-                UUID uuid = UUID.randomUUID();
-                String fileName = uuid.toString() + "_" + file.getOriginalFilename().lastIndexOf(".");//uuid+확장자명으로 이름지정
-                String imageUrl = fileUpload.uploadImageToS3(file,"restaurant",fileName);//파일 업로드
+        if(files!=null){
+            for (MultipartFile file : files) {
+                // 이미지 파일이 비어있지 않으면 처리
+                if (!file.isEmpty()) {
+                    // 이미지 파일명 생성
+                    UUID uuid = UUID.randomUUID();
+                    String fileName = uuid.toString();
+                    String imageUrl = fileCURD.uploadImageToS3(file,useServiceName,fileName);//파일 업로드 파일,폴더명,파일일련번호
 
-                // 가게 이미지 정보 생성
-                RestaurantImage restaurantImage = new RestaurantImage();
-                restaurantImage.setRestaurant(restaurant);
-                restaurantImage.setImagelink(imageUrl);
+                    // 가게 이미지 정보 생성
+                    RestaurantImage restaurantImage = new RestaurantImage();
+                    restaurantImage.setRestaurantimageid(fileName);
+                    restaurantImage.setRestaurant(restaurant);
+                    restaurantImage.setImagelink(imageUrl);
 
-                // 이미지 정보 저장
-                restaurantImages.add(restaurantImage);
+                    // 이미지 정보 저장
+                    restaurantImages.add(restaurantImage);
+                    restaurantImageRepository.save(restaurantImage);
+                }
             }
         }
-
-        // 가게 정보 저장
-        restaurantRepository.save(restaurant);
-
-        // 가게 이미지 정보 저장
-        for (RestaurantImage restaurantImage : restaurantImages) {
-            restaurantImage.setRestaurant(restaurant); // 이미지 정보에 리뷰 정보 설정
-            restaurantImageRepository.save(restaurantImage);
-        }
         restaurant.setRestaurantimages(restaurantImages);
-        restaurantRepository.save(restaurant);//이미지 링크를 출력하기 위해 다시 save
-
         return restaurant;
+    }
+    @Transactional
+    public RestaurantDto modifyRestaurant(String restaurantid,RestaurantDto restaurantDto, List<MultipartFile> files,List<String> deleteImageLinks) {
+        // 가게 정보 불러오기
+        Restaurant restaurant = restaurantRepository.findByRestaurantid(restaurantid);
+        if(restaurant.getBan()||!restaurant.getUser().equals(getCurrentUser())){
+            throw new RuntimeException("올바른 접근이 아닙니다");
+        }
+        // 가게 정보 설정
+        restaurant.setTitle(restaurantDto.getTitle());
+        restaurant.setCategory(restaurantDto.getCategory());
+        restaurant.setCloseddays(restaurantDto.getCloseddays());
+        restaurant.setOpentime(restaurantDto.getOpentime());
+        restaurant.setClosetime(restaurantDto.getClosetime());
+        restaurant.setContent(restaurantDto.getContent());
+        restaurant.setPhone(restaurantDto.getPhone());
+        restaurant.setCookingtime(restaurantDto.getCookingtime());
+        restaurant.setVibe(restaurantDto.getVibe());
+        restaurant.setAddress(restaurantDto.getAddress());
+        restaurantRepository.save(restaurant); //레스토랑 정보 저장
+
+
+        if (deleteImageLinks != null){
+            for (String deleteImageLink : deleteImageLinks) {
+                int imageidNum = deleteImageLink.lastIndexOf("/");
+                String imageid = deleteImageLink.substring(imageidNum + 1);
+
+                fileCURD.deleteFile(useServiceName,imageid);//버킷 폴더명,이미지 일련번호
+                //orphanRemoval = true가 되어있어 리뷰 엔티티의 연결을 끊어 고아 객체를 삭제
+                restaurant.getRestaurantimages().removeIf(c -> Objects.equals(c.getRestaurantimageid(), imageid));
+            }
+        }
+        if(files!=null) {
+            // 각 파일에 대한 처리
+            for (MultipartFile file : files) {
+                // 이미지 파일이 비어있지 않으면 처리
+                if (!file.isEmpty()) {
+                    // 이미지 파일명 생성
+                    UUID uuid = UUID.randomUUID();
+                    String fileName = uuid.toString();
+
+                    String imageUrl = fileCURD.uploadImageToS3(file, useServiceName, fileName);//파일 업로드 파일,폴더명,파일일련번호
+
+                    // 가게 이미지 정보 생성
+                    RestaurantImage restaurantImage = new RestaurantImage();
+                    restaurantImage.setImagelink(imageUrl);
+                    restaurantImage.setRestaurantimageid(fileName);
+                    restaurantImage.setRestaurant(restaurant);
+                    restaurant.getRestaurantimages().add(restaurantImage);
+
+                    restaurantImageRepository.save(restaurantImage);
+                }
+            }
+        }
+        RestaurantDto restaurantDto1 = this.modelMapper.map(restaurant,RestaurantDto.class);
+        List<String> imagelink = restaurant.getRestaurantimages().stream()
+                .map(RestaurantImage::getImagelink)
+                .collect(Collectors.toList());
+        restaurantDto1.setRestaurantimageLinks(imagelink);
+
+        return restaurantDto1;
     }
 
     public List<RestaurantDto> restaurantAll() {

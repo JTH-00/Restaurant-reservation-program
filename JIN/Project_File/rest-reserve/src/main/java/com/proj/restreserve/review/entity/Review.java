@@ -1,12 +1,12 @@
 package com.proj.restreserve.review.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proj.restreserve.payment.entity.Payment;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.visit.entity.Visit;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Data
+@DynamicUpdate
 @Table(name="review")
 public class Review {
     @Id

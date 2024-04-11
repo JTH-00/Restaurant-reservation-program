@@ -17,4 +17,5 @@ public class ReviewDto {
     private Payment payment;
     private Visit visit;
     private List<String> imageLinks;
+    private List<String> deleteLinks;
 }

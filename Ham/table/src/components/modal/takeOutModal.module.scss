@@ -1,0 +1,88 @@
+@charset "utf-8";
+@import "../../scss/variables.scss";
+.modal_wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 700px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+.body_wrapper {
+  display: flex;
+  align-items: start;
+  width: 600px;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  text-align: start;
+
+  img {
+    margin-top: 10px;
+    width: 75px;
+    height: 75px;
+    border-radius: 10px;
+  }
+}
+.body_info {
+  margin-left: 20px;
+}
+.info_detail {
+  display: flex;
+  align-items: center;
+  span {
+    display: inline-block;
+    width: 400px;
+    text-align: start;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  img {
+    cursor: pointer;
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.footer_wrapper {
+  background-color: white;
+  .button_wrapper {
+    button {
+      cursor: pointer;
+      width: 150px;
+      height: 50px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .cancle_button {
+      border: 1px solid $main100;
+      background-color: white;
+      color: $main100;
+    }
+    .confirm_button {
+      margin-left: 94px;
+      border: none;
+      background-color: $main100;
+      color: white;
+    }
+  }
+}

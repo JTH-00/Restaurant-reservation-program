@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface RestaurantImageRepository extends JpaRepository<RestaurantImage,String> {
     List<RestaurantImage> findByRestaurant_Restaurantid(String restaurantid);
+    void deleteByImagelink(String imagelink);
 }
