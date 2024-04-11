@@ -6,13 +6,13 @@ import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.service.RestaurantService;
+import com.proj.restreserve.review.dto.ReviewAndReplyDto;
 import com.proj.restreserve.review.dto.SelectReviewDto;
 import com.proj.restreserve.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,20 +62,23 @@ public class RestaurantController {
     }
 
     @GetMapping("/user/restaurant/review/{restaurantid}")
-    public ResponseEntity<Page<SelectReviewDto>> ReviewSortToRestaurant(
+    public ResponseEntity<Page<ReviewAndReplyDto>> ReviewSortToRestaurant(
             @RequestParam(name="sort", required = false) String sort,
             @PathVariable String restaurantid){//테스트용
-        return ResponseEntity.ok(reviewService.Myrestaurant(restaurantid,1,10,sort));
+        return ResponseEntity.ok(reviewService.Myrestaurant(restaurantid,1,5,sort));
     }
 
     @GetMapping("/admin/myreview")
-    public ResponseEntity<Page<SelectReviewDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
+    public ResponseEntity<Page<ReviewAndReplyDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
         return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,false));
+        //정렬 방문,포장 합쳐서 날짜순
     }
-    @GetMapping("/admin/myreview")
-    public ResponseEntity<Page<SelectReviewDto>> sortMyRestaurantReview(//이것도 그렇게하게 묶어놔야겠네
-            @RequestParam(name="sort", required = false) String sort){//테스트용
+    @GetMapping("/admin/myreview/sort")
+    public ResponseEntity<Page<ReviewAndReplyDto>> sortMyRestaurantReview(
+             @RequestParam(name="sort", required = false) String sort){
         return ResponseEntity.ok(reviewService.sortMyrestaurant(1, 10, false, sort));
+        //sort = {"scope","visit","payment"}로 둔상태 ,scope = 방문,포장 합쳐서 별점높은순,날짜기준 내림차순
+        //visit = 방문만 날짜기준 내림차순, payment = 포장만 날짜기준 내림차순, Default = 방문,포장 합쳐서 날짜기준 내림차순
+        //방문과 포장 따로도 별점기준으로 따로 보기 가능한데 switch에 추가안함
     }
-    //답글 작성 여부로도 추가해야함
 }
