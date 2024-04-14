@@ -28,7 +28,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -212,8 +211,8 @@ public class ReviewService {
         }
         Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
             ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
-            if(reviewAndReplyDto.getPayment()!=null){
-            List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
+            if(review.getPayment()!=null){
+                List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
                 reviewAndReplyDto.setPaymentMenuDtos(paymentMenus);//조회한 주문 메뉴를 주입
             }
             //리뷰 이미지 가져오기
@@ -221,30 +220,31 @@ public class ReviewService {
                     .map(ReviewImage::getImagelink)
                     .collect(Collectors.toList());
             reviewAndReplyDto.setIamgeLinks(imagelink);
-            //답글 가져오기
-            ReviewReply reviewReply = reviewReplyRepository.findByReview(review);
+            //답글 여부 가져오기
+            ReviewReply reviewReply = review.getReviewReply();
             if(reviewReply!=null){
-                ReviewReplyDto reviewReplyDto = modelMapper.map(reviewReply,ReviewReplyDto.class);
-                reviewAndReplyDto.setReviewReplyDto(reviewReplyDto);
-            }else {
-                reviewAndReplyDto.setPaymentMenuDtos(null);
+                reviewAndReplyDto.setReviewReplyDto(modelMapper.map(reviewReply,ReviewReplyDto.class));
             }
             return reviewAndReplyDto;
         });
         return reviewDtos;
     }
     @Transactional(readOnly = true)
-    public Page<ReviewAndReplyDto> getReviewPayment(String restaurantid,int page, int pageSize, boolean scopecheck){ //포장 주문 리뷰 조회
+    public Page<ReviewAndReplyDto> getReviewPayment(String restaurantid,int page, int pageSize, int scopecheck){ //포장 주문 리뷰 조회
         List<Sort.Order> sorts = new ArrayList<>();
             sorts.add(Sort.Order.desc("date")); //날짜기준 내림차순 정렬
-
         Pageable pageable;
-        if (scopecheck) {
-            pageable = PageRequest.of(page - 1, pageSize, Sort.by("scope").descending());//기본페이지를 1로 두었기에 -1, 별점기준 내림차순
-        }else{
-            pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
+        if (scopecheck==1) {//1일때 별점+날짜 기준
+            sorts.add(Sort.Order.desc("scope"));//별점기준 내림차순
         }
-        Page<Review> reviewPage= this.reviewRepository.findByPayment_Restaurant_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
+
+        Page<Review> reviewPage;
+        if(scopecheck==2){//2일때 날짜 기준만
+            reviewPage= this.reviewRepository.findByPayment_Restaurant_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        }else{//3일때 답글 없는거만 조회(관리자용)
+            reviewPage= this.reviewRepository.findByWithoutReplyAndPayment_Restaurantid(restaurantid,pageable);
+        }
         Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
             ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
             List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
@@ -255,29 +255,31 @@ public class ReviewService {
                     .map(ReviewImage::getImagelink)
                     .collect(Collectors.toList());
             reviewAndReplyDto.setIamgeLinks(imagelink);
-            //답글 가져오기
-            ReviewReply reviewReply = reviewReplyRepository.findByReview(review);
+            //답글 여부 가져오기
+            ReviewReply reviewReply = review.getReviewReply();
             if(reviewReply!=null){
-                ReviewReplyDto reviewReplyDto = modelMapper.map(reviewReply,ReviewReplyDto.class);
-                reviewAndReplyDto.setReviewReplyDto(reviewReplyDto);
-            }else {
-                reviewAndReplyDto.setPaymentMenuDtos(null);
+                reviewAndReplyDto.setReviewReplyDto(modelMapper.map(reviewReply,ReviewReplyDto.class));
             }
             return reviewAndReplyDto;
         });
         return reviewDtos;
     }
     @Transactional(readOnly = true)
-    public Page<ReviewAndReplyDto> getReviewVisit(String restaurantid,int page, int pageSize, boolean scopecheck){ // 방문 예약 리뷰 조회
+    public Page<ReviewAndReplyDto> getReviewVisit(String restaurantid,int page, int pageSize, int scopecheck){ // 방문 예약 리뷰 조회
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("date")); //날짜기준 내림차순 정렬
         Pageable pageable;
-        if (scopecheck) {
-            pageable = PageRequest.of(page - 1, pageSize, Sort.by("scope").descending());//기본페이지를 1로 두었기에 -1, 별점기준 내림차순
-        }else{
-            pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
+        if (scopecheck==1) {
+            sorts.add(Sort.Order.desc("scope"));//별점기준 내림차순
         }
-        Page<Review> reviewPage= this.reviewRepository.findByVisit_Restaurant_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
+
+        Page<Review> reviewPage;
+        if(scopecheck==2){//2일때 날짜 기준만
+            reviewPage= this.reviewRepository.findByVisit_Restaurant_Restaurantid(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        }else{//3일때 답글 없는거만 조회(관리자용)
+            reviewPage= this.reviewRepository.findByWithoutReplyAndVisit_Restaurantid(restaurantid,pageable);
+        }
         Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
             ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
 
@@ -286,13 +288,10 @@ public class ReviewService {
                     .map(ReviewImage::getImagelink)
                     .collect(Collectors.toList());
             reviewAndReplyDto.setIamgeLinks(imagelink);
-            //답글 가져오기
-            ReviewReply reviewReply = reviewReplyRepository.findByReview(review);
+            //답글 여부 가져오기
+            ReviewReply reviewReply = review.getReviewReply();
             if(reviewReply!=null){
-                ReviewReplyDto reviewReplyDto = modelMapper.map(reviewReply,ReviewReplyDto.class);
-                reviewAndReplyDto.setReviewReplyDto(reviewReplyDto);
-            }else {
-                reviewAndReplyDto.setPaymentMenuDtos(null);
+                reviewAndReplyDto.setReviewReplyDto(modelMapper.map(reviewReply,ReviewReplyDto.class));
             }
             return reviewAndReplyDto;
         });
@@ -318,21 +317,27 @@ public class ReviewService {
                 return getReviewAll(restaurantid, page, pageSize, true);
             case ("visit"):
                 //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
-                return getReviewVisit(restaurantid, page, pageSize, false);
+                return getReviewVisit(restaurantid, page, pageSize, 2);
+            case ("visitReply"):
+                //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
+                return getReviewVisit(restaurantid, page, pageSize, 3);
             case ("payment"):
                 //포장을 날짜 기준으로 조회
-                return getReviewPayment(restaurantid, page, pageSize, false);
+                return getReviewPayment(restaurantid, page, pageSize, 2);
+            case ("paymentReply"):
+                //포장을 날짜 기준으로 조회
+                return getReviewPayment(restaurantid, page, pageSize, 3);
             default:
                 //방문과 포장을 날짜 기준 조회
                 return getReviewAll(restaurantid, page, pageSize, false);
         }
     }
     @Transactional(readOnly = true)
-    public Page<ReviewAndReplyDto> sortMyrestaurant(int page,int pageSize, boolean scopecheck, String sort){
+    public Page<ReviewAndReplyDto> sortMyrestaurant(int page,int pageSize, String sort){
         User user = getCurrentUser();
         Restaurant restaurant = restaurantRepository.findByUser(user);//현재 로그인한 유저의 매장이 있나 확인
         if(restaurant!=null) {
-            return Myrestaurant(restaurant.getRestaurantid(),1,10,sort);
+                return Myrestaurant(restaurant.getRestaurantid(),page,pageSize,sort);
         } else {
             // 매장이 없는 경우 처리
             return Page.empty(); // 빈 페이지 반환

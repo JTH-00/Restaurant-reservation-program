@@ -46,4 +46,8 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "paymentid")
     private Payment payment;
+
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private ReviewReply reviewReply;
 }

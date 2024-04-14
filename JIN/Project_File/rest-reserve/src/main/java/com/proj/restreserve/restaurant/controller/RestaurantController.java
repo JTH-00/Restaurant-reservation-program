@@ -76,9 +76,9 @@ public class RestaurantController {
     @GetMapping("/admin/myreview/sort")
     public ResponseEntity<Page<ReviewAndReplyDto>> sortMyRestaurantReview(
              @RequestParam(name="sort", required = false) String sort){
-        return ResponseEntity.ok(reviewService.sortMyrestaurant(1, 10, false, sort));
-        //sort = {"scope","visit","payment"}로 둔상태 ,scope = 방문,포장 합쳐서 별점높은순,날짜기준 내림차순
-        //visit = 방문만 날짜기준 내림차순, payment = 포장만 날짜기준 내림차순, Default = 방문,포장 합쳐서 날짜기준 내림차순
-        //방문과 포장 따로도 별점기준으로 따로 보기 가능한데 switch에 추가안함
+        return ResponseEntity.ok(reviewService.sortMyrestaurant(1, 10, sort));
+        //sort = {"scope","visit","visitReply,"payment","paymentReply"}로 둔상태 
+        //scope = 방문,포장 합쳐서 별점높은순,날짜기준 내림차순, visit = 방문만 날짜기준 내림차순, payment = 포장만 날짜기준 내림차순,
+        //visitReply=방문 답글 없는거만 날짜순, paymentReply=포장 답글 없는거만 날짜순, Default = 방문,포장 합쳐서 날짜기준 내림차순
     }
 }

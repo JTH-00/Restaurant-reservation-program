@@ -1,5 +1,6 @@
 package com.proj.restreserve.review.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,7 +26,8 @@ public class ReviewReply {
     @Column(name="content")
     private String content;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="reviewid")
+    @JsonBackReference
     private Review review;
 }
