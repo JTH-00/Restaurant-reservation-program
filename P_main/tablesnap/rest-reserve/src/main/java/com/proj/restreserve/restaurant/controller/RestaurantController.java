@@ -2,6 +2,7 @@ package com.proj.restreserve.restaurant.controller;
 
 import com.proj.restreserve.detailpage.dto.DetailPageDto;
 import com.proj.restreserve.detailpage.service.DetailPageService;
+import com.proj.restreserve.menu.dto.MenuDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
@@ -38,12 +39,6 @@ public class RestaurantController {
         return ResponseEntity.ok("Favorite restaurant added successfully.");
     }
 
-    @PostMapping(value = "/admin/registration", consumes = {"multipart/form-data"})
-    public ResponseEntity<Restaurant> registrestaurant(
-            @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
-            @RequestPart(value = "files",required = false) List<MultipartFile> files) {
-        return ResponseEntity.ok(restaurantService.regist(restaurantDto, files));
-    }
     @PutMapping(value = "/admin/modify/myrestaurant", consumes = {"multipart/form-data"})
     public ResponseEntity<RestaurantDto> modifyrestaurant(
             @RequestParam(name="restaurantid") String restaurantid,
@@ -73,10 +68,5 @@ public class RestaurantController {
     public ResponseEntity<Page<SelectReviewDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
         return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,false));
     }
-    @GetMapping("/admin/myreview")
-    public ResponseEntity<Page<SelectReviewDto>> sortMyRestaurantReview(//이것도 그렇게하게 묶어놔야겠네
-            @RequestParam(name="sort", required = false) String sort){//테스트용
-        return ResponseEntity.ok(reviewService.sortMyrestaurant(1, 10, false, sort));
-    }
-    //답글 작성 여부로도 추가해야함
+
 }

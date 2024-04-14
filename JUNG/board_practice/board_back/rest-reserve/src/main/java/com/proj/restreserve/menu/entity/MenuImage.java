@@ -15,8 +15,7 @@ public class MenuImage {
     @Column(name = "menuimagelink", nullable = false)
     private String menuimagelink;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "menuid")
-    @JsonBackReference
     private Menu menu;
 }
