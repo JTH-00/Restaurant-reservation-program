@@ -19,12 +19,13 @@ public class AdminRestaurantController {
 
     private final RestaurantService restaurantService;
     @PostMapping(value = "/registration", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> registrestaurant(
+    public ResponseEntity<String> registrestaurant(
             @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @RequestPart(value = "menuDtos") List<MenuDto> menuDtos,
             @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles) {
-        return ResponseEntity.ok().body("가게 및 메뉴 등록 완료");
+        restaurantService.regist(restaurantDto, files, menuDtos, menuImageFiles);
+        return ResponseEntity.ok("가게 및 메뉴 등록 성공");
     }
 
 }

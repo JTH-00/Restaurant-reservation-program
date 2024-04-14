@@ -116,7 +116,7 @@ public class RestaurantService {
                 menu.setContent(menuDto.getContent());
                 menu.setPrice(menuDto.getPrice());
                 menu.setRestaurant(restaurant);
-                MenuCategory menuCategory = menuCategoryRepository.findById(menuDto.getMenuCategory().getMenucategoryid()).orElse(null);
+                MenuCategory menuCategory = menuCategoryRepository.findById(menuDto.getMenuCategoryId()).orElse(null);
                 menu.setMenuCategory(menuCategory);
 
                 // 메뉴 저장
@@ -124,22 +124,20 @@ public class RestaurantService {
 
                 // 메뉴 이미지 처리
                 List<MenuImage> menuImages = new ArrayList<>();
-                for (MultipartFile imageFile : menuImageFiles) {
-                    if (!imageFile.isEmpty() && imageFile.getOriginalFilename().startsWith(i + "_")) { // 파일 이름 규칙 확인
+                if (!menuImageFiles.isEmpty()) {
+                    MultipartFile imageFile = menuImageFiles.get(i);
+                    if (!imageFile.isEmpty()) {
+
                         UUID uuid = UUID.randomUUID();
                         String fileName = uuid.toString();
                         String imageUrl = fileCURD.uploadImageToS3(imageFile, useServiceName, fileName);
                         MenuImage menuImage = new MenuImage();
                         menuImage.setMenuimageid(fileName);
                         menuImage.setMenuimagelink(imageUrl);
+                        menuImage.setMenu(menu); // 메뉴와의 관계 설정
                         menuImageRepository.save(menuImage);
                         menuImages.add(menuImage);
                     }
-                }
-                if (!menuImages.isEmpty()) {
-                    // 첫 번째 이미지를 메뉴 이미지로 설정
-                    menu.setMenuimages(menuImages.get(0));
-                    menuRepository.save(menu);
                 }
             }
         }

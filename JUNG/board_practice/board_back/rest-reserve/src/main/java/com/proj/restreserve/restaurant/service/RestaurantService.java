@@ -55,7 +55,7 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files, List<MenuDto> menuDtos, List<MultipartFile> menuImageFiles) {
+    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files,List<MenuDto> menuDtos, List<MultipartFile> menuImageFiles) {
         // 가게 정보 저장
         Restaurant restaurant = new Restaurant();
         // 사용자 인증 정보 가져오기
@@ -116,7 +116,7 @@ public class RestaurantService {
                 menu.setContent(menuDto.getContent());
                 menu.setPrice(menuDto.getPrice());
                 menu.setRestaurant(restaurant);
-                MenuCategory menuCategory = menuCategoryRepository.findById(menuDto.getMenuCategory().getMenucategoryid()).orElse(null);
+                MenuCategory menuCategory = menuCategoryRepository.findById(menuDto.getMenuCategoryId()).orElse(null);
                 menu.setMenuCategory(menuCategory);
 
                 // 메뉴 저장
@@ -146,6 +146,7 @@ public class RestaurantService {
 
         return restaurant;
     }
+
 
     public List<RestaurantDto> restaurantAll() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
