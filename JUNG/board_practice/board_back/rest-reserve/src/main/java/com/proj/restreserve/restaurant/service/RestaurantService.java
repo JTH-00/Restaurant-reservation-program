@@ -1,5 +1,13 @@
 package com.proj.restreserve.restaurant.service;
 
+import com.proj.restreserve.detailpage.service.FileCURD;
+import com.proj.restreserve.menu.dto.MenuDto;
+import com.proj.restreserve.menu.entity.Menu;
+import com.proj.restreserve.menu.entity.MenuImage;
+import com.proj.restreserve.menu.repository.MenuImageRepository;
+import com.proj.restreserve.menu.repository.MenuRepository;
+import com.proj.restreserve.menucategory.entity.MenuCategory;
+import com.proj.restreserve.menucategory.repository.MenuCategoryRepository;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.entity.Favorites;
 import com.proj.restreserve.restaurant.entity.Restaurant;
@@ -31,6 +39,12 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
     private final UserRepository userRepository;
+    private final MenuCategoryRepository menuCategoryRepository;
+    private final MenuRepository menuRepository;
+    private final MenuImageRepository menuImageRepository;
+    private final FileCURD fileCURD;
+    private final String useServiceName = "restaurant";//S3 버킷 폴더명
+
 
     private final FavoritesRepository favoritesRepository;
 
@@ -41,7 +55,7 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files) {
+    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files,List<MenuDto> menuDtos, List<MultipartFile> menuImageFiles) {
         // 가게 정보 저장
         Restaurant restaurant = new Restaurant();
         // 사용자 인증 정보 가져오기
@@ -62,52 +76,77 @@ public class RestaurantService {
         restaurant.setVibe(restaurantDto.getVibe());
         restaurant.setAddress(restaurantDto.getAddress());
 
-        // 가게 이미지 업로드 경로 설정
-        String projectPath = System.getProperty("user.dir")+ File.separator+"JUNG"+ File.separator+"board_practice"+ File.separator +"board_back"+ File.separator + "rest-reserve" + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" +  File.separator + "files";
+        //레스토랑 이미지에 set하기위해 save 선언
+        restaurantRepository.save(restaurant);
 
         List<RestaurantImage> restaurantImages = new ArrayList<>();
 
+
+
         // 각 파일에 대한 처리
-        for (MultipartFile file : files) {
-            // 이미지 파일이 비어있지 않으면 처리
-            if (!file.isEmpty()) {
-                try {
+        if(files!=null){
+            for (MultipartFile file : files) {
+                // 이미지 파일이 비어있지 않으면 처리
+                if (!file.isEmpty()) {
                     // 이미지 파일명 생성
                     UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString() + "_" + file.getOriginalFilename();
-
-                    String restaurantImageId = uuid.toString();
-                    File saveFile = new File(projectPath, fileName);
-
-                    // 파일 저장
-                    // 랜덤 식별자와 파일명 지정(중복 방지)
-                    file.transferTo(saveFile);
+                    String fileName = uuid.toString();
+                    String imageUrl = fileCURD.uploadImageToS3(file,useServiceName,fileName);//파일 업로드 파일,폴더명,파일일련번호
 
                     // 가게 이미지 정보 생성
                     RestaurantImage restaurantImage = new RestaurantImage();
+                    restaurantImage.setRestaurantimageid(fileName);
                     restaurantImage.setRestaurant(restaurant);
-                    restaurantImage.setImagelink("images/" + fileName);
+                    restaurantImage.setImagelink(imageUrl);
 
                     // 이미지 정보 저장
                     restaurantImages.add(restaurantImage);
-                } catch (IOException e) {
-                    throw new RuntimeException("이미지 업로드 중 오류 발생: " + e.getMessage());
+                    restaurantImageRepository.save(restaurantImage);
+                }
+            }
+        }
+        restaurant.setRestaurantimages(restaurantImages);
+
+        // 메뉴 및 메뉴 이미지 처리
+        if (menuDtos != null) {
+            for (int i = 0; i < menuDtos.size(); i++) {
+                MenuDto menuDto = menuDtos.get(i);
+                Menu menu = new Menu();
+                menu.setName(menuDto.getName());
+                menu.setContent(menuDto.getContent());
+                menu.setPrice(menuDto.getPrice());
+                menu.setRestaurant(restaurant);
+                MenuCategory menuCategory = menuCategoryRepository.findById(menuDto.getMenuCategoryId()).orElse(null);
+                menu.setMenuCategory(menuCategory);
+
+                // 메뉴 저장
+                menuRepository.save(menu);
+
+                // 메뉴 이미지 처리
+                List<MenuImage> menuImages = new ArrayList<>();
+                for (MultipartFile imageFile : menuImageFiles) {
+                    if (!imageFile.isEmpty() && imageFile.getOriginalFilename().startsWith(i + "_")) { // 파일 이름 규칙 확인
+                        UUID uuid = UUID.randomUUID();
+                        String fileName = uuid.toString();
+                        String imageUrl = fileCURD.uploadImageToS3(imageFile, useServiceName, fileName);
+                        MenuImage menuImage = new MenuImage();
+                        menuImage.setMenuimageid(fileName);
+                        menuImage.setMenuimagelink(imageUrl);
+                        menuImageRepository.save(menuImage);
+                        menuImages.add(menuImage);
+                    }
+                }
+                if (!menuImages.isEmpty()) {
+                    // 첫 번째 이미지를 메뉴 이미지로 설정
+                    menu.setMenuimages(menuImages.get(0));
+                    menuRepository.save(menu);
                 }
             }
         }
 
-        // 가게 정보 저장
-        restaurant = restaurantRepository.save(restaurant);
-
-        // 가게 이미지 정보 저장
-        for (RestaurantImage restaurantImage : restaurantImages) {
-            restaurantImage.setRestaurant(restaurant); // 이미지 정보에 리뷰 정보 설정
-            restaurantImageRepository.save(restaurantImage);
-        }
-        restaurant.setRestaurantimages(restaurantImages);
-
         return restaurant;
     }
+
 
     public List<RestaurantDto> restaurantAll() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
