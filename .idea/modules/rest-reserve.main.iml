@@ -4,5 +4,8 @@
     <content url="file://$MODULE_DIR$/../../JIN/Project_File/rest-reserve/build/generated/sources/annotationProcessor/java/main">
       <sourceFolder url="file://$MODULE_DIR$/../../JIN/Project_File/rest-reserve/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
     </content>
+    <content url="file://$MODULE_DIR$/../../P_main/tablesnap/rest-reserve/build/generated/sources/annotationProcessor/java/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../P_main/tablesnap/rest-reserve/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
+    </content>
   </component>
 </module>

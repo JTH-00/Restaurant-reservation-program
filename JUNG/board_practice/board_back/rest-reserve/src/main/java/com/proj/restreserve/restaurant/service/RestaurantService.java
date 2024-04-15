@@ -55,7 +55,7 @@ public class RestaurantService {
         restaurant.setClosetime(restaurantDto.getClosetime());
         restaurant.setContent(restaurantDto.getContent());
         restaurant.setPhone(restaurantDto.getPhone());
-        restaurant.setStopsales(true);
+        restaurant.setStopsales(false);
         restaurant.setCookingtime(restaurantDto.getCookingtime());
         restaurant.setBan(false);
         restaurant.setUser(user);

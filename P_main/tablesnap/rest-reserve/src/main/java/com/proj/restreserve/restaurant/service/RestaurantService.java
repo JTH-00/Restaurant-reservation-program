@@ -1,6 +1,13 @@
 package com.proj.restreserve.restaurant.service;
 
 import com.proj.restreserve.detailpage.service.FileCURD;
+import com.proj.restreserve.menu.dto.MenuDto;
+import com.proj.restreserve.menu.entity.Menu;
+import com.proj.restreserve.menu.entity.MenuImage;
+import com.proj.restreserve.menu.repository.MenuImageRepository;
+import com.proj.restreserve.menu.repository.MenuRepository;
+import com.proj.restreserve.menucategory.entity.MenuCategory;
+import com.proj.restreserve.menucategory.repository.MenuCategoryRepository;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.entity.Favorites;
@@ -9,9 +16,12 @@ import com.proj.restreserve.restaurant.entity.RestaurantImage;
 import com.proj.restreserve.restaurant.repository.FavoritesRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
+import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
+import com.proj.restreserve.visit.entity.Visit;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -20,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +42,9 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final FavoritesRepository favoritesRepository;
+    private final MenuRepository menuRepository;
+    private final MenuImageRepository menuImageRepository;
+    private final MenuCategoryRepository menuCategoryRepository;
     private final FileCURD fileCURD;
     private final String useServiceName = "restaurant";//S3 버킷 폴더명
 
@@ -41,7 +55,7 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files) {
+    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files,List<MenuDto> menuDtos, List<MultipartFile> menuImageFiles) {
         // 가게 정보 저장
         Restaurant restaurant = new Restaurant();
         // 사용자 인증 정보 가져오기
@@ -67,6 +81,8 @@ public class RestaurantService {
 
         List<RestaurantImage> restaurantImages = new ArrayList<>();
 
+
+
         // 각 파일에 대한 처리
         if(files!=null){
             for (MultipartFile file : files) {
@@ -90,6 +106,42 @@ public class RestaurantService {
             }
         }
         restaurant.setRestaurantimages(restaurantImages);
+
+        // 메뉴 및 메뉴 이미지 처리
+        if (menuDtos != null) {
+            for (int i = 0; i < menuDtos.size(); i++) {
+                MenuDto menuDto = menuDtos.get(i);
+                Menu menu = new Menu();
+                menu.setName(menuDto.getName());
+                menu.setContent(menuDto.getContent());
+                menu.setPrice(menuDto.getPrice());
+                menu.setRestaurant(restaurant);
+                MenuCategory menuCategory = menuCategoryRepository.findById(menuDto.getMenuCategoryId()).orElse(null);
+                menu.setMenuCategory(menuCategory);
+
+                // 메뉴 저장
+                menuRepository.save(menu);
+
+                // 메뉴 이미지 처리
+                List<MenuImage> menuImages = new ArrayList<>();
+                if (!menuImageFiles.isEmpty()) {
+                    MultipartFile imageFile = menuImageFiles.get(i);
+                    if (!imageFile.isEmpty()) {
+
+                        UUID uuid = UUID.randomUUID();
+                        String fileName = uuid.toString();
+                        String imageUrl = fileCURD.uploadImageToS3(imageFile, useServiceName, fileName);
+                        MenuImage menuImage = new MenuImage();
+                        menuImage.setMenuimageid(fileName);
+                        menuImage.setMenuimagelink(imageUrl);
+                        menuImage.setMenu(menu); // 메뉴와의 관계 설정
+                        menuImageRepository.save(menuImage);
+                        menuImages.add(menuImage);
+                    }
+                }
+            }
+        }
+
         return restaurant;
     }
     @Transactional
