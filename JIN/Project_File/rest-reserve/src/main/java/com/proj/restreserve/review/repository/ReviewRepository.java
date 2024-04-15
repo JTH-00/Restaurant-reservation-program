@@ -66,4 +66,25 @@ public interface ReviewRepository extends JpaRepository<Review,String> {
         //네이티브 쿼리를 사용하여 Union 사용하여 Payment와 Visit 둘중 하나라도 양쪽테이블이 일치하는 경우를 합쳐서 Select
         //여기서 내림차순으로 정렬
     Page<Review> findReviewsByRestaurantToDescScope(String restaurantid, Pageable pageable);
+    @Query(value= "SELECT r.reviewid, r.content, r.date, r.paymentid, r.scope, r.userid, r.visitid FROM Review r " +
+            "LEFT JOIN Reviewreply rr ON r.reviewid = rr.reviewid " +
+            "INNER JOIN Payment p ON p.paymentid = r.paymentid " +
+            "WHERE p.restaurantid = :restaurantid AND rr.reviewreplyid IS NULL " + // reviewReply가 null인 것만 필터링합니다.
+            "UNION " +
+            "SELECT r.reviewid, r.content, r.date, r.paymentid, r.scope, r.userid, r.visitid FROM Review r " +
+            "LEFT JOIN Reviewreply rr ON r.reviewid = rr.reviewid " +
+            "INNER JOIN Visit v ON v.visitid = r.visitid " +
+            "WHERE v.restaurantid = :restaurantid AND rr.reviewreplyid IS NULL " + // reviewReply가 null인 것만 필터링합니다.
+            "ORDER BY date DESC, scope DESC",
+            countQuery = "SELECT COUNT(*) FROM (SELECT r.reviewid FROM Review r " +
+                    "LEFT JOIN reviewreply rr ON r.reviewid = rr.reviewid " +
+                    "INNER JOIN Payment p ON p.paymentid = r.paymentid " +
+                    "WHERE p.restaurantid = :restaurantid AND rr.reviewreplyid IS NULL " +
+                    "UNION " +
+                    "SELECT r.reviewid FROM Review r " +
+                    "LEFT JOIN reviewreply rr ON r.reviewid = rr.reviewid " +
+                    "INNER JOIN Visit v ON v.visitid = r.visitid " +
+                    "WHERE v.restaurantid = :restaurantid AND rr.reviewreplyid IS NULL) AS countQuery",
+            nativeQuery = true)
+    Page<Review> findReviewsByRestaurantWithNullReviewReply(String restaurantid, Pageable pageable);
 }

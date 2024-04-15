@@ -21,19 +21,19 @@ import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import com.proj.restreserve.visit.entity.Visit;
 import com.proj.restreserve.visit.repository.VisitRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,12 +51,56 @@ public class ReviewService {
     private final FileCURD fileCURD;
     private final RestaurantRepository restaurantRepository;
     private final ReviewReplyRepository reviewReplyRepository;
+    private final EntityManager entityManager;
     private final String useServiceName = "review";//S3 버킷 폴더명
-    public User getCurrentUser() {
+    public  User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
         String useremail = authentication.getName();
         return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
     }
+    private static String getQueryString(boolean replycheck, Boolean sort,Pageable pageable) {
+        String sortDESC = sort ? "ORDER BY date DESC, scope DESC" :"ORDER BY date DESC";
+        String checkReply = replycheck ? "AND rr.reviewreplyid IS NULL" : "";
+        String joinLeft = replycheck ? "LEFT JOIN Reviewreply rr ON r.reviewid = rr.reviewid":"";
+
+        String queryString = "SELECT r.reviewid, r.content, r.date, r.paymentid, r.scope, r.userid, r.visitid FROM Review r " +
+                joinLeft + "INNER JOIN Payment p ON p.paymentid = r.paymentid " +
+                "WHERE p.restaurantid = :restaurantid " +
+                "UNION " +
+                "SELECT r.reviewid, r.content, r.date, r.paymentid, r.scope, r.userid, r.visitid FROM Review r " +
+                joinLeft + "INNER JOIN Visit v ON v.visitid = r.visitid " +
+                "WHERE v.restaurantid = :restaurantid " + checkReply + sortDESC +
+                " LIMIT " + pageable.getPageSize() +
+                " OFFSET " + pageable.getOffset();;
+
+        return queryString;
+    }
+    private static String getQueryCount(boolean replycheck) {
+        String joinLeft = replycheck ? "LEFT JOIN Reviewreply rr ON r.reviewid = rr.reviewid":"";
+
+        String countQuery = "SELECT COUNT(*) FROM (SELECT r.reviewid FROM Review r " + joinLeft +
+                "INNER JOIN Payment p ON p.paymentid = r.paymentid " +
+                "WHERE p.restaurantid = :restaurantid " +
+                "UNION " +
+                "SELECT r.reviewid FROM Review r " + joinLeft +
+                "INNER JOIN Visit v ON v.visitid = r.visitid " +
+                "WHERE v.restaurantid = :restaurantid) AS countQuery";
+        return countQuery;
+    }
+    Page<Review> findReviewsByRestaurant(String restaurantid, Pageable pageable, boolean sortScope, boolean replycheck){
+        String queryString = getQueryString(replycheck,sortScope,pageable);
+        String queryCount = getQueryCount(replycheck);
+
+        int count = ((Number) entityManager.createNativeQuery(queryCount)
+                .setParameter("restaurantid", restaurantid)
+                .getSingleResult()).intValue();
+
+        List<Review> reviews = entityManager.createNativeQuery(queryString, Review.class)
+                .setParameter("restaurantid", restaurantid)
+                .getResultList();
+        return new PageImpl<>(reviews, pageable, count);
+    }
+
 
     @Transactional
     public SelectReviewDto writeReview(String visitid, String paymentid, ReviewDto reviewDto, List<MultipartFile> files) {
@@ -199,15 +243,20 @@ public class ReviewService {
         Objects.requireNonNull(restaurant,"해당 매장을 찾을 수 없습니다.").setReviewcount(restaurant.getReviewcount()-1);
         reviewRepository.deleteById(reviewid);//리뷰 삭제
     }
+
     @Transactional(readOnly = true)
-    public Page<ReviewAndReplyDto> getReviewAll(String restaurantid, int page, int pageSize, boolean scopecheck){ //전체리뷰(방문,포장) 조회
+    public Page<ReviewAndReplyDto> getReviewAll(String restaurantid, int page, int pageSize, int scopecheck){ //전체리뷰(방문,포장) 조회
         //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
         Pageable pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
         Page<Review> reviewPage;
-        if(scopecheck){//true == 별점 높은순, false== 별점 관계 없이
-            reviewPage= this.reviewRepository.findReviewsByRestaurantToDescScope(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
-        }else{
-            reviewPage= this.reviewRepository.findReviewsByRestaurant(restaurantid,pageable);//Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+        if(scopecheck==1){//1 = 별점 높은순
+            //Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+            reviewPage = findReviewsByRestaurant(restaurantid,pageable,true,false);
+        }else if(scopecheck==2){// 2= 별점 관계 없이
+            //Payment의 레스토랑 객체의 레스토랑 아이디로 검색
+            reviewPage = findReviewsByRestaurant(restaurantid,pageable,false,false);
+        }else{//답글이 없는것만 조회
+            reviewPage = findReviewsByRestaurant(restaurantid,pageable,false,true);
         }
         Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
             ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
@@ -231,6 +280,7 @@ public class ReviewService {
     }
     @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> getReviewPayment(String restaurantid,int page, int pageSize, int scopecheck){ //포장 주문 리뷰 조회
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
         List<Sort.Order> sorts = new ArrayList<>();
             sorts.add(Sort.Order.desc("date")); //날짜기준 내림차순 정렬
         Pageable pageable;
@@ -266,6 +316,7 @@ public class ReviewService {
     }
     @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> getReviewVisit(String restaurantid,int page, int pageSize, int scopecheck){ // 방문 예약 리뷰 조회
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("date")); //날짜기준 내림차순 정렬
         Pageable pageable;
@@ -298,8 +349,8 @@ public class ReviewService {
         return reviewDtos;
     }
     @Transactional(readOnly = true)
-    public Page<ReviewAndReplyDto> getMyrestaurant(int page, int pageSize, boolean scopecheck){ //자신의 매장 리뷰 보기
-        // 여기에 문자열 받아서 스위치문으로 값 불러오기 할까
+    public Page<ReviewAndReplyDto> getMyrestaurant(int page, int pageSize, int scopecheck){ //자신의 매장 리뷰 보기
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
         User user = getCurrentUser();
         Restaurant restaurant = restaurantRepository.findByUser(user);//현재 로그인한 유저의 매장이 있나 확인
 
@@ -312,24 +363,27 @@ public class ReviewService {
     }
     @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> Myrestaurant(String restaurantid, int page,int pageSize, String sort){
-        switch(sort){
+        switch(sort){//scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
             case ("scope")://별점 높은 순과 날짜를 기준으로 리뷰 조회
-                return getReviewAll(restaurantid, page, pageSize, true);
+                return getReviewAll(restaurantid, page, pageSize, 1);
             case ("visit"):
                 //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
                 return getReviewVisit(restaurantid, page, pageSize, 2);
             case ("visitReply"):
-                //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
+                //방문을 날짜 기준으로 조회 (답글이 없는것 조회)
                 return getReviewVisit(restaurantid, page, pageSize, 3);
             case ("payment"):
                 //포장을 날짜 기준으로 조회
                 return getReviewPayment(restaurantid, page, pageSize, 2);
             case ("paymentReply"):
-                //포장을 날짜 기준으로 조회
+                //포장을 날짜 기준으로 조회 (답글이 없는것 조회)
                 return getReviewPayment(restaurantid, page, pageSize, 3);
+            case ("allReply"):
+                //답글이 없는 포장,방문 조회
+                return getReviewAll(restaurantid,page,pageSize,3);
             default:
                 //방문과 포장을 날짜 기준 조회
-                return getReviewAll(restaurantid, page, pageSize, false);
+                return getReviewAll(restaurantid, page, pageSize, 2);
         }
     }
     @Transactional(readOnly = true)
