@@ -1,6 +1,15 @@
 import axios from "axios";
+import React, { createContext, useState } from "react";
 
-export const useCartHook = () => {
+export const baseUrl = "http://localhost:8090";
+
+const CartContext = createContext();
+
+export const CartProvider = ({ children }) => {
+  const [price, setPrice] = useState(0);
+  const [cartData, setCartData] = useState([]);
+  const [cartId, setCartId] = useState("");
+
   const token = localStorage.getItem("token");
 
   const getCartListHook = async () => {
@@ -10,7 +19,9 @@ export const useCartHook = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      setCartData(response.data.cartMenus);
+      setCartId(response?.data.cartMenus[0]?.cart.cartid);
+      setPrice(response.data.totalAmount);
       return response.data;
     } catch (err) {
       return err.response.data;
@@ -94,11 +105,22 @@ export const useCartHook = () => {
     }
   };
 
-  return {
-    getCartListHook,
-    cartAddMenuHook,
-    cartCountHook,
-    cartMenuDeleteHook,
-    takeoutHook,
-  };
+  return (
+    <CartContext.Provider
+      value={{
+        price,
+        cartData,
+        cartId,
+        getCartListHook,
+        cartAddMenuHook,
+        cartCountHook,
+        cartMenuDeleteHook,
+        takeoutHook,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 };
+
+export const useCart = () => React.useContext(CartContext);

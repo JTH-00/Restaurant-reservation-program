@@ -6,17 +6,23 @@ import { useCartHook } from "../hooks/cartHook";
 import Card from "../components/cart/Card";
 import CartOption from "../components/cart/CartOption";
 import { useUser } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 const Cart = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isContain, setIsContain] = useState(false);
-  const [cartData, setCartData] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [cardId, setCartId] = useState("");
+
+  const {
+    price,
+    cartData,
+    cartId,
+    getCartListHook,
+    cartCountHook,
+    cartMenuDeleteHook,
+    takeoutHook,
+  } = useCart();
 
   const { userId } = useUser();
-  const { getCartListHook, cartCountHook, cartMenuDeleteHook, takeoutHook } =
-    useCartHook();
 
   useEffect(() => {
     setIsLoading(true);
@@ -27,9 +33,6 @@ const Cart = () => {
 
   const getList = async () => {
     const response = await getCartListHook();
-    setCartData(response.cartMenus);
-    setTotalPrice(response.totalAmount);
-    setCartId(response?.cartMenus[0]?.cart.cartid);
     setIsLoading(false);
     setIsContain(true);
   };
@@ -65,7 +68,6 @@ const Cart = () => {
                         menuName={e.menu.name}
                         initialQuantity={e.menucount}
                         price={e.menu.price}
-                        setTotalPrice={setTotalPrice}
                         cartMenuDeleteHook={cartMenuDeleteHook}
                         cartCountHook={cartCountHook}
                       />
@@ -75,8 +77,8 @@ const Cart = () => {
               )}
             </div>
             <CartOption
-              totalPrice={totalPrice}
-              cardId={cardId}
+              totalPrice={price}
+              cardId={cartId}
               takeoutHook={takeoutHook}
               userId={userId}
             />

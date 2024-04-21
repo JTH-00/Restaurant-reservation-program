@@ -37,7 +37,7 @@ const Reserve = () => {
       {!isLoading && (
         <div className={styles.reserve_cardList}>
           <>
-            {reserveData.map((e, i) => {
+            {reserveData?.map((e, i) => {
               return (
                 <div key={i} className={styles.reserve_card}>
                   <img

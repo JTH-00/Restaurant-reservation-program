@@ -27,7 +27,7 @@ const UserReview = ({ restaurantReview }) => {
           <p>{e.content}</p>
         </div>
         <div className={styles.userDetail}>
-          <h3>{e.userid.username}</h3>
+          <h3>{e.user.username}</h3>
           <p>{reviewTime}</p>
         </div>
       </div>

@@ -44,12 +44,18 @@ const Modal = ({ modalData, setIsOpen }) => {
   };
 
   const postReview = async (e) => {
+    const formData = new FormData();
+
     try {
-      const formData = new FormData();
-      formData.append("scope", rating);
-      formData.append("content", input);
-      formData.append("date", "2023-03-10");
-      formData.append("visit", "1");
+      const jsonData = {
+        content: input,
+        date: date,
+        visit: "1",
+      };
+      formData.append(
+        "reviewDto",
+        new Blob([JSON.stringify(jsonData)], { type: "application/json" })
+      );
 
       if (showImages.length > 0) {
         for (const file of showImages) {
@@ -63,12 +69,13 @@ const Modal = ({ modalData, setIsOpen }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/file",
           },
         }
       );
       console.log(response.data);
     } catch (err) {
+      console.log(formData);
       console.error(err);
     }
   };
@@ -78,10 +85,12 @@ const Modal = ({ modalData, setIsOpen }) => {
       content: input,
       date: date,
       visit: "1",
+      reportrestaurantid: 1,
+      user: "사업자",
     };
 
     formData.append(
-      "reviewDto",
+      "reportRestaurantDto",
       new Blob([JSON.stringify(jsonData)], { type: "application/json" })
     );
     if (showImages.length > 0) {
@@ -89,10 +98,11 @@ const Modal = ({ modalData, setIsOpen }) => {
         formData.append("files", file);
       }
     }
+
     try {
       const response = await axios.post(
         "/api/user/report/restaurant/1",
-        { formData: formData },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,

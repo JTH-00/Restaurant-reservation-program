@@ -16,36 +16,19 @@ const Card = ({
   cartMenuDeleteHook,
   cartCountHook,
 }) => {
-  const [quantity, setQuantity] = useState(initialQuantity);
-
-  useEffect(() => {}, []);
-
   const addCountingQuantity = async (e) => {
-    try {
-      const response = await cartCountHook(1, cartmenuid);
-      setQuantity(quantity + 1);
-      console.log(response);
-    } catch (err) {
-      console.error(err);
-    }
+    const response = await cartCountHook(1, cartmenuid);
   };
   const minusCountingQuantity = async (e) => {
-    try {
+    if (initialQuantity > 1) {
       const response = await cartCountHook(0, cartmenuid);
-      setQuantity(quantity - 1);
-      console.log(response);
-    } catch (err) {
-      console.error(err);
+    } else {
+      return null;
     }
   };
 
   const deleteCard = async () => {
-    console.log(1);
-    try {
-      const response = await cartMenuDeleteHook(cartmenuid);
-    } catch (err) {
-      console.error(err);
-    }
+    const response = await cartMenuDeleteHook(cartmenuid);
   };
 
   return (
@@ -63,7 +46,7 @@ const Card = ({
           onClick={() => minusCountingQuantity()}
           style={{ width: "24px", height: "24px" }}
         ></img>
-        <h2>{quantity}</h2>
+        <h2>{initialQuantity}</h2>
         <img
           src={add}
           type="button"
@@ -71,7 +54,7 @@ const Card = ({
           onClick={() => addCountingQuantity()}
           style={{ width: "24px", height: "24px" }}
         ></img>
-        <span>{quantity * price.toLocaleString()}원</span>
+        <span>{initialQuantity * price.toLocaleString()}원</span>
         <img
           type="button"
           onClick={() => deleteCard()}

@@ -28,14 +28,10 @@ export const myPageHook = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.data.length <= 1) {
-        return response.data;
-      } else {
-        return null;
-      }
+      console.log(response.data);
+      return response.data;
     } catch (err) {
-      console.log("fail");
-      console.error(err);
+      return "fail";
     }
   };
 
