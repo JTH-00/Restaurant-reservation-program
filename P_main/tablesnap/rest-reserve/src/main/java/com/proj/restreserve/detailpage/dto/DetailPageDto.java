@@ -5,6 +5,7 @@ import com.proj.restreserve.menu.dto.SelectMenuDto;
 import com.proj.restreserve.menucategory.dto.MenuCategoryDto;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
+import com.proj.restreserve.review.dto.ReviewAndReplyDto;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.dto.SelectReviewDto;
 import lombok.Data;
@@ -18,9 +19,9 @@ public class DetailPageDto { //가게 상세페이지용(가게 정보, 카테�
     private SelectRestaurantDto restaurantDto;
     private Set<MenuCategoryDto> menuCategoryDto;
     private List<SelectMenuDto> menuDtoList;
-    private Page<SelectReviewDto> reviewDto;
+    private Page<ReviewAndReplyDto> reviewDto;
 
-    public DetailPageDto(SelectRestaurantDto restaurantDto, Set<MenuCategoryDto> menuCategoryDto, List<SelectMenuDto> menuDtoList, Page<SelectReviewDto> reviewDto){
+    public DetailPageDto(SelectRestaurantDto restaurantDto, Set<MenuCategoryDto> menuCategoryDto, List<SelectMenuDto> menuDtoList, Page<ReviewAndReplyDto> reviewDto){
         this.restaurantDto = restaurantDto;
         this.menuCategoryDto = menuCategoryDto;
         this.menuDtoList = menuDtoList;

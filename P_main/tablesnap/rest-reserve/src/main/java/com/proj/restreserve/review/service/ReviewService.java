@@ -241,7 +241,7 @@ public class ReviewService {
     }
     @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> getReviewAll(String restaurantid, int page, int pageSize, int scopecheck){ //전체리뷰(방문,포장) 조회
-        //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
         Pageable pageable = PageRequest.of(page - 1, pageSize);//기본페이지를 1로 두었기에 -1
         Page<Review> reviewPage;
         if(scopecheck==1){//1 = 별점 높은순
