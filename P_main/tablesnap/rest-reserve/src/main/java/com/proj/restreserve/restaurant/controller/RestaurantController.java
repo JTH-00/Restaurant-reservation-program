@@ -2,6 +2,7 @@ package com.proj.restreserve.restaurant.controller;
 
 import com.proj.restreserve.detailpage.dto.DetailPageDto;
 import com.proj.restreserve.detailpage.service.DetailPageService;
+import com.proj.restreserve.menu.dto.MenuDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
@@ -39,12 +40,6 @@ public class RestaurantController {
         return ResponseEntity.ok("Favorite restaurant added successfully.");
     }
 
-    @PostMapping(value = "/admin/registration", consumes = {"multipart/form-data"})
-    public ResponseEntity<Restaurant> registrestaurant(
-            @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
-            @RequestPart(value = "files",required = false) List<MultipartFile> files) {
-        return ResponseEntity.ok(restaurantService.regist(restaurantDto, files));
-    }
     @PutMapping(value = "/admin/modify/myrestaurant", consumes = {"multipart/form-data"})
     public ResponseEntity<RestaurantDto> modifyrestaurant(
             @RequestParam(name="restaurantid") String restaurantid,
@@ -76,6 +71,7 @@ public class RestaurantController {
         return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,2));
         //정렬 방문,포장 합쳐서 날짜순
     }
+
     @GetMapping("/admin/myreview/sort")
     public ResponseEntity<Page<ReviewAndReplyDto>> sortMyRestaurantReview(
             @RequestParam(name="sort", required = false) String sort){

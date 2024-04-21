@@ -1,5 +1,6 @@
 package com.proj.restreserve.menu.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proj.restreserve.menucategory.entity.MenuCategory;
 import com.proj.restreserve.restaurant.entity.Restaurant;
@@ -27,9 +28,10 @@ public class Menu {
     @Column(name = "price", nullable = false)
     private String price;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<MenuImage> menuimages = new ArrayList<>(); // 연관된 이미지들
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name="menuimageid", nullable = true)
+    @JsonBackReference
+    private MenuImage menuimages; // 연관된 이미지들
 
     @ManyToOne
     @JoinColumn(name="menucategoryid", nullable = false)

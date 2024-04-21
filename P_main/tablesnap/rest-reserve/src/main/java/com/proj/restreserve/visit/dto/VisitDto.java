@@ -1,5 +1,6 @@
 package com.proj.restreserve.visit.dto;
 
+import com.proj.restreserve.restaurant.entity.Restaurant;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,6 @@ public class VisitDto {
     private LocalDateTime visittime;
     private Boolean visitcheck;
     private int visitcustomers;
-    private String restaurantid;
+    private Restaurant restaurant;
     private String userid;
 }

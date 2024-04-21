@@ -37,7 +37,7 @@ public class VisitService {
         if(existReserveVisit){
             throw new IllegalStateException("Restaurant already reserve to same time");
         }
-        Optional<Restaurant> restaurant = restaurantRepository.findById(visitDto.getRestaurantid());
+        Optional<Restaurant> restaurant = restaurantRepository.findById(visitDto.getRestaurant().getRestaurantid());
         if(restaurant.isEmpty() || restaurant.get().getBan()){
             throw new IllegalArgumentException("Restaurant not found or banned");
         }

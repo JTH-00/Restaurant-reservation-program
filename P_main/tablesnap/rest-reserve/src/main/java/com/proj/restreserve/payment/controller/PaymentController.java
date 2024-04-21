@@ -1,6 +1,5 @@
 package com.proj.restreserve.payment.controller;
 
-import com.proj.restreserve.cart.entity.CartMenu;
 import com.proj.restreserve.cart.repository.CartMenuRepository;
 import com.proj.restreserve.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/user/restaurant")
 public class PaymentController {
     private final PaymentService paymentService;
-    private final CartMenuRepository cartMenuRepository;
 
     @PostMapping("/takeout/{restaurantid}")
     public ResponseEntity<?> processPayment(@PathVariable("restaurantid") String restaurantid,@RequestParam("cartid") String cartid) {
