@@ -28,7 +28,8 @@ public class DetailPageService { //가게 상세페이지용 서비스
     private final RestaurantService restaurantService;
     private final MenuService menuService;
     @Transactional(readOnly = true)
-    public DetailPageDto pageload(String restaurantid, int page, boolean scopecheck){ //DTO를 모아서 한번에 출력하기 위해 Map사용
+    public DetailPageDto pageload(String restaurantid, int page, int scopecheck){
+        //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
         MenuAndCategoryDto menuAndCategoryDto = menuService.findMenu(restaurantid);//카테고리 종류와 총 메뉴를 가져오기
 
         SelectRestaurantDto date1= restaurantService.findRestaurant(restaurantid).get();//레스토랑 정보

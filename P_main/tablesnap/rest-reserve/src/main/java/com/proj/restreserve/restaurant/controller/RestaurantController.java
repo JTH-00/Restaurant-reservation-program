@@ -7,6 +7,7 @@ import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.service.RestaurantService;
+import com.proj.restreserve.review.dto.ReviewAndReplyDto;
 import com.proj.restreserve.review.dto.SelectReviewDto;
 import com.proj.restreserve.review.service.ReviewService;
 import jakarta.validation.Valid;
@@ -58,15 +59,25 @@ public class RestaurantController {
     }
 
     @GetMapping("/user/restaurant/review/{restaurantid}")
-    public ResponseEntity<Page<SelectReviewDto>> ReviewSortToRestaurant(
+    public ResponseEntity<Page<ReviewAndReplyDto>> ReviewSortToRestaurant(
             @RequestParam(name="sort", required = false) String sort,
             @PathVariable String restaurantid){//테스트용
-        return ResponseEntity.ok(reviewService.Myrestaurant(restaurantid,1,10,sort));
+        return ResponseEntity.ok(reviewService.Myrestaurant(restaurantid,1,5,sort));
     }
 
     @GetMapping("/admin/myreview")
-    public ResponseEntity<Page<SelectReviewDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
-        return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,false));
+    public ResponseEntity<Page<ReviewAndReplyDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
+        //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
+        return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,2));
+        //정렬 방문,포장 합쳐서 날짜순
     }
 
+    @GetMapping("/admin/myreview/sort")
+    public ResponseEntity<Page<ReviewAndReplyDto>> sortMyRestaurantReview(
+            @RequestParam(name="sort", required = false) String sort){
+        return ResponseEntity.ok(reviewService.sortMyrestaurant(1, 10, sort));
+        //sort = {"scope","visit","visitReply,"payment","paymentReply"}로 둔상태
+        //scope = 방문,포장 합쳐서 별점높은순,날짜기준 내림차순, visit = 방문만 날짜기준 내림차순, payment = 포장만 날짜기준 내림차순,
+        //visitReply=방문 답글 없는거만 날짜순, paymentReply=포장 답글 없는거만 날짜순, Default = 방문,포장 합쳐서 날짜기준 내림차순
+    }
 }

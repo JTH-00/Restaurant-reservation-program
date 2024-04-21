@@ -5,6 +5,8 @@ import com.proj.restreserve.jwt.TokenDto;
 import com.proj.restreserve.jwt.TokenProvider;
 import com.proj.restreserve.report.service.ReportService;
 import com.proj.restreserve.review.dto.ReviewDto;
+import com.proj.restreserve.review.entity.ReviewReply;
+import com.proj.restreserve.review.service.ReviewService;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
@@ -34,7 +36,7 @@ public class AdminController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
-
+    private final ReviewService reviewService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 
@@ -74,5 +76,26 @@ public class AdminController {
     public ResponseEntity<String> logout(HttpServletRequest servletRequest){
         userService.logout();
         return ResponseEntity.ok().body("로그아웃");
+    }
+    @PostMapping(value = "/write/reply")
+    public ResponseEntity<ReviewReply> writeReviewReply(
+            @RequestParam(name="reviewid") String reviewid,
+            @Valid @RequestBody ReviewDto reviewDto){
+        return ResponseEntity.ok(reviewService.writeReply(reviewid,reviewDto));
+    }
+    @PutMapping (value = "/modify/reply")
+    public ResponseEntity<ReviewReply> modifyReviewReply(
+            @RequestParam(name="replyid") String replyid,
+            @Valid @RequestBody ReviewDto reviewDto){
+        return ResponseEntity.ok(reviewService.modifyReply(replyid,reviewDto));
+    }
+    @PostMapping(value = "/delete/reply")
+    public ResponseEntity<String> deleteReviewReply(@RequestParam(name="replyid") String replyid) {
+        try {
+            reviewService.deleteReply(replyid);
+            return ResponseEntity.ok("리뷰가 성공적으로 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
