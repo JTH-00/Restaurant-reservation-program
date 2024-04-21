@@ -125,7 +125,7 @@ public class RestaurantService {
         }
         if(files!=null) {
             // 각 파일에 대한 처리
-            for (MultipartFile file : files) {
+            for (MultipartFile file : files) {  
                 // 이미지 파일이 비어있지 않으면 처리
                 if (!file.isEmpty()) {
                     // 이미지 파일명 생성

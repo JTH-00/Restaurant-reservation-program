@@ -55,7 +55,8 @@ public class RestaurantController {
     }
     @GetMapping("/user/restaurant/{restaurantid}")
     public ResponseEntity<DetailPageDto> showRestaurant(@PathVariable String restaurantid){
-        return ResponseEntity.ok(detailPageService.pageload(restaurantid,1,false));//레스토랑 상세 페이지, 별점 상관없이 최신순
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
+        return ResponseEntity.ok(detailPageService.pageload(restaurantid,1,2));//레스토랑 상세 페이지, 별점 상관없이 최신순
     }
 
     @GetMapping("/user/restaurant/review/{restaurantid}")
@@ -67,7 +68,7 @@ public class RestaurantController {
 
     @GetMapping("/admin/myreview")
     public ResponseEntity<Page<ReviewAndReplyDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
-        //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
         return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,2));
         //정렬 방문,포장 합쳐서 날짜순
     }
