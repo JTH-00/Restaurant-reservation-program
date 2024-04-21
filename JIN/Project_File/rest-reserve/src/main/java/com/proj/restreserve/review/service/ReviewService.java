@@ -114,7 +114,6 @@ public class ReviewService {
             Visit visit= visitRepository.getReferenceById(visitid);
             review.setVisit(visit);
             restaurant = visit.getRestaurant();
-
         } else if (paymentid!=null) {
             Payment payment = paymentRepository.getReferenceById(paymentid);
             review.setPayment(payment);
@@ -129,7 +128,6 @@ public class ReviewService {
         review.setUser(user);
         //매장 리뷰 카운트 추가, Null에러 반환
         Objects.requireNonNull(restaurant,"해당 매장을 찾을 수 없습니다.").setReviewcount(restaurant.getReviewcount()+1);
-
         //리뷰 이미지에 set하기위해 save 선언
         reviewRepository.save(review);
 
@@ -243,7 +241,6 @@ public class ReviewService {
         Objects.requireNonNull(restaurant,"해당 매장을 찾을 수 없습니다.").setReviewcount(restaurant.getReviewcount()-1);
         reviewRepository.deleteById(reviewid);//리뷰 삭제
     }
-
     @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> getReviewAll(String restaurantid, int page, int pageSize, int scopecheck){ //전체리뷰(방문,포장) 조회
         //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)

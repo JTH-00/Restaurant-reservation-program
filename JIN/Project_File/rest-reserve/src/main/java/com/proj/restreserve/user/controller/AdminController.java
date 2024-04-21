@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
-public class AdminPageController {
+public class AdminController {
     private final ReviewService reviewService;
     @PostMapping(value = "/write/reply")
     public ResponseEntity<ReviewReply> writeReviewReply(
