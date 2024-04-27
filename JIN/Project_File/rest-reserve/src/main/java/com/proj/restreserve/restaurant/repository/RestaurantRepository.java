@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface RestaurantRepository extends JpaRepository <Restaurant, String> {
-    Restaurant findByRestaurantid(String restaurantid);
     @EntityGraph(attributePaths = {"user"})//fetch join으로 쿼리 하나로 묶기
     Restaurant findByRestaurantidAndBanFalse(String restaurantid);
     @EntityGraph(attributePaths = {"user"})//fetch join으로 쿼리 하나로 묶기

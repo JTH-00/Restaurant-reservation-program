@@ -22,8 +22,11 @@ public class Alarm {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "url", nullable = false)
+    @Column(name = "url")
     private String url;
+
+    @Column(name = "category", nullable = false)
+    private String category;
 
     @ManyToOne
     @JoinColumn(name="userid")

@@ -17,4 +17,5 @@ public interface VisitRepository extends JpaRepository <Visit,String> {
     List<Visit> findByVisitcheckFalseAndRestaurant(Restaurant restaurant);
     //방문 예약 신청 수락 리스트
     List<Visit> findByVisitcheckTrueAndRestaurantAndVisittimeBefore(Restaurant restaurant, LocalDateTime time);
+    List<Visit> findByUserAndVisitcheckFalse(User user);
 }

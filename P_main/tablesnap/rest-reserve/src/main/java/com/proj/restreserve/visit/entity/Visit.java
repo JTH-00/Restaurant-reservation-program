@@ -16,7 +16,6 @@ public class Visit {
 
     @Id
     @Column(name = "visitid")
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String visitid;
 
     @Column(name = "visittime", nullable = false)

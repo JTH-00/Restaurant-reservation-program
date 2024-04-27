@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface PaymentRepository extends JpaRepository <Payment,String> {
     List<Payment> findByUser(User user);
+    List<Payment> findByUserAndPaymentcheckFalse(User user);
 }
