@@ -43,7 +43,7 @@ public class MyPageService{
         return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
     }
 
-    @Transactional
+/*    @Transactional
     public List<VisitDto> MyRegistInfo(){
 
         User user = getCurrentUser();
@@ -64,7 +64,7 @@ public class MyPageService{
 
             return visitDto;
         }).collect(Collectors.toList());
-    }
+    }*/
 
     public List<FavoritesDto> Myfavorites() {
 

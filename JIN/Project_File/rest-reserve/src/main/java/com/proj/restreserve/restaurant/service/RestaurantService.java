@@ -95,7 +95,7 @@ public class RestaurantService {
     @Transactional
     public RestaurantDto modifyRestaurant(String restaurantid,RestaurantDto restaurantDto, List<MultipartFile> files,List<String> deleteImageLinks) {
         // 가게 정보 불러오기
-        Restaurant restaurant = restaurantRepository.findByRestaurantid(restaurantid);
+        Restaurant restaurant = restaurantRepository.getReferenceById(restaurantid);
         if(restaurant.getBan()||!restaurant.getUser().equals(getCurrentUser())){
             throw new RuntimeException("올바른 접근이 아닙니다");
         }
@@ -258,5 +258,17 @@ public class RestaurantService {
         mainPage.add(restaurantByReview);
 
         return mainPage;
+    }
+    @Transactional
+    public String changeSales(String restaurantid){
+        Restaurant restaurant = restaurantRepository.getReferenceById(restaurantid);
+        if(restaurant.getBan()||!restaurant.getUser().equals(getCurrentUser())){
+            throw new RuntimeException("올바른 접근이 아닙니다");
+        }
+        else{
+            boolean restaurantStatus = restaurant.getStopsales();
+            restaurant.setStopsales(!restaurantStatus);
+            return restaurantStatus ? "영업을 중단합니다" : "영업을 다시 시작합니다";
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.proj.restreserve.review.service;
 
+import com.proj.restreserve.alarm.dto.AlarmDto;
+import com.proj.restreserve.alarm.service.AlarmService;
 import com.proj.restreserve.detailpage.service.FileCURD;
 import com.proj.restreserve.payment.dto.PaymentMenuDto;
 import com.proj.restreserve.payment.entity.Payment;
@@ -51,6 +53,7 @@ public class ReviewService {
     private final FileCURD fileCURD;
     private final RestaurantRepository restaurantRepository;
     private final ReviewReplyRepository reviewReplyRepository;
+    private final AlarmService alarmService;
     private final EntityManager entityManager;
     private final String useServiceName = "review";//S3 버킷 폴더명
     public User getCurrentUser() {
@@ -75,30 +78,20 @@ public class ReviewService {
 
         return queryString;
     }
-    private static String getQueryCount(boolean replycheck) {
-        String joinLeft = replycheck ? "LEFT JOIN Reviewreply rr ON r.reviewid = rr.reviewid":"";
 
-        String countQuery = "SELECT COUNT(*) FROM (SELECT r.reviewid FROM Review r " + joinLeft +
-                "INNER JOIN Payment p ON p.paymentid = r.paymentid " +
-                "WHERE p.restaurantid = :restaurantid " +
-                "UNION " +
-                "SELECT r.reviewid FROM Review r " + joinLeft +
-                "INNER JOIN Visit v ON v.visitid = r.visitid " +
-                "WHERE v.restaurantid = :restaurantid) AS countQuery";
-        return countQuery;
-    }
+    //레스토랑 id로 리뷰찾기
     Page<Review> findReviewsByRestaurant(String restaurantid, Pageable pageable, boolean sortScope, boolean replycheck){
         String queryString = getQueryString(replycheck,sortScope,pageable);
-        String queryCount = getQueryCount(replycheck);
+/*        String queryCount = getQueryCount(replycheck);
 
         int count = ((Number) entityManager.createNativeQuery(queryCount)
                 .setParameter("restaurantid", restaurantid)
-                .getSingleResult()).intValue();
+                .getSingleResult()).intValue();*/
 
         List<Review> reviews = entityManager.createNativeQuery(queryString, Review.class)
                 .setParameter("restaurantid", restaurantid)
                 .getResultList();
-        return new PageImpl<>(reviews, pageable, count);
+        return new PageImpl<>(reviews, pageable, reviews.size());
     }
     @Transactional
     public SelectReviewDto writeReview(String visitid, String paymentid,ReviewDto reviewDto, List<MultipartFile> files) {
@@ -120,6 +113,9 @@ public class ReviewService {
             throw new RuntimeException("포장예약과 방문예약이 둘다 없을 수 없습니다.");
         }
         // 리뷰 작성
+        String reviewid= UUID.randomUUID().toString();
+
+        review.setReviewid(reviewid);
         review.setScope(reviewDto.getScope());
         review.setContent(reviewDto.getContent());
         review.setDate(LocalDate.now());
@@ -159,6 +155,13 @@ public class ReviewService {
                 .map(ReviewImage::getImagelink)
                 .collect(Collectors.toList());
         selectReviewDto.setIamgeLinks(imagelink);
+
+        //알람을 해당 매장 업주에게 전송
+        AlarmDto alarmDto = new AlarmDto();
+        alarmDto.setContent("새로운 리뷰가 작성되었어요.");
+        alarmDto.setUrl("api/admin/mypage/review/"+reviewid);// 작성된 리뷰를 조회하도록 url제공
+        alarmService.wirteAlarm(alarmDto,"리뷰",restaurant.getUser());//레스토랑 업주에게 보내는 알람
+
         return selectReviewDto;
     }
     @Transactional
@@ -239,6 +242,33 @@ public class ReviewService {
         Objects.requireNonNull(restaurant,"해당 매장을 찾을 수 없습니다.").setReviewcount(restaurant.getReviewcount()-1);
         reviewRepository.deleteById(reviewid);//리뷰 삭제
     }
+
+    @Transactional(readOnly = true)
+    public Page<ReviewAndReplyDto> getReview(String reviewid){ //알람에서 리뷰 하나만 조회할때(업주는 새로운 리뷰 알람의 링크, 사용자는 답글이 달렸을때의 알람 링크)
+        Pageable pageable = PageRequest.of(0, 1);
+        Page<Review> reviewPage = reviewRepository.findByReviewid(reviewid,pageable);
+
+        Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
+            ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
+            if(review.getPayment()!=null){
+                List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
+                reviewAndReplyDto.setPaymentMenuDtos(paymentMenus);//조회한 주문 메뉴를 주입
+            }
+            //리뷰 이미지 가져오기
+            List<String> imagelink = review.getReviewimages().stream()
+                    .map(ReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            reviewAndReplyDto.setIamgeLinks(imagelink);
+            //답글 여부 가져오기
+            ReviewReply reviewReply = review.getReviewReply();
+            if(reviewReply!=null){
+                reviewAndReplyDto.setReviewReplyDto(modelMapper.map(reviewReply,ReviewReplyDto.class));
+            }
+            return reviewAndReplyDto;
+        });
+        return reviewDtos;
+    }
+
     @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> getReviewAll(String restaurantid, int page, int pageSize, int scopecheck){ //전체리뷰(방문,포장) 조회
         //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
@@ -356,42 +386,41 @@ public class ReviewService {
             return Page.empty(); // 빈 페이지 반환
         }
     }
-    @Transactional(readOnly = true)
-    public Page<ReviewAndReplyDto> Myrestaurant(String restaurantid, int page,int pageSize, String sort){
-        switch(sort){//scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
-            case ("scope")://별점 높은 순과 날짜를 기준으로 리뷰 조회
-                return getReviewAll(restaurantid, page, pageSize, 1);
-            case ("visit"):
-                //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
-                return getReviewVisit(restaurantid, page, pageSize, 2);
-            case ("visitReply"):
-                //방문을 날짜 기준으로 조회 (답글이 없는것 조회)
-                return getReviewVisit(restaurantid, page, pageSize, 3);
-            case ("payment"):
-                //포장을 날짜 기준으로 조회
-                return getReviewPayment(restaurantid, page, pageSize, 2);
-            case ("paymentReply"):
-                //포장을 날짜 기준으로 조회 (답글이 없는것 조회)
-                return getReviewPayment(restaurantid, page, pageSize, 3);
-            case ("allReply"):
-                //답글이 없는 포장,방문 조회
-                return getReviewAll(restaurantid,page,pageSize,3);
-            default:
-                //방문과 포장을 날짜 기준 조회
-                return getReviewAll(restaurantid, page, pageSize, 2);
-        }
-    }
-    @Transactional(readOnly = true)
+
+    @Transactional(readOnly = true) //자신의 매장의 리뷰 (정렬) 조회(업주용)
     public Page<ReviewAndReplyDto> sortMyrestaurant(int page,int pageSize, String sort){
         User user = getCurrentUser();
         Restaurant restaurant = restaurantRepository.findByUser(user);//현재 로그인한 유저의 매장이 있나 확인
+
         if(restaurant!=null) {
-            return Myrestaurant(restaurant.getRestaurantid(),1,10,sort);
+            return switch (sort) {//scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
+                case ("scope") ->//별점 높은 순과 날짜를 기준으로 리뷰 조회
+                        getReviewAll(restaurant.getRestaurantid(), page, pageSize, 1);
+                case ("visit") ->
+                    //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
+                        getReviewVisit(restaurant.getRestaurantid(), page, pageSize, 2);
+                case ("visitReply") ->
+                    //방문을 날짜 기준으로 조회 (답글이 없는것 조회)
+                        getReviewVisit(restaurant.getRestaurantid(), page, pageSize, 3);
+                case ("payment") ->
+                    //포장을 날짜 기준으로 조회
+                        getReviewPayment(restaurant.getRestaurantid(), page, pageSize, 2);
+                case ("paymentReply") ->
+                    //포장을 날짜 기준으로 조회 (답글이 없는것 조회)
+                        getReviewPayment(restaurant.getRestaurantid(), page, pageSize, 3);
+                case ("allReply") ->
+                    //답글이 없는 포장,방문 조회
+                        getReviewAll(restaurant.getRestaurantid(), page, pageSize, 3);
+                default ->
+                    //방문과 포장을 날짜 기준 조회
+                        getReviewAll(restaurant.getRestaurantid(), page, pageSize, 2);
+            };
         } else {
             // 매장이 없는 경우 처리
             return Page.empty(); // 빈 페이지 반환
         }
     }
+
     @Transactional
     public ReviewReply writeReply(String reviewid,ReviewDto reviewDto) {
         Review review = reviewRepository.findById(reviewid).orElseThrow(
@@ -403,6 +432,12 @@ public class ReviewService {
         reviewReply.setDate(LocalDate.now());
         reviewReply.setContent(reviewDto.getContent());
         reviewReplyRepository.save(reviewReply);
+
+        //알람을 해당 리뷰를 작성한 사용자에게 전송
+        AlarmDto alarmDto = new AlarmDto();
+        alarmDto.setContent("리뷰에 답글이 달렸어요.");
+        alarmDto.setUrl("api/user/mypage/review/"+reviewid);//사용자가 작성한 리뷰로 이동(답글포함)
+        alarmService.wirteAlarm(alarmDto,"리뷰 답글",review.getUser());//리뷰를 작성했던 사용자에게 보내는 알람
 
         return reviewReply;
     }

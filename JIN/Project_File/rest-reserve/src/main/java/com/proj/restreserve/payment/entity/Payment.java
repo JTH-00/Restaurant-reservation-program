@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Table(name = "payment")
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "paymentid", nullable = false)
     private String paymentid;
 

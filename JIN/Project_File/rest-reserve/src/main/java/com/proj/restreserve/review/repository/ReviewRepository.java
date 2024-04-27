@@ -26,4 +26,6 @@ public interface ReviewRepository extends JpaRepository<Review,String> {
     @EntityGraph(attributePaths = "user")
     //방문예약만을 기준으로 리뷰조회(정렬 별도로 해야함)
     Page<Review> findByVisit_Restaurant_Restaurantid(String restaurantid, Pageable pageable);
+
+    Page<Review> findByReviewid(String reviewid, Pageable pageable);
 }

@@ -81,4 +81,9 @@ public class RestaurantController {
         //scope = 방문,포장 합쳐서 별점높은순,날짜기준 내림차순, visit = 방문만 날짜기준 내림차순, payment = 포장만 날짜기준 내림차순,
         //visitReply=방문 답글 없는거만 날짜순, paymentReply=포장 답글 없는거만 날짜순, Default = 방문,포장 합쳐서 날짜기준 내림차순
     }
+
+    @PostMapping("/admin/sales/{restaurantid}")
+    public ResponseEntity<String> changeSalesStatus(@PathVariable String restaurantid){
+        return ResponseEntity.ok(restaurantService.changeSales(restaurantid));
+    }
 }
