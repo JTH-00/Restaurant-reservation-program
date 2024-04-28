@@ -19,6 +19,9 @@ import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -160,9 +163,10 @@ public class ReportService {
 
         return reportReview;
     }
-    public List<ReportRestaurantDto> reportrestaurantAll() {
-        List<ReportRestaurant> reportrestaurants = reportRestaurantRepository.findAll();
-        return reportrestaurants.stream().map(reportRestaurant -> {
+    public Page<ReportRestaurantDto> reportrestaurantAll(int page,int pagesize) {
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<ReportRestaurant> reportrestaurants = reportRestaurantRepository.findAll(pageable);
+/*        return reportrestaurants.stream().map(reportRestaurant -> {
             ReportRestaurantDto reportRestaurantDto = new ReportRestaurantDto();
             reportRestaurantDto.setRestaurant(reportRestaurant.getRestaurant());
             reportRestaurantDto.setContent(reportRestaurant.getContent());
@@ -177,11 +181,28 @@ public class ReportService {
             reportRestaurantDto.setReportrestaurantimages(imageLinks);
 
             return reportRestaurantDto;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList());*/
+        return reportrestaurants.map(reportRestaurant -> {
+            ReportRestaurantDto reportRestaurantDto = new ReportRestaurantDto();
+            reportRestaurantDto.setRestaurant(reportRestaurant.getRestaurant());
+            reportRestaurantDto.setContent(reportRestaurant.getContent());
+            reportRestaurantDto.setDate(reportRestaurant.getDate());
+            reportRestaurantDto.setUser(reportRestaurant.getUser());
+            reportRestaurantDto.setReportrestcheck(reportRestaurant.getReportrestcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportRestaurant.getReportrestaurantimages().stream()
+                    .map(ReportRestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportRestaurantDto.setReportrestaurantimages(imageLinks);
+
+            return reportRestaurantDto;
+        });
     }
-    public List<ReportReviewDto> reportreviewAll() {
-        List<ReportReview> reportreviews = reportReviewRepository.findAll();
-        return reportreviews.stream().map(reportReview -> {
+    public Page<ReportReviewDto> reportreviewAll(int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<ReportReview> reportreviews = reportReviewRepository.findAll(pageable);
+/*        return reportreviews.stream().map(reportReview -> {
             ReportReviewDto reportReviewDto = new ReportReviewDto();
             reportReviewDto.setReview(reportReview.getReview());
             reportReviewDto.setContent(reportReview.getContent());
@@ -196,7 +217,23 @@ public class ReportService {
             reportReviewDto.setReportreviewimages(imageLinks);
 
             return reportReviewDto;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList());*/
+        return reportreviews.map(reportReview -> {
+            ReportReviewDto reportReviewDto = new ReportReviewDto();
+            reportReviewDto.setReview(reportReview.getReview());
+            reportReviewDto.setContent(reportReview.getContent());
+            reportReviewDto.setDate(reportReview.getDate());
+            reportReviewDto.setUser(reportReview.getUser());
+            reportReviewDto.setReportreviewcheck(reportReview.getReportreviewcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportReview.getReportreviewimages().stream()
+                    .map(ReportReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportReviewDto.setReportreviewimages(imageLinks);
+
+            return reportReviewDto;
+        });
     }
 
     @Transactional

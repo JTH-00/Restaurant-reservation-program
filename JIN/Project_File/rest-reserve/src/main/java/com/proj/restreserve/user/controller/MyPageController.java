@@ -42,8 +42,8 @@ public class MyPageController {
     }*/
 
     @GetMapping("/mypage/like")
-    public ResponseEntity<List<FavoritesDto>> favoriterests(){
-        List<FavoritesDto> favoritesDtos = myPageService.Myfavorites();
+    public ResponseEntity<Page<FavoritesDto>> favoriterests(){
+        Page<FavoritesDto> favoritesDtos = myPageService.Myfavorites(1,10);
         return ResponseEntity.ok(favoritesDtos);
     }
 
@@ -60,9 +60,9 @@ public class MyPageController {
 */
 
     @GetMapping("/mypage/review")
-    public ResponseEntity<List<ReviewDto>> reviewRestaur(){
+    public ResponseEntity<Page<ReviewDto>> reviewRestaur(){
 
-        List<ReviewDto> reviewDtos = myPageService.MyReviewInfo();
+        Page<ReviewDto> reviewDtos = myPageService.MyReviewInfo(1,10);
 
         return ResponseEntity.ok(reviewDtos);
     }

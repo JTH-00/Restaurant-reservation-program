@@ -7,7 +7,6 @@ import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.service.RestaurantService;
 import com.proj.restreserve.review.dto.ReviewAndReplyDto;
-import com.proj.restreserve.review.dto.SelectReviewDto;
 import com.proj.restreserve.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +53,7 @@ public class RestaurantController {
     }
     @GetMapping("/main")
     public ResponseEntity<List<List<SelectRestaurantDto>>> showRestaurant(){
-        return ResponseEntity.ok(restaurantService.showMainPage());//레스토랑 상세 페이지
+        return ResponseEntity.ok(restaurantService.showMainPage());//레스토랑 메인 페이지
     }
     @GetMapping("/user/restaurant/{restaurantid}")
     public ResponseEntity<DetailPageDto> showRestaurant(@PathVariable String restaurantid){
@@ -65,8 +64,8 @@ public class RestaurantController {
     @GetMapping("/user/restaurant/review/{restaurantid}")
     public ResponseEntity<Page<ReviewAndReplyDto>> ReviewSortToRestaurant(
             @RequestParam(name="sort", required = false) String sort,
-            @PathVariable String restaurantid){//테스트용
-        return ResponseEntity.ok(reviewService.Myrestaurant(restaurantid,1,5,sort));
+            @PathVariable String restaurantid){//상세페이지의 리뷰부분만 다시 정렬하는 용도
+        return ResponseEntity.ok(reviewService.sortReviews(restaurantid,1,5,sort));
     }
 
     @GetMapping("/admin/myreview")
