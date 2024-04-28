@@ -21,20 +21,20 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @PostMapping(value = "/admin/write/event",  consumes = {"multipart/form-data"})
+    @PostMapping(value = "/superadmin/write/event",  consumes = {"multipart/form-data"})
     public ResponseEntity<Event> writeevent(
             @Valid @RequestPart EventDto eventDto,
             @RequestPart("files")List<MultipartFile> files){
         return ResponseEntity.ok(boardService.writeevent(eventDto,files));
     }
 
-    @PostMapping(value = "/admin/write/notice",  consumes = {"multipart/form-data"})
+    @PostMapping(value = "/superadmin/write/notice",  consumes = {"multipart/form-data"})
     public ResponseEntity<Notice> writenotice(
             @Valid @RequestPart NoticeDto noticeDto,
             @RequestPart("files")List<MultipartFile> files){
         return ResponseEntity.ok(boardService.writenotice(noticeDto,files));
     }
-    @PutMapping(value = "/admin/modify/event", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/superadmin/modify/event", consumes = {"multipart/form-data"})
     public ResponseEntity<EventDto> modifyEvent(
             @RequestParam(name="eventid") String eventid,
             @Valid @RequestPart("eventDto") EventDto eventDto,
@@ -42,7 +42,7 @@ public class BoardController {
             @RequestPart List<String> deleteImageLinks) {
         return ResponseEntity.ok(boardService.modifyEvent(eventid,eventDto , files,deleteImageLinks));
     }
-    @PutMapping(value = "/admin/modify/notice", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/superadmin/modify/notice", consumes = {"multipart/form-data"})
     public ResponseEntity<NoticeDto> modifyNotice(
             @RequestParam(name="noticeid") String noticeid,
             @Valid @RequestPart("noticeDto") NoticeDto noticeDto,
@@ -50,7 +50,7 @@ public class BoardController {
             @RequestPart List<String> deleteImageLinks) {
         return ResponseEntity.ok(boardService.modifyNotice(noticeid,noticeDto , files,deleteImageLinks));
     }
-    @PostMapping(value = "/admin/delete/event")
+    @PostMapping(value = "/superadmin/delete/event")
     public ResponseEntity<?> deleteEvent(@RequestParam(name="eventid") String eventid) {
         try {
             boardService.deleteEvent(eventid);
@@ -59,7 +59,7 @@ public class BoardController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @PostMapping(value = "/admin/delete/notice")
+    @PostMapping(value = "/superadmin/delete/notice")
     public ResponseEntity<?> deleteNotice(@RequestParam(name="noticeid") String noticeid) {
         try {
             boardService.deleteNotice(noticeid);

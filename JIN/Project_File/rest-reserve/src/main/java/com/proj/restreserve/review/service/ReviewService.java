@@ -25,7 +25,6 @@ import com.proj.restreserve.visit.entity.Visit;
 import com.proj.restreserve.visit.repository.VisitRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
@@ -35,7 +34,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -370,6 +368,32 @@ public class ReviewService {
         return reviewDtos;
     }
     @Transactional(readOnly = true)
+    public Page<ReviewAndReplyDto> sortReviews(String restaurantid, int page, int pageSize, String sort){
+        switch(sort){//scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
+            case ("scope")://별점 높은 순과 날짜를 기준으로 리뷰 조회
+                return getReviewAll(restaurantid, page, pageSize, 1);
+            case ("visit"):
+                //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
+                return getReviewVisit(restaurantid, page, pageSize, 2);
+            case ("visitReply"):
+                //방문을 날짜 기준으로 조회 (답글이 없는것 조회)
+                return getReviewVisit(restaurantid, page, pageSize, 3);
+            case ("payment"):
+                //포장을 날짜 기준으로 조회
+                return getReviewPayment(restaurantid, page, pageSize, 2);
+            case ("paymentReply"):
+                //포장을 날짜 기준으로 조회 (답글이 없는것 조회)
+                return getReviewPayment(restaurantid, page, pageSize, 3);
+            case ("allReply"):
+                //답글이 없는 포장,방문 조회
+                return getReviewAll(restaurantid,page,pageSize,3);
+            default:
+                //방문과 포장을 날짜 기준 조회
+                return getReviewAll(restaurantid, page, pageSize, 2);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> getMyrestaurant(int page, int pageSize, int scopecheck){ //자신의 매장 리뷰 보기
         //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
         User user = getCurrentUser();
@@ -383,34 +407,12 @@ public class ReviewService {
         }
     }
 
-    @Transactional(readOnly = true) //자신의 매장의 리뷰 (정렬) 조회(업주용)
+    @Transactional(readOnly = true)
     public Page<ReviewAndReplyDto> sortMyrestaurant(int page,int pageSize, String sort){
         User user = getCurrentUser();
         Restaurant restaurant = restaurantRepository.findByUser(user);//현재 로그인한 유저의 매장이 있나 확인
-
         if(restaurant!=null) {
-            return switch (sort) {//scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
-                case ("scope") ->//별점 높은 순과 날짜를 기준으로 리뷰 조회
-                        getReviewAll(restaurant.getRestaurantid(), page, pageSize, 1);
-                case ("visit") ->
-                    //방문을 날짜 기준으로 조회, 별점순으로 조회도 가능하니 필요에 따라 추가하면됨
-                        getReviewVisit(restaurant.getRestaurantid(), page, pageSize, 2);
-                case ("visitReply") ->
-                    //방문을 날짜 기준으로 조회 (답글이 없는것 조회)
-                        getReviewVisit(restaurant.getRestaurantid(), page, pageSize, 3);
-                case ("payment") ->
-                    //포장을 날짜 기준으로 조회
-                        getReviewPayment(restaurant.getRestaurantid(), page, pageSize, 2);
-                case ("paymentReply") ->
-                    //포장을 날짜 기준으로 조회 (답글이 없는것 조회)
-                        getReviewPayment(restaurant.getRestaurantid(), page, pageSize, 3);
-                case ("allReply") ->
-                    //답글이 없는 포장,방문 조회
-                        getReviewAll(restaurant.getRestaurantid(), page, pageSize, 3);
-                default ->
-                    //방문과 포장을 날짜 기준 조회
-                        getReviewAll(restaurant.getRestaurantid(), page, pageSize, 2);
-            };
+            return sortReviews(restaurant.getRestaurantid(),page,pageSize,sort);
         } else {
             // 매장이 없는 경우 처리
             return Page.empty(); // 빈 페이지 반환

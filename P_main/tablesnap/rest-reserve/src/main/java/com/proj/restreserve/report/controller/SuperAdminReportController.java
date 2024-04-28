@@ -40,7 +40,7 @@ public class SuperAdminReportController {
         reportService.blockRestaurant(restaurantid);
         return ResponseEntity.ok("Restaurant blocked successfully.");
     }
-    @PostMapping("/reportreview/{reportreviewid}/confirm")
+        @PostMapping("/reportreview/{reportreviewid}/confirm")
     public ResponseEntity<String> confirmReportReview(@PathVariable String reportreviewid) {
         reportService.confirmReportReview(reportreviewid);
         return ResponseEntity.ok("Reported review confirmed successfully.");

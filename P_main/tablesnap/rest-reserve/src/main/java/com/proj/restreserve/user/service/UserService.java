@@ -3,7 +3,7 @@ package com.proj.restreserve.user.service;
 import com.proj.restreserve.businessnumber.dto.BusinessNumberDto;
 import com.proj.restreserve.businessnumber.entity.BusinessNumber;
 import com.proj.restreserve.businessnumber.repository.BusinessNumberRepository;
-import com.proj.restreserve.detailpage.service.FileUpload;
+import com.proj.restreserve.detailpage.service.FileCURD;
 import com.proj.restreserve.jwt.SecurityUtil;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.Role;
@@ -30,7 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final BusinessNumberRepository businessNumberRepository;
-    private final FileUpload fileUpload;
+    private final FileCURD fileCURD;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Transactional
@@ -68,7 +68,7 @@ public class UserService {
                     UUID uuid = UUID.randomUUID();
                     String fileName = uuid.toString() + "_" + file.getOriginalFilename(); // UUID와 원본 파일 이름 사용
 
-                    String imageUrl = fileUpload.uploadImageToS3(file, "business", fileName); // S3에 파일 업로드 후 URL 획득
+                    String imageUrl = fileCURD.uploadImageToS3(file, "business", fileName); // S3에 파일 업로드 후 URL 획득
 
                     // BusinessNumber에 이미지 링크 저장
                     businessNumber.setImagelink(imageUrl);
