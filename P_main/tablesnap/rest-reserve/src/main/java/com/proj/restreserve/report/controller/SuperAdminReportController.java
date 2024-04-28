@@ -4,6 +4,7 @@ import com.proj.restreserve.report.dto.ReportRestaurantDto;
 import com.proj.restreserve.report.dto.ReportReviewDto;
 import com.proj.restreserve.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,14 +20,14 @@ import java.util.List;
 public class SuperAdminReportController {
     private final ReportService reportService;
     @GetMapping("/reportrest/list")
-    public ResponseEntity<List<ReportRestaurantDto>> reportrestaurantlist(){
-        List<ReportRestaurantDto> reportRestaurantDtos = reportService.reportrestaurantAll();
+    public ResponseEntity<Page<ReportRestaurantDto>> reportrestaurantlist(){
+        Page<ReportRestaurantDto> reportRestaurantDtos = reportService.reportrestaurantAll(1,10);
         return ResponseEntity.ok(reportRestaurantDtos);
     }
 
     @GetMapping("/reportreview/list")
-    public ResponseEntity<List<ReportReviewDto>> reportreviewlist(){
-        List<ReportReviewDto> reportReviewDtos = reportService.reportreviewAll();
+    public ResponseEntity<Page<ReportReviewDto>> reportreviewlist(){
+        Page<ReportReviewDto> reportReviewDtos = reportService.reportreviewAll(1,10);
         return ResponseEntity.ok(reportReviewDtos);
     }
     @PostMapping("/reportrest/{reportrestaurantid}/confirm")
