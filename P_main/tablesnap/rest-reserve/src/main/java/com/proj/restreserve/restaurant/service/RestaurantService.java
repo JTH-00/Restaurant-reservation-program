@@ -16,14 +16,14 @@ import com.proj.restreserve.restaurant.entity.RestaurantImage;
 import com.proj.restreserve.restaurant.repository.FavoritesRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantImageRepository;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
-import com.proj.restreserve.review.dto.ReviewDto;
-import com.proj.restreserve.review.entity.Review;
-import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
-import com.proj.restreserve.visit.entity.Visit;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -75,6 +75,7 @@ public class RestaurantService {
         restaurant.setUser(user);
         restaurant.setVibe(restaurantDto.getVibe());
         restaurant.setAddress(restaurantDto.getAddress());
+        restaurant.setPermitday(LocalDate.now());
 
         //레스토랑 이미지에 set하기위해 save 선언
         restaurantRepository.save(restaurant);
@@ -162,6 +163,11 @@ public class RestaurantService {
         restaurant.setCookingtime(restaurantDto.getCookingtime());
         restaurant.setVibe(restaurantDto.getVibe());
         restaurant.setAddress(restaurantDto.getAddress());
+
+        if(!restaurant.getPermitcheck()){//승인한 매장이 아닐경우 승인일자를 초기화함
+            restaurant.setPermitday(LocalDate.now());
+            restaurant.setPermitcheck(null);
+        }
         restaurantRepository.save(restaurant); //레스토랑 정보 저장
 
 
@@ -254,8 +260,21 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<SelectRestaurantDto> findBanRestaurant(String restaurantid) {//차단한 레스토랑 상세페이지 조회
+        Restaurant restaurant = this.restaurantRepository.findByRestaurantidAndPermitcheckTrue(restaurantid);//밴된 레스토랑 매장 조회
+        //DTO변환
+        SelectRestaurantDto selectRestaurantDto = modelMapper.map(restaurant, SelectRestaurantDto.class);
+        // 이미지 파일들의 링크 가져오기
+        List<String> imageLinks = restaurant.getRestaurantimages().stream()
+                .map(RestaurantImage::getImagelink)
+                .collect(Collectors.toList());
+        selectRestaurantDto.setRestaurantimageLinks(imageLinks);
+        return Optional.ofNullable(selectRestaurantDto);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<SelectRestaurantDto> findRestaurant(String restaurantid) {//레스토랑 상세페이지 조회
-        Restaurant restaurant = this.restaurantRepository.findByRestaurantidAndBanFalse(restaurantid);//밴이 안된 레스토랑 매장 조회
+        Restaurant restaurant = this.restaurantRepository.findByRestaurantidAndBanFalseAndPermitcheckTrue(restaurantid);//밴이 안된 레스토랑 매장 조회
         //DTO변환
         SelectRestaurantDto selectRestaurantDto = modelMapper.map(restaurant, SelectRestaurantDto.class);
         // 이미지 파일들의 링크 가져오기
@@ -321,6 +340,62 @@ public class RestaurantService {
             boolean restaurantStatus = restaurant.getStopsales();
             restaurant.setStopsales(!restaurantStatus);
             return restaurantStatus ? "영업을 중단합니다" : "영업을 다시 시작합니다";
+        }
+    }
+    @Transactional(readOnly = true)
+    public Page<SelectRestaurantDto> showPermitRestaurant(int page, int pagesize){//관리자 승인요청온 매장 조회
+        Pageable pageable = PageRequest.of(page-1,pagesize, Sort.by("permitday").descending());//날짜 기준 내림차순 정렬
+        Page<Restaurant> restaurants = restaurantRepository.findByPermitcheckIsNull(pageable);
+
+        Page<SelectRestaurantDto> restaurantDtos = restaurants.map(restaurant -> {
+            SelectRestaurantDto selectRestaurantDto = modelMapper.map(restaurant,SelectRestaurantDto.class);
+            //이미지 링크로 삽입
+            List<String> imageLinks = restaurant.getRestaurantimages().stream()
+                    .map(RestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            selectRestaurantDto.setRestaurantimageLinks(imageLinks);
+
+            return selectRestaurantDto;
+        });
+        return restaurantDtos;
+    }
+    @Transactional
+    public Restaurant checkPermit(){
+        User user = getCurrentUser();
+        Restaurant restaurant = restaurantRepository.findByUser(user);
+/*
+        if(restaurant==null){
+            //승인 요청한 매장이 없습니다. 매장 승인하러 가기
+        }else if(Boolean.FALSE.equals(restaurant.getPermitcheck())){
+            //매장 승인이 거절되었습니다. 다시 작성하러가기
+        }else if (Boolean.TRUE.equals(restaurant.getPermitcheck())) {
+            //매장이 승인되어있습니다. 매장 정보 수정하러가기
+        }else{
+            //승인 확인중입니다.
+        }*/
+        return restaurant;
+    }
+    @Transactional
+    public void permitRestaurant(String restaurantid){//매장 승인하기
+        Optional<Restaurant> restaurant= restaurantRepository.findById(restaurantid);
+        if(restaurant.isEmpty()){
+            throw new RuntimeException("해당 매장을 찾을 수 없습니다");
+        }else if (restaurant.get().getPermitcheck()==null){
+            restaurant.get().setPermitcheck(true);
+        }else{
+            throw new RuntimeException("이미 승인이 허가된 매장입니다");
+        }
+    }
+    @Transactional
+    public void denyRestaurant(String restaurantid) {//매장 거부하기
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantid);
+        if (restaurant.isEmpty()) {
+            throw new RuntimeException("해당 매장을 찾을 수 없습니다");
+        } else if (restaurant.get().getPermitcheck()==null) {
+            restaurant.get().setPermitcheck(false);
+            restaurant.get().setPermitday(null);
+        } else {
+            throw new RuntimeException("이미 승인이 허가된 매장입니다");
         }
     }
 }

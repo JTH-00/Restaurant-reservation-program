@@ -4,6 +4,7 @@ import com.proj.restreserve.detailpage.dto.DetailUserDto;
 import lombok.Data;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -24,4 +25,6 @@ public class SelectRestaurantDto {
     private int reviewcount;
     private DetailUserDto user;
     private List<String> restaurantimageLinks;
+    private LocalDate permitday;
+    private Boolean permitcheck;
 }

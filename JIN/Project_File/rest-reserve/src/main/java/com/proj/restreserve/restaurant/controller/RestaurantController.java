@@ -36,6 +36,10 @@ public class RestaurantController {
         restaurantService.addFavoriteRestaurant(restaurantid);
         return ResponseEntity.ok("Favorite restaurant added successfully.");
     }
+    @GetMapping(value = "/admin/checkpermit")
+    public ResponseEntity<Restaurant> checkPermit() {//가게 관리, 가게 승인여부 체크하는 페이지
+        return ResponseEntity.ok(restaurantService.checkPermit());
+    }
 
     @PostMapping(value = "/admin/registration", consumes = {"multipart/form-data"})
     public ResponseEntity<Restaurant> registrestaurant(

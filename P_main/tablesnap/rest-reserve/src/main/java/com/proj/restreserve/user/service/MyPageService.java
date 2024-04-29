@@ -74,7 +74,7 @@ public class MyPageService{
         User user = getCurrentUser();
         Pageable pageable = PageRequest.of(page-1, pagesize);
        /* List<Favorites> favoritesList = favoritesRepository.findByUser(user);*/
-        Page<Favorites> favorites = favoritesRepository.findbyUser(user, pageable);
+        Page<Favorites> favorites = favoritesRepository.findByUser(user, pageable);
         /*return favoritesList.stream().map(favorite -> {
             FavoritesDto favoritesDto = new FavoritesDto();
             favoritesDto.setFavoritesid(favorite.getFavoritesid());

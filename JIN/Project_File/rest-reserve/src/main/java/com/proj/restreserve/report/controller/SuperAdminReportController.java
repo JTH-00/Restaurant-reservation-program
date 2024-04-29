@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/superadmin")
@@ -27,11 +25,13 @@ public class SuperAdminReportController {
         Page<ReportRestaurantDto> reportRestaurantDtos = reportService.reportrestaurantAll(1,10);
         return ResponseEntity.ok(reportRestaurantDtos);
     }
+
     @GetMapping("/reportrest/list/{restaurantid}")
     public ResponseEntity<SelectRestaurantDto> reportrestaurantlist(@PathVariable String restaurantid){
         SelectRestaurantDto reportRestaurantDtos = restaurantService.findBanRestaurant(restaurantid).get();
         return ResponseEntity.ok(reportRestaurantDtos);
     }
+
     @GetMapping("/reportreview/list")
     public ResponseEntity<Page<ReportReviewDto>> reportreviewlist(){
         Page<ReportReviewDto> reportReviewDtos = reportService.reportreviewAll(1,10);
