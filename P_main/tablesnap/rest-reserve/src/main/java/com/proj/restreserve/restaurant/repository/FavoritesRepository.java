@@ -16,5 +16,5 @@ public interface FavoritesRepository extends JpaRepository<Favorites,String> {
 
     boolean existsByUserAndRestaurant(User user, Restaurant restaurant);
 
-    Page<Favorites> findbyUser(User user, Pageable pageable);
+    Page<Favorites> findByUser(User user, Pageable pageable);
 }

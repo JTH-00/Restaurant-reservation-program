@@ -27,5 +27,8 @@ public class AdminRestaurantController {
         restaurantService.regist(restaurantDto, files, menuDtos, menuImageFiles);
         return ResponseEntity.ok("가게 및 메뉴 등록 성공");
     }
-
+    @GetMapping(value = "/admin/checkpermit")
+    public ResponseEntity<Restaurant> checkPermit() {//가게 관리, 가게 승인여부 체크하는 페이지
+        return ResponseEntity.ok(restaurantService.checkPermit());
+    }
 }

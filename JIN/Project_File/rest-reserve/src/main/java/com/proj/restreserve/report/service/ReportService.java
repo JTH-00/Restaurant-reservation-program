@@ -19,6 +19,9 @@ import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -159,5 +163,126 @@ public class ReportService {
 
         return reportReview;
     }
+    public Page<ReportRestaurantDto> reportrestaurantAll(int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<ReportRestaurant> reportrestaurants = reportRestaurantRepository.findAll(pageable);
+/*        return reportrestaurants.stream().map(reportRestaurant -> {
+            ReportRestaurantDto reportRestaurantDto = new ReportRestaurantDto();
+            reportRestaurantDto.setRestaurant(reportRestaurant.getRestaurant());
+            reportRestaurantDto.setContent(reportRestaurant.getContent());
+            reportRestaurantDto.setDate(reportRestaurant.getDate());
+            reportRestaurantDto.setUser(reportRestaurant.getUser());
+            reportRestaurantDto.setReportrestcheck(reportRestaurant.getReportrestcheck());
 
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportRestaurant.getReportrestaurantimages().stream()
+                    .map(ReportRestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportRestaurantDto.setReportrestaurantimages(imageLinks);
+
+            return reportRestaurantDto;
+        }).collect(Collectors.toList());*/
+        return reportrestaurants.map(reportRestaurant -> {
+            ReportRestaurantDto reportRestaurantDto = new ReportRestaurantDto();
+            reportRestaurantDto.setRestaurant(reportRestaurant.getRestaurant());
+            reportRestaurantDto.setContent(reportRestaurant.getContent());
+            reportRestaurantDto.setDate(reportRestaurant.getDate());
+            reportRestaurantDto.setUser(reportRestaurant.getUser());
+            reportRestaurantDto.setReportrestcheck(reportRestaurant.getReportrestcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportRestaurant.getReportrestaurantimages().stream()
+                    .map(ReportRestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportRestaurantDto.setReportrestaurantimages(imageLinks);
+
+            return reportRestaurantDto;
+        });
+    }
+    public Page<ReportReviewDto> reportreviewAll(int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<ReportReview> reportreviews = reportReviewRepository.findAll(pageable);
+/*        return reportreviews.stream().map(reportReview -> {
+            ReportReviewDto reportReviewDto = new ReportReviewDto();
+            reportReviewDto.setReview(reportReview.getReview());
+            reportReviewDto.setContent(reportReview.getContent());
+            reportReviewDto.setDate(reportReview.getDate());
+            reportReviewDto.setUser(reportReview.getUser());
+            reportReviewDto.setReportreviewcheck(reportReview.getReportreviewcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportReview.getReportreviewimages().stream()
+                    .map(ReportReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportReviewDto.setReportreviewimages(imageLinks);
+
+            return reportReviewDto;
+        }).collect(Collectors.toList());*/
+        return reportreviews.map(reportReview -> {
+            ReportReviewDto reportReviewDto = new ReportReviewDto();
+            reportReviewDto.setReview(reportReview.getReview());
+            reportReviewDto.setContent(reportReview.getContent());
+            reportReviewDto.setDate(reportReview.getDate());
+            reportReviewDto.setUser(reportReview.getUser());
+            reportReviewDto.setReportreviewcheck(reportReview.getReportreviewcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportReview.getReportreviewimages().stream()
+                    .map(ReportReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportReviewDto.setReportreviewimages(imageLinks);
+
+            return reportReviewDto;
+        });
+    }
+
+    @Transactional
+    public void confirmReportRestaurant(String reportrestaurantid) {
+        ReportRestaurant reportRestaurant = reportRestaurantRepository.findById(reportrestaurantid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported restaurant not found"));
+        reportRestaurant.setReportrestcheck("확인");
+        reportRestaurantRepository.save(reportRestaurant);
+    }
+
+    @Transactional
+    public void blockRestaurant(String restaurantid) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantid)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        restaurant.setBan(true);
+        restaurantRepository.save(restaurant);
+    }
+
+    @Transactional
+    public void confirmReportReview(String reportreviewid) {
+        ReportReview reportReview = reportReviewRepository.findById(reportreviewid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported review not found"));
+        reportReview.setReportreviewcheck("확인");
+        reportReviewRepository.save(reportReview);
+    }
+
+    @Transactional
+    public void deleteReview(String reportReviewid) {
+        // 로직: 해당 ID를 가진 리뷰를 삭제합니다.
+        ReportReview reportReview = reportReviewRepository.findById(reportReviewid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported review not found"));
+
+        // Review가 null이 아닌 경우 해당 Review와 연관된 모든 reportreview를 가져와서 삭제합니다.
+        Review review = reportReview.getReview();
+        if (review != null) {
+            List<ReportReview> reportReviews = reportReviewRepository.findByReviewReviewid(review.getReviewid());
+            for (ReportReview rr : reportReviews) {
+                reportReviewRepository.deleteById(rr.getReportreviewid());
+            }
+        }
+
+        // Review를 삭제합니다.
+        reviewRepository.deleteById(review.getReviewid());
+    }
+    @Transactional
+    public void blockUser(String userid) {
+        User user = userRepository.findById(userid)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with "));
+        user.setBan(true);
+        userRepository.save(user);
+    }
 }
