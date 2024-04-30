@@ -10,6 +10,9 @@ import com.proj.restreserve.visit.dto.VisitDto;
 import com.proj.restreserve.visit.entity.Visit;
 import com.proj.restreserve.visit.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -64,12 +67,13 @@ public class VisitService {
     }
 
     @Transactional(readOnly = true)
-    public List<Visit> showVisitReserve(){//방문 예약 신청 리스트
+    public Page<Visit> showVisitReserve(int page, int pagesize){//방문 예약 신청 리스트
+        Pageable pageable = PageRequest.of(page,pagesize);
         User user = getCurrentUser();
         Restaurant restaurant = restaurantRepository.findByUser(user);
-        List<Visit> visits;
+        Page<Visit> visits;
         if(restaurant!=null){
-            visits = visitRepository.findByVisitcheckFalseAndRestaurant(restaurant);
+            visits = visitRepository.findByVisitcheckFalseAndRestaurant(restaurant,pageable);
         }else{
             throw new RuntimeException("로그인한 유저의 매장정보가 없습니다.");
         }
@@ -87,7 +91,7 @@ public class VisitService {
     }
     
     @Transactional
-    public void acceptVisit(String visitid){//방문 예약 수락
+    public void checkVisit(String visitid){//방문 예약 확인
         Visit visit = visitRepository.getReferenceById(visitid);
         visit.setVisitcheck(true);
 

@@ -4,6 +4,7 @@ import com.proj.restreserve.board.dto.EventDto;
 import com.proj.restreserve.board.dto.NoticeDto;
 import com.proj.restreserve.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +19,8 @@ public class AdminBoardController {
     private final BoardService boardService;
 
     @GetMapping("/board/event")
-    public ResponseEntity <List<EventDto>> eventlist(){
-        return ResponseEntity.ok(boardService.eventlist());
+    public ResponseEntity <Page<EventDto>> eventlist(){
+        return ResponseEntity.ok(boardService.eventlist(1,10));
     }
 
     @GetMapping("/board/event/detail/{eventid}")
@@ -29,8 +30,8 @@ public class AdminBoardController {
     }
 
     @GetMapping("/board/notice")
-    public ResponseEntity <List<NoticeDto>> noticelist(){
-        return ResponseEntity.ok(boardService.noticelist());
+    public ResponseEntity <Page<NoticeDto>> noticelist(){
+        return ResponseEntity.ok(boardService.noticelist(1,10));
     }
 
     @GetMapping("/board/notice/detail/{noticeid}")

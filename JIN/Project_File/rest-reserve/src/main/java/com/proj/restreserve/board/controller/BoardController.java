@@ -8,6 +8,7 @@ import com.proj.restreserve.board.service.BoardService;
 import com.proj.restreserve.review.dto.ReviewDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,8 +70,8 @@ public class BoardController {
         }
     }
     @GetMapping("/user/board/event")
-    public ResponseEntity <List<EventDto>> eventlist(){
-        return ResponseEntity.ok(boardService.eventlist());
+    public ResponseEntity <Page<EventDto>> eventlist(){
+        return ResponseEntity.ok(boardService.eventlist(1,10));
     }
 
     @GetMapping("/user/board/event/detail/{eventid}")
@@ -80,8 +81,8 @@ public class BoardController {
     }
 
     @GetMapping("/user/board/notice")
-    public ResponseEntity <List<NoticeDto>> noticelist(){
-        return ResponseEntity.ok(boardService.noticelist());
+    public ResponseEntity <Page<NoticeDto>> noticelist(){
+        return ResponseEntity.ok(boardService.noticelist(1,10));
     }
 
     @GetMapping("/user/board/notice/detail/{noticeid}")

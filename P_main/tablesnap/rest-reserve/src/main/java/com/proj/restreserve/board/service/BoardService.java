@@ -18,6 +18,9 @@ import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -264,28 +267,30 @@ public class BoardService {
         noticeRepository.deleteById(noticetid);//공지사항 삭제
     }
 
-    public List<EventDto> eventlist() {
-        List<Event> events = eventRepository.findAll();
-        return events.stream().map(event -> {
+    public Page<EventDto> eventlist(int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page,pagesize);
+        Page<Event> events = eventRepository.findAll(pageable);
+        return events.map(event -> {
             EventDto eventDto = new EventDto();
             eventDto.setEventid(event.getEventid());
             eventDto.setTitle(event.getTitle());
             eventDto.setDate(event.getDate());
 
             return eventDto;
-        }).collect(Collectors.toList());
+        });
     }
 
-    public List<NoticeDto> noticelist() {
-        List<Notice> notices = noticeRepository.findAll();
-        return notices.stream().map(notice -> {
+    public Page<NoticeDto> noticelist(int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page,pagesize);
+        Page<Notice> notices = noticeRepository.findAll(pageable);
+        return notices.map(notice -> {
             NoticeDto noticeDto = new NoticeDto();
             noticeDto.setNoticeid(notice.getNoticeid());
             noticeDto.setTitle(notice.getTitle());
             noticeDto.setDate(notice.getDate());
 
             return noticeDto;
-        }).collect(Collectors.toList());
+        });
     }
 
     public EventDto eventdetail(String eventid) {
