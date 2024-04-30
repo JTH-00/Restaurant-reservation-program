@@ -64,7 +64,6 @@ public class BoardService {
         event.setEventend(eventDto.getEventend());
         event.setEventstatus(false);
         event.setUser(user);
-        eventRepository.save(event);
 
         List<EventImage> eventImages = new ArrayList<>();
         if (files != null) {
@@ -86,11 +85,11 @@ public class BoardService {
 
                     // 이미지 정보 저장
                     eventImages.add(eventImage);
-                    eventImageRepository.save(eventImage);
                 }
             }
         }
         event.setEventimages(eventImages);
+        eventRepository.save(event);
         return event;
     }
 
@@ -104,7 +103,7 @@ public class BoardService {
         notice.setContent(noticeDto.getContent());
         notice.setDate(LocalDate.now());
         notice.setUser(user);
-        noticeRepository.save(notice);
+
         List<NoticeImage> noticeImages = new ArrayList<>();
         if (files != null) {
             // 각 파일에 대한 처리
@@ -124,11 +123,11 @@ public class BoardService {
 
                     // 이미지 정보 저장
                     noticeImages.add(noticeImage);
-                    noticeImageRepository.save(noticeImage);
                 }
             }
         }
         notice.setNoticeimages(noticeImages);
+        noticeRepository.save(notice);
 
         return notice;
     }
@@ -144,8 +143,6 @@ public class BoardService {
         event.setContent(eventDto.getContent());
         event.setEventstart(eventDto.getEventstart());
         event.setEventend(eventDto.getEventend());
-        //수정한 이벤트 저장
-        eventRepository.save(event);
 
         if (deleteImageLinks != null){
             for (String deleteImageLink : deleteImageLinks) {
@@ -197,8 +194,6 @@ public class BoardService {
         //수정된 공지사항 내용
         notice.setTitle(noticeDto.getTitle());
         notice.setContent(noticeDto.getContent());
-        //수정한 공지사항 저장
-        noticeRepository.save(notice);
 
         if (deleteImageLinks != null){
             for (String deleteImageLink : deleteImageLinks) {

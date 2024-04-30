@@ -117,8 +117,6 @@ public class ReviewService {
         review.setUser(user);
         //매장 리뷰 카운트 추가, Null에러 반환
         Objects.requireNonNull(restaurant,"해당 매장을 찾을 수 없습니다.").setReviewcount(restaurant.getReviewcount()+1);
-        //리뷰 이미지에 set하기위해 save 선언
-        reviewRepository.save(review);
 
         List<ReviewImage> reviewImages = new ArrayList<>();
         // 각 파일에 대한 처리
@@ -139,12 +137,13 @@ public class ReviewService {
 
                     // 이미지 정보 저장
                     reviewImages.add(reviewImage);
-                    reviewImageRepository.save(reviewImage);
                 }
             }
         }
         //출력을 위해 삽입
         review.setReviewimages(reviewImages);
+        reviewRepository.save(review);
+
         SelectReviewDto selectReviewDto = modelMapper.map(review,SelectReviewDto.class);
         List<String> imagelink = review.getReviewimages().stream()
                 .map(ReviewImage::getImagelink)
@@ -161,16 +160,13 @@ public class ReviewService {
     }
     @Transactional
     public SelectReviewDto modifyReview(String reviewid, ReviewDto reviewDto, List<MultipartFile> files, List<String> deleteImageLinks){
-        Review review = this.reviewRepository.getReferenceById(reviewid);
+        Review review = this.reviewRepository.findById(reviewid).get();
         if(!review.getUser().equals(getCurrentUser())){
             throw new RuntimeException("올바른 접근이 아닙니다");
         }
         // 리뷰 작성
         review.setScope(reviewDto.getScope());
         review.setContent(reviewDto.getContent());
-
-        //리뷰 이미지에 set하기위해 save 선언
-        reviewRepository.save(review);
 
         if (deleteImageLinks != null){
             for (String deleteImageLink : deleteImageLinks) {
@@ -199,12 +195,10 @@ public class ReviewService {
                     reviewImage.setImagelink(imageUrl);
                     reviewImage.setReview(review);
                     review.getReviewimages().add(reviewImage);//리뷰에 있는 컬렉션에 리뷰이미지 추가
-                    
                     reviewImageRepository.save(reviewImage);
                 }
             }
         }
-
         SelectReviewDto selectReviewDto = modelMapper.map(review,SelectReviewDto.class);
         List<String> imagelink = review.getReviewimages().stream()
                 .map(ReviewImage::getImagelink)

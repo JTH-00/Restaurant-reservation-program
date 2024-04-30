@@ -9,7 +9,6 @@ import lombok.Data;
 @Table(name = "reportrestimage")
 public class ReportRestaurantImage {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String reportrestimageid;
 
     private String imagelink;

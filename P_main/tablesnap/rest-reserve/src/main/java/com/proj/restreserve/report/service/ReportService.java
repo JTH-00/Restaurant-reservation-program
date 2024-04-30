@@ -85,6 +85,7 @@ public class ReportService {
                     String imageUrl = fileCURD.uploadImageToS3(file,useServiceName.get(0),fileName);//파일 업로드 파일,파일폴더명,파일일련번호
                     // 리뷰 이미지 정보 생성
                     ReportRestaurantImage reportRestaurantImage = new ReportRestaurantImage();
+                    reportRestaurantImage.setReportrestimageid(fileName);
                     reportRestaurantImage.setReportRestaurant(reportRestaurant);
                     reportRestaurantImage.setImagelink(imageUrl);
 
@@ -95,14 +96,6 @@ public class ReportService {
         }
 
         // 리뷰 정보 저장
-        reportRestaurantRepository.save(reportRestaurant);
-
-        // 리뷰 이미지 정보 저장
-        for (ReportRestaurantImage reportRestaurantImage : reportRestaurantImages) {
-            reportRestaurantImage.setReportRestaurant(reportRestaurant); // 이미지 정보에 리뷰 정보 설정
-            reportRestaurantImageRepository.save(reportRestaurantImage);
-        }
-
         reportRestaurant.setReportrestaurantimages(reportRestaurantImages);
         reportRestaurantRepository.save(reportRestaurant);//이미지 링크를 출력하기 위해 다시 save
 
@@ -140,6 +133,7 @@ public class ReportService {
 
                     // 리뷰 이미지 정보 생성
                     ReportReviewImage reportReviewImage = new ReportReviewImage();
+                    reportReviewImage.setReportreviewimageid(fileName);
                     reportReviewImage.setReportReview(reportReview);
                     reportReviewImage.setImagelink(imageUrl);
 
@@ -150,14 +144,6 @@ public class ReportService {
         }
 
         // 리뷰 정보 저장
-        reportReviewRepository.save(reportReview);
-
-        // 리뷰 이미지 정보 저장
-        for (ReportReviewImage reportReviewImage : reportReviewImages) {
-            reportReviewImage.setReportReview(reportReview); // 이미지 정보에 리뷰 정보 설정
-            reportReviewImageRepository.save(reportReviewImage);
-        }
-
         reportReview.setReportreviewimages(reportReviewImages);
         reportReviewRepository.save(reportReview);//이미지 링크를 출력하기 위해 다시 save
 
