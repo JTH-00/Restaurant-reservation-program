@@ -150,7 +150,7 @@ public class ReportService {
     }
     public Page<ReportRestaurantDto> reportrestaurantAll(int page, int pagesize) {
         Pageable pageable = PageRequest.of(page-1,pagesize);
-        Page<ReportRestaurant> reportrestaurants = reportRestaurantRepository.findAll(pageable);
+        Page<ReportRestaurant> reportrestaurants = reportRestaurantRepository.findByReportrestcheck("미확인", pageable);
 /*        return reportrestaurants.stream().map(reportRestaurant -> {
             ReportRestaurantDto reportRestaurantDto = new ReportRestaurantDto();
             reportRestaurantDto.setRestaurant(reportRestaurant.getRestaurant());
@@ -186,7 +186,7 @@ public class ReportService {
     }
     public Page<ReportReviewDto> reportreviewAll(int page, int pagesize) {
         Pageable pageable = PageRequest.of(page-1,pagesize);
-        Page<ReportReview> reportreviews = reportReviewRepository.findAll(pageable);
+        Page<ReportReview> reportreviews = reportReviewRepository.findByReportreviewcheck("미확인", pageable);
 /*        return reportreviews.stream().map(reportReview -> {
             ReportReviewDto reportReviewDto = new ReportReviewDto();
             reportReviewDto.setReview(reportReview.getReview());
@@ -230,11 +230,16 @@ public class ReportService {
     }
 
     @Transactional
-    public void blockRestaurant(String restaurantid) {
+    public void blockRestaurant(String restaurantid,String reportrestaurantid) {
         Restaurant restaurant = restaurantRepository.findById(restaurantid)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
         restaurant.setBan(true);
         restaurantRepository.save(restaurant);
+        
+        ReportRestaurant reportRestaurant = reportRestaurantRepository.findById(reportrestaurantid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported restaurant not found"));
+        reportRestaurant.setReportrestcheck("차단");
+        reportRestaurantRepository.save(reportRestaurant);
     }
 
     @Transactional
@@ -264,10 +269,15 @@ public class ReportService {
         reviewRepository.deleteById(review.getReviewid());
     }
     @Transactional
-    public void blockUser(String userid) {
+    public void blockUser(String userid,String reportReviewid) {
         User user = userRepository.findById(userid)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with "));
         user.setBan(true);
         userRepository.save(user);
+
+        ReportReview reportReview = reportReviewRepository.findById(reportReviewid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported review not found"));
+        reportReview.setReportreviewcheck("확인");
+        reportReviewRepository.save(reportReview);
     }
 }

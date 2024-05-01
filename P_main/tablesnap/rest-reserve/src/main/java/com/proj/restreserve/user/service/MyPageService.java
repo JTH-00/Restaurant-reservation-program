@@ -10,6 +10,7 @@ import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.review.repository.ReviewRepository;
+import com.proj.restreserve.user.dto.SelectUserDto;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
@@ -17,6 +18,7 @@ import com.proj.restreserve.visit.entity.Visit;
 import com.proj.restreserve.visit.dto.VisitDto;
 import com.proj.restreserve.visit.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +41,7 @@ public class MyPageService{
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final FavoritesRepository favoritesRepository;
+    private final ModelMapper modelMapper;
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
@@ -181,5 +184,16 @@ public class MyPageService{
         user.setPassword(newPasswordHash);
         // 사용자 정보 저장
         userRepository.save(user);
+    }
+    @Transactional(readOnly = true)
+    public Page<SelectUserDto> showBannedUser(int page, int pagesize){
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<User> users = userRepository.findByBanTrue(pageable);
+
+        Page<SelectUserDto> userDtos = users.map(user -> {
+            SelectUserDto selectUserDto = modelMapper.map(user,SelectUserDto.class);
+            return selectUserDto;
+        });
+        return userDtos;
     }
 }

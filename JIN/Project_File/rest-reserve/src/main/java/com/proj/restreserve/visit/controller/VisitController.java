@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 public class VisitController {
     private final VisitService visitService;
     @GetMapping("/admin/restaurant/visit/list")
-    public ResponseEntity<Page<Visit>> showVisit(){
-        return ResponseEntity.ok(visitService.showVisitReserve(1,10));
+    public ResponseEntity<Page<Visit>> showVisit(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(visitService.showVisitReserve(page,10));
     }
     @PostMapping("user/restaurant/reserve/{restaurantid}")
     public ResponseEntity<String> showRestaurant(@Valid @RequestBody VisitDto visitDto, @PathVariable String restaurantid){

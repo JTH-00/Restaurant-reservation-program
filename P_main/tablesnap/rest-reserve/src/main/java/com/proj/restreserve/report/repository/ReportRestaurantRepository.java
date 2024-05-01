@@ -16,5 +16,5 @@ public interface ReportRestaurantRepository extends JpaRepository <ReportRestaur
 
     Optional<ReportRestaurant> findByRestaurantRestaurantid(String restaurantId);
 
-    Page<ReportRestaurant> findAll(Pageable pageable);
+    Page<ReportRestaurant> findByReportrestcheck(String reportrestcheck,Pageable pageable);
 }

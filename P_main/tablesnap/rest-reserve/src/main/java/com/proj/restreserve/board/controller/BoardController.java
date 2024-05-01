@@ -70,8 +70,8 @@ public class BoardController {
         }
     }
     @GetMapping("/user/board/event")
-    public ResponseEntity <Page<EventDto>> eventlist(){
-        return ResponseEntity.ok(boardService.eventlist(1,10));
+    public ResponseEntity <Page<EventDto>> eventlist(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(boardService.eventlist(page,10));
     }
 
     @GetMapping("/user/board/event/detail/{eventid}")
@@ -81,8 +81,8 @@ public class BoardController {
     }
 
     @GetMapping("/user/board/notice")
-    public ResponseEntity <Page<NoticeDto>> noticelist(){
-        return ResponseEntity.ok(boardService.noticelist(1,10));
+    public ResponseEntity <Page<NoticeDto>> noticelist(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(boardService.noticelist(page,10));
     }
 
     @GetMapping("/user/board/notice/detail/{noticeid}")

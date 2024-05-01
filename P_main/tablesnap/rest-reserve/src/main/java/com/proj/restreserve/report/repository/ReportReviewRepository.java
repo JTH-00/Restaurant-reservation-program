@@ -16,5 +16,5 @@ public interface ReportReviewRepository extends JpaRepository <ReportReview, Str
 
     List<ReportReview> findByReviewReviewid(String reviewid);
 
-    Page<ReportReview> findAll(Pageable pageable);
+    Page<ReportReview> findByReportreviewcheck(String reportreviewcheck,Pageable pageable);
 }

@@ -30,8 +30,8 @@ public class SelectReservation {
         return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
     }
 
-    public Page<Object> showReservation(int page){//예약중인 방문,포장 조회
-        Pageable pageable = PageRequest.of(page-1, 10);
+    public Page<Object> showReservation(int page,int pagesize){//예약중인 방문,포장 조회
+        Pageable pageable = PageRequest.of(page-1, pagesize);
         User user = getCurrentUser();
         //결제확인이 안된걸 기준으로 검색
         List<Payment> payments = paymentRepository.findByUserAndPaymentcheckFalse(user);

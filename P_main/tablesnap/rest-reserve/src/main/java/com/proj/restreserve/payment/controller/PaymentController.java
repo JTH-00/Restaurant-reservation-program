@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
     private final PaymentService paymentService;
     @GetMapping("/admin/restaurant/payment/list")
-    public ResponseEntity<Page<Payment>> showVisit(){
-        return ResponseEntity.ok(paymentService.showPaymentReserve(1,10));
+    public ResponseEntity<Page<Payment>> showVisit(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(paymentService.showPaymentReserve(page,10));
     }
     @PostMapping("/admin/restaurant/payment/refuse/{paymentid}")
     public ResponseEntity<String> refuseVisit(@PathVariable String paymentid){
