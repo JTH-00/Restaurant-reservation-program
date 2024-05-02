@@ -14,6 +14,6 @@ public class MenuDto {
     private String content;
     private String price;
     private String menuCategoryId;
-    private List<String> imageLinks;
+    private String imageLinks;
     private Restaurant restaurant;
 }

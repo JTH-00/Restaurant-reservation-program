@@ -13,18 +13,17 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-    @GetMapping("/restaurant/list")
-    public ResponseEntity <List<RestaurantDto>> restaurantlist(){
-        List<RestaurantDto> restaurantDtos = restaurantService.restaurantAll();
+    @GetMapping("/user/restaurant/list")
+    public ResponseEntity<List<RestaurantDto>> restaurantlist(@RequestParam(required = false) String category, @RequestParam(required = false) String vibe) {
+        List<RestaurantDto> restaurantDtos = restaurantService.restaurantAll(category, vibe);
         return ResponseEntity.ok(restaurantDtos);
     }
-
-    @PostMapping("/restaurant/list/favorite/{restaurantid}")
+    @PostMapping("/user/restaurant/list/favorite/{restaurantid}")
     public ResponseEntity<String> addFavoriteRestaurant(@PathVariable String restaurantid) {
         restaurantService.addFavoriteRestaurant(restaurantid);
         return ResponseEntity.ok("Favorite restaurant added successfully.");

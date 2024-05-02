@@ -32,15 +32,15 @@ public class MenuService {
             menuDto.setContent(menu.getContent());
             menuDto.setPrice(menu.getPrice());
             menuDto.setRestaurant(menu.getRestaurant());
-            menuDto.setMenuCategory(menu.getMenuCategory());
+            menuDto.setMenuCategoryId(menu.getMenuCategory().getMenucategoryid());
 
 
             // 이미지 파일들의 정보 가져오기
-            List<String> imageLinks = menu.getMenuimages().stream()
+ /*           List<String> imageLinks = menu.getMenuimages().stream()
                     .map(MenuImage::getMenuimagelink)
                     .collect(Collectors.toList());
             menuDto.setImageLinks(imageLinks);
-
+*/
             return menuDto;
         }).collect(Collectors.toList());
     }

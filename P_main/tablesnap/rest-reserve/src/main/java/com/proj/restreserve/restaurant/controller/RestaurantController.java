@@ -25,8 +25,8 @@ public class RestaurantController {
     private final ReviewService reviewService;
 
     @GetMapping("/user/restaurant/list")
-    public ResponseEntity <List<RestaurantDto>> restaurantlist(){
-        List<RestaurantDto> restaurantDtos = restaurantService.restaurantAll();
+    public ResponseEntity<List<RestaurantDto>> restaurantlist(@RequestParam(required = false) String category, @RequestParam(required = false) String vibe) {
+        List<RestaurantDto> restaurantDtos = restaurantService.restaurantAll(category, vibe);
         return ResponseEntity.ok(restaurantDtos);
     }
 
