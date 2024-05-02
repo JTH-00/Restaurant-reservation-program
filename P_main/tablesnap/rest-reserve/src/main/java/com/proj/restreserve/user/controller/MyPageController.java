@@ -43,8 +43,8 @@ public class MyPageController {
     }*/
 
     @GetMapping("/mypage/like")
-    public ResponseEntity<Page<FavoritesDto>> favoriterests(){
-        Page<FavoritesDto> favoritesDtos = myPageService.Myfavorites(1,10);
+    public ResponseEntity<Page<FavoritesDto>> favoriterests(@RequestParam(required = false, defaultValue = "1") int page){
+        Page<FavoritesDto> favoritesDtos = myPageService.Myfavorites(page,10);
         return ResponseEntity.ok(favoritesDtos);
     }
 
@@ -59,9 +59,9 @@ public class MyPageController {
     }*/
 
     @GetMapping("/mypage/review")
-    public ResponseEntity<Page<ReviewDto>> reviewRestaur(){
+    public ResponseEntity<Page<ReviewDto>> reviewRestaur(@RequestParam(required = false,defaultValue = "1") int page){
 
-        Page<ReviewDto> reviewDtos = myPageService.MyReviewInfo(1,10);
+        Page<ReviewDto> reviewDtos = myPageService.MyReviewInfo(page,10);
 
         return ResponseEntity.ok(reviewDtos);
     }
@@ -120,7 +120,7 @@ public class MyPageController {
         }
     }
     @GetMapping(value = "/mypage/reserve")
-    public ResponseEntity<Page<Object>> showReservation(){
-        return ResponseEntity.ok(selectReservation.showReservation(1));
+    public ResponseEntity<Page<Object>> showReservation(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(selectReservation.showReservation(page,10));
     }
 }

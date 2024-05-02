@@ -8,6 +8,7 @@ import com.proj.restreserve.board.service.BoardService;
 import com.proj.restreserve.review.dto.ReviewDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.modifyNotice(noticeid,noticeDto , files,deleteImageLinks));
     }
     @PostMapping(value = "/superadmin/delete/event")
-    public ResponseEntity<?> deleteEvent(@RequestParam(name="eventid") String eventid) {
+    public ResponseEntity<?> deleteEvent(@RequestParam(required = false, name="eventid") String eventid) {
         try {
             boardService.deleteEvent(eventid);
             return ResponseEntity.ok("이벤트가 성공적으로 삭제되었습니다.");
@@ -60,7 +61,7 @@ public class BoardController {
         }
     }
     @PostMapping(value = "/superadmin/delete/notice")
-    public ResponseEntity<?> deleteNotice(@RequestParam(name="noticeid") String noticeid) {
+    public ResponseEntity<?> deleteNotice(@RequestParam(required = false, name="noticeid") String noticeid) {
         try {
             boardService.deleteNotice(noticeid);
             return ResponseEntity.ok("공지사항이 성공적으로 삭제되었습니다.");
@@ -69,8 +70,8 @@ public class BoardController {
         }
     }
     @GetMapping("/user/board/event")
-    public ResponseEntity <List<EventDto>> eventlist(){
-        return ResponseEntity.ok(boardService.eventlist());
+    public ResponseEntity <Page<EventDto>> eventlist(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(boardService.eventlist(page,10));
     }
 
     @GetMapping("/user/board/event/detail/{eventid}")
@@ -80,8 +81,8 @@ public class BoardController {
     }
 
     @GetMapping("/user/board/notice")
-    public ResponseEntity <List<NoticeDto>> noticelist(){
-        return ResponseEntity.ok(boardService.noticelist());
+    public ResponseEntity <Page<NoticeDto>> noticelist(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(boardService.noticelist(page,10));
     }
 
     @GetMapping("/user/board/notice/detail/{noticeid}")

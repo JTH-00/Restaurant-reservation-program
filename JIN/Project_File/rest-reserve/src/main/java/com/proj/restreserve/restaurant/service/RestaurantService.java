@@ -349,4 +349,21 @@ public class RestaurantService {
             throw new RuntimeException("이미 승인이 허가된 매장입니다");
         }
     }
+
+    @Transactional(readOnly = true)
+    public Page<SelectRestaurantDto> showBannedRestaurant(int page, int pagesize){
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<Restaurant> restaurants = restaurantRepository.findByBanTrue(pageable);
+
+        Page<SelectRestaurantDto> restaurantDtos = restaurants.map(restaurant -> {
+            SelectRestaurantDto selectRestaurantDto = modelMapper.map(restaurant,SelectRestaurantDto.class);
+            //이미지 링크로 삽입
+            List<String> imageLinks = restaurant.getRestaurantimages().stream()
+                    .map(RestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            selectRestaurantDto.setRestaurantimageLinks(imageLinks);
+            return selectRestaurantDto;
+        });
+        return restaurantDtos;
+    }
 }

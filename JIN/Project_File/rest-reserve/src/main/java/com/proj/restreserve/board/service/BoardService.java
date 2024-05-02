@@ -18,6 +18,9 @@ import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -61,7 +64,6 @@ public class BoardService {
         event.setEventend(eventDto.getEventend());
         event.setEventstatus(false);
         event.setUser(user);
-        eventRepository.save(event);
 
         List<EventImage> eventImages = new ArrayList<>();
         if (files != null) {
@@ -83,11 +85,11 @@ public class BoardService {
 
                     // 이미지 정보 저장
                     eventImages.add(eventImage);
-                    eventImageRepository.save(eventImage);
                 }
             }
         }
         event.setEventimages(eventImages);
+        eventRepository.save(event);
         return event;
     }
 
@@ -101,7 +103,7 @@ public class BoardService {
         notice.setContent(noticeDto.getContent());
         notice.setDate(LocalDate.now());
         notice.setUser(user);
-        noticeRepository.save(notice);
+
         List<NoticeImage> noticeImages = new ArrayList<>();
         if (files != null) {
             // 각 파일에 대한 처리
@@ -121,11 +123,11 @@ public class BoardService {
 
                     // 이미지 정보 저장
                     noticeImages.add(noticeImage);
-                    noticeImageRepository.save(noticeImage);
                 }
             }
         }
         notice.setNoticeimages(noticeImages);
+        noticeRepository.save(notice);
 
         return notice;
     }
@@ -141,8 +143,6 @@ public class BoardService {
         event.setContent(eventDto.getContent());
         event.setEventstart(eventDto.getEventstart());
         event.setEventend(eventDto.getEventend());
-        //수정한 이벤트 저장
-        eventRepository.save(event);
 
         if (deleteImageLinks != null){
             for (String deleteImageLink : deleteImageLinks) {
@@ -194,8 +194,6 @@ public class BoardService {
         //수정된 공지사항 내용
         notice.setTitle(noticeDto.getTitle());
         notice.setContent(noticeDto.getContent());
-        //수정한 공지사항 저장
-        noticeRepository.save(notice);
 
         if (deleteImageLinks != null){
             for (String deleteImageLink : deleteImageLinks) {
@@ -264,28 +262,30 @@ public class BoardService {
         noticeRepository.deleteById(noticetid);//공지사항 삭제
     }
 
-    public List<EventDto> eventlist() {
-        List<Event> events = eventRepository.findAll();
-        return events.stream().map(event -> {
+    public Page<EventDto> eventlist(int page,int pagesize) {
+        Pageable pageable = PageRequest.of(page,pagesize);
+        Page<Event> events = eventRepository.findAll(pageable);
+        return events.map(event -> {
             EventDto eventDto = new EventDto();
             eventDto.setEventid(event.getEventid());
             eventDto.setTitle(event.getTitle());
             eventDto.setDate(event.getDate());
 
             return eventDto;
-        }).collect(Collectors.toList());
+        });
     }
 
-    public List<NoticeDto> noticelist() {
-        List<Notice> notices = noticeRepository.findAll();
-        return notices.stream().map(notice -> {
+    public Page<NoticeDto> noticelist(int page,int pagesize) {
+        Pageable pageable = PageRequest.of(page,pagesize);
+        Page<Notice> notices = noticeRepository.findAll(pageable);
+        return notices.map(notice -> {
             NoticeDto noticeDto = new NoticeDto();
             noticeDto.setNoticeid(notice.getNoticeid());
             noticeDto.setTitle(notice.getTitle());
             noticeDto.setDate(notice.getDate());
 
             return noticeDto;
-        }).collect(Collectors.toList());
+        });
     }
 
     public EventDto eventdetail(String eventid) {

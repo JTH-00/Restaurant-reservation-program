@@ -58,21 +58,23 @@ public class RestaurantController {
     @GetMapping("/user/restaurant/review/{restaurantid}")
     public ResponseEntity<Page<ReviewAndReplyDto>> ReviewSortToRestaurant(
             @RequestParam(name="sort", required = false) String sort,
+            @RequestParam(required = false, defaultValue = "1") int page,
             @PathVariable String restaurantid){//상세페이지의 리뷰부분만 다시 정렬하는 용도
-        return ResponseEntity.ok(reviewService.sortReviews(restaurantid,1,5,sort));
+        return ResponseEntity.ok(reviewService.sortReviews(restaurantid,page,5,sort));
     }
 
     @GetMapping("/admin/myreview")
-    public ResponseEntity<Page<ReviewAndReplyDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
+    public ResponseEntity<Page<ReviewAndReplyDto>> myRestaurantReview(@RequestParam(required = false, defaultValue = "1") int page){//로그인한 유저의 id로 레스토랑 검색후 반환
         //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
-        return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,2));
+        return ResponseEntity.ok(reviewService.getMyrestaurant(page,10,2));
         //정렬 방문,포장 합쳐서 날짜순
     }
 
     @GetMapping("/admin/myreview/sort")
     public ResponseEntity<Page<ReviewAndReplyDto>> sortMyRestaurantReview(
-            @RequestParam(name="sort", required = false) String sort){
-        return ResponseEntity.ok(reviewService.sortMyrestaurant(1, 10, sort));
+            @RequestParam(name="sort", required = false) String sort,
+            @RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(reviewService.sortMyrestaurant(page, 10, sort));
         //sort = {"scope","visit","visitReply,"payment","paymentReply"}로 둔상태
         //scope = 방문,포장 합쳐서 별점높은순,날짜기준 내림차순, visit = 방문만 날짜기준 내림차순, payment = 포장만 날짜기준 내림차순,
         //visitReply=방문 답글 없는거만 날짜순, paymentReply=포장 답글 없는거만 날짜순, Default = 방문,포장 합쳐서 날짜기준 내림차순

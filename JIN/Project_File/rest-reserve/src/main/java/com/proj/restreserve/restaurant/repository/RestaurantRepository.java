@@ -28,4 +28,5 @@ public interface RestaurantRepository extends JpaRepository <Restaurant, String>
     Restaurant findByUser(User user);
 
     Page<Restaurant> findByPermitcheckIsNull(Pageable pageable);
+    Page<Restaurant> findByBanTrue(Pageable pageable);
 }

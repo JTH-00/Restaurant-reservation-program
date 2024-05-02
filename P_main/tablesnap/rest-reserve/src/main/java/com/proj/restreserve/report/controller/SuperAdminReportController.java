@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,18 +20,18 @@ public class SuperAdminReportController {
     private final ReportService reportService;
     private final RestaurantService restaurantService;
     @GetMapping("/reportrest/list")
-    public ResponseEntity<Page<ReportRestaurantDto>> reportrestaurantlist(){
-        Page<ReportRestaurantDto> reportRestaurantDtos = reportService.reportrestaurantAll(1,10);
+    public ResponseEntity<Page<ReportRestaurantDto>> reportrestaurantlist(@RequestParam(required = false, defaultValue = "1") int page){
+        Page<ReportRestaurantDto> reportRestaurantDtos = reportService.reportrestaurantAll(page,10);
         return ResponseEntity.ok(reportRestaurantDtos);
     }
     @GetMapping("/reportrest/list/{restaurantid}")
     public ResponseEntity<SelectRestaurantDto> reportrestaurantlist(@PathVariable String restaurantid){
-        SelectRestaurantDto reportRestaurantDtos = restaurantService.findBanRestaurant(restaurantid).get();
+        SelectRestaurantDto reportRestaurantDtos = restaurantService.findRestaurant(restaurantid).get();
         return ResponseEntity.ok(reportRestaurantDtos);
     }
     @GetMapping("/reportreview/list")
-    public ResponseEntity<Page<ReportReviewDto>> reportreviewlist(){
-        Page<ReportReviewDto> reportReviewDtos = reportService.reportreviewAll(1,10);
+    public ResponseEntity<Page<ReportReviewDto>> reportreviewlist(@RequestParam(required = false, defaultValue = "1") int page){
+        Page<ReportReviewDto> reportReviewDtos = reportService.reportreviewAll(page,10);
         return ResponseEntity.ok(reportReviewDtos);
     }
     @PostMapping("/reportrest/{reportrestaurantid}/confirm")
@@ -44,8 +41,8 @@ public class SuperAdminReportController {
     }
 
     @PostMapping("/reportrest/{restaurantid}/block")
-    public ResponseEntity<String> blockRestaurant(@PathVariable String restaurantid) {
-        reportService.blockRestaurant(restaurantid);
+    public ResponseEntity<String> blockRestaurant(@PathVariable String restaurantid,@RequestParam String reportrestaurantid) {
+        reportService.blockRestaurant(restaurantid, reportrestaurantid);
         return ResponseEntity.ok("Restaurant blocked successfully.");
     }
         @PostMapping("/reportreview/{reportreviewid}/confirm")
@@ -54,8 +51,8 @@ public class SuperAdminReportController {
         return ResponseEntity.ok("Reported review confirmed successfully.");
     }
     @PostMapping("/reportreview/{userid}/block")
-    public ResponseEntity<String> blockUser(@PathVariable String userid) {
-        reportService.blockUser(userid);
+    public ResponseEntity<String> blockUser(@PathVariable String userid, @RequestParam String reportreviewid) {
+        reportService.blockUser(userid,reportreviewid);
         return ResponseEntity.ok("Reported user blocked successfully.");
     }
 

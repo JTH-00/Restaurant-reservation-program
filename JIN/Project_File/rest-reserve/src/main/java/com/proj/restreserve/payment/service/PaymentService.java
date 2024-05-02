@@ -18,12 +18,15 @@ import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -110,6 +113,21 @@ public class PaymentService {
         cartService.removeCart(cartid);
 
     }
+
+    @Transactional(readOnly = true)
+    public Page<Payment> showPaymentReserve(int page, int pagesize){//포장 예약 신청 리스트
+        Pageable pageable = PageRequest.of(page,pagesize);
+        User user = getCurrentUser();
+        Restaurant restaurant = restaurantRepository.findByUser(user);
+        Page<Payment> payments;
+        if(restaurant!=null){
+            payments = paymentRepository.findByPaymentcheckFalseAndRestaurant(restaurant,pageable);
+        }else{
+            throw new RuntimeException("로그인한 유저의 매장정보가 없습니다.");
+        }
+        return payments;
+    }
+
     @Transactional
     public void refusePayment(String paymentid){//포장 예약 거절
         Payment payment = paymentRepository.getReferenceById(paymentid);

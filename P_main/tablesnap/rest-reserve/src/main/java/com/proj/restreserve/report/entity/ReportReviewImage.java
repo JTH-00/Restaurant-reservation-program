@@ -10,7 +10,6 @@ import org.springframework.data.domain.Persistable;
 @Table(name = "reportreviewimage")
 public class ReportReviewImage implements Persistable<String> {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String reportreviewimageid;
 
     private String imagelink;

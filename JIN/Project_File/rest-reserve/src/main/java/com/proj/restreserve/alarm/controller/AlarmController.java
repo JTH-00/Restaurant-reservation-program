@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,7 +19,7 @@ public class AlarmController {
         return alarmService.selectAlarm(1,5);
     }
     @GetMapping("alarmpage")//리뷰 리스트 조회
-    public Page<AlarmDto> showAlarmPage(){//리스트 페이지 조회
-        return alarmService.selectAlarm(1,10);
+    public Page<AlarmDto> showAlarmPage(@RequestParam(required = false, defaultValue = "1") int page){//리스트 페이지 조회
+        return alarmService.selectAlarm(page,10);
     }
 }
