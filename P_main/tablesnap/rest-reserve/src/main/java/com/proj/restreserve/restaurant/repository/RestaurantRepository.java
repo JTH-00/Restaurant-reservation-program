@@ -35,4 +35,12 @@ public interface RestaurantRepository extends JpaRepository <Restaurant, String>
     List<Restaurant> findByCategory(String category);
 
     List<Restaurant> findByVibe(String vibe);
+
+    List<Restaurant> findByCategoryAndVibeAndAddress(String category, String vibe, String address);
+
+    List<Restaurant> findByCategoryAndAddress(String category, String address);
+
+    List<Restaurant> findByVibeAndAddress(String vibe, String address);
+
+    List<Restaurant> findByAddress(String address);
 }
