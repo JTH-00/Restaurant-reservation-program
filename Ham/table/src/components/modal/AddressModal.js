@@ -11,7 +11,6 @@ const AddressModal = ({ setIsOpen, getAddress }) => {
     getAddress(data.sigungu + " " + data.bname);
     setIsOpen(false);
   };
-
   return (
     <div className={styles.modal_wrap}>
       <header className={styles.header_wrap}>

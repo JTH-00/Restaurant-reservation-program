@@ -23,7 +23,7 @@ const RealReview = ({ reviewCount, reviewDto }) => {
     "700px",
     imgArr[0],
   ];
-  console.log(reviewDto);
+  console.log(reviewDto, 12341242);
 
   return (
     <div className={styles.realReview_wrapper}>
@@ -51,7 +51,7 @@ const RealReview = ({ reviewCount, reviewDto }) => {
               <div className={styles.circle}></div>
 
               <p style={{ marginLeft: "10px", marginTop: "10px" }}>
-                {e.userid.username}
+                {e.user.username}
               </p>
             </aside>
             <div className={styles.reviewDetail_wrapper}>
@@ -86,11 +86,10 @@ const RealReview = ({ reviewCount, reviewDto }) => {
                 })}
               </div>
               <span>주문메뉴:</span>
-
-              {e.paymentMenusDtos.map((menu) => {
+              {e.paymentMenuDtos?.map((menu) => {
                 return (
                   <span style={{ marginLeft: "10px" }}>
-                    {menu.menuid.name} : {menu.count}
+                    {menu.menu.name} : {menu.count}
                   </span>
                 );
               })}

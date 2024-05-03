@@ -11,7 +11,6 @@ import axios from "axios";
 
 const Main = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const { userId } = useUser();
 
   useEffect(() => {

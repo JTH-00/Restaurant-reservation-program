@@ -36,10 +36,7 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.username);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("username", response.data.username);
-        getUserId();
-        localStorage.setItem("userid", userId);
       }
-
       console.log(response.data);
     } catch (err) {
       console.error(err);
@@ -48,16 +45,16 @@ export const AuthProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      const response = await axios.post(
-        `/api/user/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data);
+      // const response = await axios.post(
+      //   `/api/user/logout`,
+      //   {},
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+      // console.log(response.data);
       setUserId(null);
       setUser(null);
       localStorage.clear();
@@ -103,6 +100,9 @@ export const AuthProvider = ({ children }) => {
       console.error(err);
     }
   };
+  if (token) {
+    getUserId();
+  }
 
   const setTokenUser = async () => {
     if (token) {

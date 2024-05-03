@@ -31,24 +31,25 @@ const RestaurantList = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data, 123123123);
       setResList(response.data);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const ddipRes = async (resId) => {
-    console.log(resId);
+  const ddipRes = async (restaurantid) => {
     try {
       const response = await axios.post(
-        `/api/user/restaurant/list/favorite/${resId}`,
-        {},
+        `/api/user/restaurant/list/favorite/${restaurantid}`,
+        { restaurantid: 1 },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+      console.log(response.data);
     } catch (err) {
       console.error(err);
     }

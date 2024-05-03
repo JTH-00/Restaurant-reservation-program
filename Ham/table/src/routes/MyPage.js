@@ -41,14 +41,10 @@ const MyPage = () => {
   };
 
   const confirmHandle = async () => {
-    try {
-      const response = await confirmUserHook(userPw);
-      console.log(response);
-      setConfirmUser(true);
-      getUserData();
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await confirmUserHook(userPw);
+    console.log(response);
+    setConfirmUser(true);
+    getUserData();
   };
 
   const updateHandle = () => {
