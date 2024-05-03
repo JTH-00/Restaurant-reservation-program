@@ -32,15 +32,13 @@ public class MyPageController {
     private final ReviewService reviewService;
     private final SelectReservation selectReservation;
 
-/*    @GetMapping("/mypage/use")
-    public ResponseEntity<List<VisitDto>> visitRestaur(){
-
-        List<VisitDto> visitDtos = myPageService.MyRegistInfo().stream()
-                .filter(visitDto -> visitDto.getVisitcheck())
-                .collect(Collectors.toList());
+    @GetMapping("/mypage/use")
+    public ResponseEntity<Page<VisitDto>> visitRestaur(@RequestParam(required = false, defaultValue = "1") int page){
+        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10)
+                .filter(visitDto -> visitDto.getVisitcheck());
 
         return ResponseEntity.ok(visitDtos);
-    }*/
+    }
 
     @GetMapping("/mypage/like")
     public ResponseEntity<Page<FavoritesDto>> favoriterests(@RequestParam(required = false, defaultValue = "1") int page){
@@ -48,15 +46,13 @@ public class MyPageController {
         return ResponseEntity.ok(favoritesDtos);
     }
 
-/*    @GetMapping("/mypage/reserve")
-    public ResponseEntity<List<VisitDto>> reserveRestaur(){
-
-        List<VisitDto> visitDtos = myPageService.MyRegistInfo().stream()
-                .filter(visitDto -> !visitDto.getVisitcheck())
-                .collect(Collectors.toList());
+    @GetMapping("/mypage/reserve")
+    public ResponseEntity<Page<VisitDto>> useRestaur(@RequestParam(required = false, defaultValue = "1") int page){
+        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10)
+                .filter(visitDto -> !visitDto.getVisitcheck());
 
         return ResponseEntity.ok(visitDtos);
-    }*/
+    }
 
     @GetMapping("/mypage/review")
     public ResponseEntity<Page<ReviewDto>> reviewRestaur(@RequestParam(required = false,defaultValue = "1") int page){
