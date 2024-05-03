@@ -1,0 +1,88 @@
+@charset "utf-8";
+@import "../../scss/variables.scss";
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 900px;
+}
+
+.review_title {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reviewDetail_wrapper {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  align-items: center;
+
+  .day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid black;
+    width: 136.5px;
+    height: 90px;
+  }
+  .user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    width: 130px;
+    height: 90px;
+  }
+  .detail {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    width: 633.5px;
+    height: 90px;
+
+    img {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+  }
+}
+
+.answer_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 10px;
+  width: 900px;
+  height: 172px;
+  border: 1px solid black;
+  textarea {
+    width: 600px;
+    height: 100px;
+  }
+
+  .answer_btn {
+    display: flex;
+    flex-direction: column;
+
+    button {
+      margin-top: 25px;
+      width: 67px;
+      height: 30px;
+      background-color: white;
+      border: 1px solid black;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}

@@ -1,0 +1,113 @@
+@charset "utf-8";
+@import "../../../scss/variables.scss";
+
+.mainInfo_wrapper {
+  display: flex;
+  img {
+    width: 640px;
+    height: 512px;
+  }
+}
+.rightInfo_wrapper {
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  width: 514px;
+  height: 512px;
+  margin-left: 100px;
+  justify-content: space-between;
+
+  h2 {
+    text-align: center; /* 텍스트 중앙 정렬 */
+    margin-top: 1px;
+  }
+  .line {
+    position: relative;
+    top: -10px;
+    width: 514px;
+    height: 1px;
+    background-color: black;
+  }
+  .subInfo_wrapper {
+    display: flex;
+    margin-top: -10px;
+    .business_hours {
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+
+      p {
+        margin-top: -10px;
+      }
+    }
+    h3 {
+      position: relative;
+      top: -6px;
+    }
+    p {
+      margin-left: 20px;
+      margin-top: 15px;
+    }
+  }
+
+  .button_wrapper {
+    display: flex;
+    position: relative;
+    left: -15px;
+    button {
+      border-radius: 8px;
+      margin-left: 18px;
+      font-weight: 600;
+      font-size: 16px;
+      color: white;
+      border: none;
+      background-color: $main100;
+      width: 248px;
+      height: 60px;
+    }
+    :hover {
+      background: $mainHover;
+    }
+  }
+}
+
+.division {
+  height: 14px;
+  color: gray;
+  display: flex;
+}
+
+.total {
+  margin-top: 10px;
+  height: 20px;
+  display: flex;
+  img {
+    position: relative;
+    top: 20px;
+    width: 20px;
+    height: 18px;
+  }
+
+  p {
+    margin-left: 6px;
+  }
+  h3 {
+    position: relative;
+    top: -3px;
+    margin-right: 10px;
+  }
+  a {
+    position: relative;
+    top: 15px;
+    margin-left: 10px;
+    color: #1273e4;
+  }
+}
+
+.basicInfo_wrapoer {
+  margin-bottom: 50px;
+  h2 {
+    margin-top: 30px;
+    height: 15px;
+  }
+}

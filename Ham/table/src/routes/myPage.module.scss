@@ -1,0 +1,220 @@
+@charset 'utf-8';
+@import "../scss/variables.scss";
+
+.form {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 50px;
+
+  button {
+    cursor: pointer;
+  }
+}
+.myPage_wrapper {
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  .aside_wrapper {
+    width: 246px;
+
+    .category_wrapper {
+      .active {
+        color: $main100;
+        background-color: #d9d9d981;
+      }
+      button {
+        width: 246px;
+        height: 46px;
+        display: flex;
+        font-size: 14.4px;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        border: none;
+        background-color: white;
+      }
+    }
+  }
+  .myPageInfo_wrapper {
+    font-size: 22.4px;
+    font-weight: bold;
+    margin-left: 100px;
+    p {
+      display: inline-block;
+      height: 10px;
+    }
+  }
+  .line {
+    width: 787.5px;
+    height: 1px;
+    background-color: black;
+  }
+  .noneItem_wrapper {
+    margin-top: 7%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    p {
+      color: gray;
+      font-weight: lighter;
+      font-size: 16px;
+    }
+  }
+
+  .ddip_card {
+    margin-top: 10px;
+    display: flex;
+    width: 787px;
+    height: 140px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 0px gray;
+    h3 {
+      display: inline-block;
+      height: 10px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    p {
+      display: inline-block;
+      height: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    span {
+      display: inline-block;
+      height: 10px;
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    .card_content {
+      flex: 1;
+      height: 100px;
+    }
+
+    .btn_wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: flex-end;
+      button {
+        cursor: pointer;
+        width: 85px;
+        height: 35px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .delete {
+        border: 1px solid $main100;
+        background-color: white;
+        color: $main100;
+      }
+      .delete:hover {
+        background-color: #f0f0f0;
+      }
+
+      .order {
+        color: white;
+        background-color: $main100;
+        border: none;
+      }
+
+      .order:hover {
+        background-color: $mainHover;
+      }
+
+      .update {
+        color: #1273e4;
+        background-color: white;
+        border: none;
+      }
+    }
+  }
+  .updateUser_wrapper {
+    display: flex;
+    flex-direction: column;
+    h2 {
+      height: 5px;
+      font-size: 18px;
+      font-weight: lighter;
+    }
+    p {
+      height: 10px;
+      font-size: 10px;
+      font-weight: lighter;
+    }
+    input {
+      margin-top: 20px;
+      font-size: 14px;
+      height: 56px;
+      width: 787.5px;
+    }
+    button {
+      align-self: center;
+      margin-top: 20px;
+      width: 469px;
+      height: 44px;
+      border-radius: 4px;
+      background-color: $main100;
+      border: none;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+    }
+  }
+  .ddip_card > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+  }
+}
+.infoUpdate {
+  display: flex;
+  flex-direction: column;
+  .userInfo_wrapper {
+    p {
+      width: 150px;
+      font-weight: lighter;
+      font-size: 22.4px;
+    }
+    span {
+      margin-left: 150px;
+      font-weight: lighter;
+      color: gray;
+    }
+    button {
+      margin-left: 150px;
+      width: 132px;
+      height: 44px;
+      border-radius: 4px;
+      background-color: $main100;
+      border: none;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    input {
+      margin-left: 150px;
+      width: 333px;
+      height: 46px;
+      font-size: 14px;
+    }
+  }
+  .update_button {
+    margin-top: 20px;
+    align-self: center;
+    width: 340px;
+    height: 44px;
+    border-radius: 4px;
+    border: none;
+    background-color: $main100;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+  }
+}

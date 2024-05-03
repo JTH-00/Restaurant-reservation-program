@@ -1,0 +1,53 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+.form {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 55px;
+  margin-bottom: 10px;
+  h1 {
+    position: relative;
+    top: -20px;
+    left: 30px;
+  }
+}
+
+.userReview_flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  width: 78%;
+}
+
+.logo {
+  position: relative;
+  margin-top: 100px;
+  left: 100px;
+  width: 205px;
+  height: 41.43px;
+  .inner_logo {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+  img {
+    position: absolute;
+  }
+}
+
+.commend_wrapper {
+  position: relative;
+  left: 40px;
+  display: flex;
+  margin-top: 15px;
+  h2 {
+    color: $main100;
+  }
+  p {
+    position: relative;
+    top: 12px;
+  }
+}

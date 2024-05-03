@@ -1,0 +1,47 @@
+@charset "utf-8";
+@import "../../../scss/variables.scss";
+
+.reviewBox_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  margin-left: 31px;
+  background: #fafafa;
+  width: 486px;
+  height: 153px;
+
+  .userDetail {
+    position: relative;
+    top: -20px;
+    margin-left: 20px;
+    width: 66px;
+    height: 33px;
+    h3 {
+      font-size: 14px;
+      width: 44px;
+      height: 10px;
+      margin-left: 400px;
+    }
+    p {
+      font-size: 12px;
+      width: 66px;
+      height: 8px;
+      margin-left: 400px;
+    }
+  }
+}
+
+.userReview {
+  display: flex;
+  img {
+    height: 24px;
+    width: 24px;
+    margin-top: 25px;
+    margin-left: 25px;
+  }
+  p {
+    margin-left: 15px;
+    width: 400px;
+    height: 85px;
+  }
+}

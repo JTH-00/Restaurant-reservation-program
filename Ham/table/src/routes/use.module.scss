@@ -1,0 +1,150 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 55px;
+  margin-bottom: 10px;
+}
+
+.used_header {
+  width: 681px;
+  height: 50px;
+  border-bottom: 1px solid black;
+  margin-bottom: 10px;
+  h1 {
+    font-size: 20px;
+  }
+}
+
+.use_header {
+  display: flex;
+  select {
+    background-color: $main100;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    width: 67px;
+    height: 34px;
+    option {
+      text-align: center;
+      border: 1px solid black;
+      border-radius: 0%;
+      background-color: white;
+      color: black;
+    }
+  }
+}
+
+.day_wrapper {
+  margin-left: 315px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  height: 34px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  button {
+    font-size: 14px;
+    border: none;
+    background-color: white;
+  }
+}
+.calendar_wrapper {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 10px;
+  width: 350px;
+  height: 300px;
+  font-size: 14px;
+  font-weight: bold;
+
+  .calendar_button {
+    background-color: $main100;
+    border: none;
+    color: white;
+    width: 50px;
+    height: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    position: relative;
+    left: -150px;
+  }
+  .calendar_button:hover {
+    background-color: $mainHover;
+  }
+}
+.cardList_wrapper {
+  margin-top: 50px;
+
+  .useCard {
+    align-items: center;
+    width: 681px;
+    height: 180px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 0px gray;
+
+    .card_header {
+      margin-left: 15px;
+
+      span {
+        margin-top: 15px;
+        display: inline-block;
+        font-size: 17px;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.5);
+      }
+      a {
+        cursor: pointer;
+        margin-left: 10px;
+        font-size: 11px;
+        font-weight: lighter;
+        color: #1273e4;
+      }
+    }
+    .body_wrapper {
+      display: flex;
+      margin-top: 20px;
+      margin-left: 15px;
+      .card_img {
+        img {
+          margin-right: 20px;
+          width: 100px;
+          height: 100px;
+        }
+      }
+
+      .card_info {
+        flex: 2;
+        p {
+          margin: 0;
+        }
+        a {
+          cursor: pointer;
+          display: inline-block;
+          margin-top: 15px;
+          color: $main100;
+        }
+      }
+      button {
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 500;
+        width: 80px;
+        height: 20px;
+        border: none;
+        background-color: white;
+        color: $main100;
+        margin-top: 90px;
+      }
+    }
+  }
+}

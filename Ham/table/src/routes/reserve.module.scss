@@ -1,0 +1,98 @@
+@charset 'utf-8';
+@import "../scss/variables.scss";
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 50px;
+}
+.reserve_header {
+  width: 892px;
+  border-bottom: 1px solid black;
+  h1 {
+    font-size: 20px;
+    height: 20px;
+  }
+}
+
+.reserve_cardList {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .reserve_card {
+    margin-top: 10px;
+    display: flex;
+    width: 892px;
+    height: 200px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 0px gray;
+    h3 {
+      display: inline-block;
+      height: 10px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    p {
+      display: inline-block;
+      height: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    span {
+      display: inline-block;
+      height: 10px;
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    .card_content {
+      flex: 1;
+      margin-left: 10px;
+      h3 {
+        margin-top: 50px;
+      }
+      .content_detail {
+        margin-top: 10px;
+        height: 10px;
+        p {
+          font-size: 16px;
+          font-weight: bold;
+        }
+        span {
+          font-size: 16px;
+          font-weight: lighter;
+        }
+      }
+    }
+
+    .btn_wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: flex-end;
+      button {
+        cursor: pointer;
+        width: 100px;
+        height: 35px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+      }
+      .delete {
+        background-color: white;
+        color: $main100;
+      }
+
+      .update {
+        color: #1273e4;
+        background-color: white;
+      }
+    }
+  }
+}

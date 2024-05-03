@@ -1,0 +1,127 @@
+@charset "utf-8";
+@import "../../scss/variables.scss";
+
+.modal_wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 700px;
+  height: 300px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+.reserve_header {
+  display: flex;
+  justify-content: flex-start;
+  width: 600px;
+  height: 40px;
+  margin-top: 20px;
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+.reserve_body {
+  display: flex;
+  width: 600px;
+  height: 95px;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  .reserve_info {
+    position: relative;
+    top: -10px;
+    height: 75px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    p {
+      font-size: 16px;
+      font-weight: lighter;
+    }
+  }
+  .info_detail {
+    display: flex;
+    align-items: flex-start;
+
+    p {
+      margin-left: 10px;
+      font-size: 11px;
+      font-weight: lighter;
+      color: #808080;
+      span {
+        font-weight: bold;
+        color: black;
+      }
+    }
+  }
+
+  button {
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: white;
+    width: 150px;
+    height: 30px;
+    font-size: 14px;
+    font-weight: lighter;
+    img {
+      position: relative;
+      top: 2px;
+      margin-left: 10px;
+      border-radius: 0px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+.footer_wrapper {
+  margin-top: 30px;
+  background-color: white;
+  button {
+    width: 150px;
+    height: 50px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .confirm_button {
+    margin-left: 94px;
+    background-color: $main100;
+    color: white;
+    border: none;
+  }
+  .cancle_button {
+    background-color: white;
+    border: 1px solid $main100;
+    color: $main100;
+  }
+}
+.calender_warpper {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  // button {
+  //   background-color: $main100;
+  //   color: white;
+  //   font-size: 16px;
+  //   font-weight: bold;
+  //   border: none;
+  // }
+}
