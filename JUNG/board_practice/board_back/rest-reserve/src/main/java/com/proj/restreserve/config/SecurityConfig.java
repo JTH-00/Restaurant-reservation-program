@@ -15,6 +15,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +35,7 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)  //csrf 차단 == token 사용
+                .cors(AbstractHttpConfigurer::disable)
 
                 .exceptionHandling((exceptionHandling) -> //컨트롤러의 예외처리
                         exceptionHandling
@@ -39,10 +44,11 @@ public class SecurityConfig {
                 )
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션을 사용하지 않기 때문에 STATELESS로 설정
-                .authorizeHttpRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한을 설정
-                        .requestMatchers("/api/user/signup").permitAll() //사용자 전체 혀용
-                        .requestMatchers("/api/user/login").permitAll() //사용자 전체 혀용
-                        .requestMatchers("/api/user/{useremail}").hasAuthority("ROLE_ADMIN") //업주만 허용
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/api/user/signup","api/admin/signup").permitAll() //사용자 전체 혀용
+                        .requestMatchers("/api/user/login","api/admin/login").permitAll() //사용자 전체 혀용
+                        .requestMatchers("api/user/restaurant/{restaurantid}").permitAll()//레스토랑
+                        .requestMatchers("api/main").permitAll()//레스토랑
                         .anyRequest().authenticated() // 그 외 인증 없이 접근X
                 )
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {}); //filterChain 등록
@@ -51,6 +57,16 @@ public class SecurityConfig {
         return http.build();
     }
 
+    CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); // 허용할 origin
+            config.setAllowCredentials(true);
+            return config;
+        };
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
