@@ -1,0 +1,79 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  textarea {
+    font-size: 20px;
+    margin-top: 10px;
+    width: 800px;
+    height: 500px;
+  }
+}
+
+.board_title {
+  width: 1200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+
+  select {
+    width: 120px;
+    height: 30px;
+  }
+
+  input {
+    width: 800px;
+    height: 30px;
+  }
+}
+
+.board_body {
+  textarea {
+    width: 1200px;
+    height: 200px;
+  }
+}
+
+.category_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.writing_title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.writing_detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.writing_button {
+  width: 800px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  button {
+    margin-left: 30px;
+    width: 120px;
+    height: 50px;
+  }
+}

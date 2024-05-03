@@ -1,0 +1,58 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 55px;
+  margin-bottom: 10px;
+}
+
+.board_wrapper {
+  width: 1000px;
+  .board_header {
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    border-bottom: 1px solid black;
+  }
+  .board_body {
+    .board_title {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+      h3 {
+        height: 20px;
+        font-size: 20px;
+        font-weight: 500;
+      }
+      p {
+        color: #808080;
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+
+    .board_detail {
+      img {
+        width: 1000px;
+        height: 800px;
+      }
+    }
+  }
+  .board_footer {
+    background-color: white;
+    button {
+      cursor: pointer;
+      float: right;
+      width: 120px;
+      height: 46px;
+      border: none;
+      background-color: $main100;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+    }
+  }
+}
