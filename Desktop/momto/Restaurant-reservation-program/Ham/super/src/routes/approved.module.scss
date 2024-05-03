@@ -1,0 +1,88 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.approved_box {
+  display: flex;
+  width: 1000px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+.approved_title {
+  width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+// <p style={{ width: "135px" }}>승인요청일자</p>
+// <p style={{ width: "235px" }}>가맹점명</p>
+// <p style={{ width: "130px" }}>카테고리</p>
+// <p style={{ width: "110px" }}>분위기</p>
+// <p style={{ width: "290px" }}>전화번호</p>
+
+.approved_innerBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  width: 900px;
+  font-size: 16px;
+  font-weight: bold;
+  height: 90px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  .first {
+    width: 135px;
+  }
+  .second {
+    width: 235px;
+  }
+  .third {
+    width: 130px;
+  }
+  .four {
+    width: 110px;
+  }
+  .five {
+    width: 290px;
+  }
+}
+
+.dropdown_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  width: 900px;
+  background-color: #ededed;
+}
+
+.dropdown_title {
+  display: flex;
+  p {
+    margin-left: 30px;
+  }
+}
+
+.dropdown_detail {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  width: 800px;
+  margin-left: 50px;
+}

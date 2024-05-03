@@ -1,0 +1,80 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+.form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 55px;
+  margin-bottom: 10px;
+  .submit_button {
+    width: 274px;
+    height: 44px;
+    background-color: $main100;
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+}
+
+.storeManage_header {
+  text-align: center;
+  width: 800px;
+  border-bottom: 1px solid black;
+}
+
+.input_wrapper {
+  margin-top: 40px;
+  display: flex;
+  p {
+    width: 120px;
+    font-size: 14px;
+  }
+
+  input {
+    margin-left: 159px;
+    background-color: white;
+    width: 350px;
+    height: 50px;
+    border: 1px solid #d9d9d9;
+  }
+  input:focus {
+    outline: none;
+  }
+
+  button {
+    cursor: pointer;
+    margin-left: 159px;
+    width: 350px;
+    height: 50px;
+    border: 1px solid #d9d9d9;
+    background-color: white;
+  }
+  select {
+    margin-left: 159px;
+    background-color: white;
+    width: 350px;
+    height: 50px;
+    border: 1px solid #d9d9d9;
+    text-align: center;
+  }
+  .cooktime_warpper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 159px;
+    width: 350px;
+    height: 50px;
+
+    input {
+      margin-left: 10px;
+      margin-right: 10px;
+      width: 60px;
+      height: 34px;
+      text-align: center;
+    }
+  }
+}
