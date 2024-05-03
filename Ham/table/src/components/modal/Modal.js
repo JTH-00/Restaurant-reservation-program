@@ -18,6 +18,7 @@ const Modal = ({ modalData, setIsOpen }) => {
     [modalData[5], "실제 음식의 사진"],
     [modalData[5], "매장의 분위기"],
   ];
+
   const token = localStorage.getItem("token");
   const onChangeHandle = (e) => {
     setInput(e.target.value);
@@ -49,8 +50,7 @@ const Modal = ({ modalData, setIsOpen }) => {
     try {
       const jsonData = {
         content: input,
-        date: date,
-        visit: "1",
+        scope: rating,
       };
       formData.append(
         "reviewDto",
@@ -71,6 +71,7 @@ const Modal = ({ modalData, setIsOpen }) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/file",
           },
+          params: { paymentid: "1" },
         }
       );
       console.log(response.data);
@@ -83,10 +84,6 @@ const Modal = ({ modalData, setIsOpen }) => {
     const formData = new FormData();
     const jsonData = {
       content: input,
-      date: date,
-      visit: "1",
-      reportrestaurantid: 1,
-      user: "사업자",
     };
 
     formData.append(

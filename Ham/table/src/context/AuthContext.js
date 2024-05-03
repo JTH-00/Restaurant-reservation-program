@@ -45,16 +45,16 @@ export const AuthProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      const response = await axios.post(
-        `/api/user/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data);
+      // const response = await axios.post(
+      //   `/api/user/logout`,
+      //   {},
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+      // console.log(response.data);
       setUserId(null);
       setUser(null);
       localStorage.clear();
