@@ -1,0 +1,68 @@
+@charset "utf-8";
+@import "../../scss/variables.scss";
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.alarm_title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.alarm_detail {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  height: 50px;
+  margin-bottom: 10px;
+  .redCircle {
+    width: 8px;
+    height: 8px;
+    border-radius: 100px;
+    background-color: $main100;
+    margin-right: 10px;
+  }
+  .left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 1px solid black;
+    width: 276px;
+  }
+  .mid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 1px solid black;
+    width: 279px;
+  }
+  .right {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px solid black;
+    width: 345px;
+    flex-direction: row;
+
+    button {
+      background-color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border: 1px solid black;
+      width: 75px;
+      height: 30px;
+    }
+  }
+}

@@ -1,0 +1,94 @@
+@charset "utf-8";
+@import "../scss/variables.scss";
+
+.form {
+  display: flex;
+  margin-left: 25%;
+  width: 800px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 55px;
+  margin-bottom: 10px;
+}
+
+.SignUp_header {
+  h1 {
+    text-align: center;
+    font-size: 32px;
+  }
+  a {
+    cursor: pointer;
+    font-size: 12px;
+    color: #1273e4;
+  }
+}
+
+.line {
+  margin-top: 15px;
+  width: 800px;
+  height: 1px;
+  background-color: black;
+}
+
+.input_wrapper {
+  margin-top: 40px;
+  display: flex;
+  p {
+    width: 120px;
+    font-size: 14px;
+  }
+
+  input {
+    margin-left: 159px;
+    width: 350px;
+    height: 50px;
+    border: 1px solid #d9d9d9;
+  }
+  input:focus {
+    outline: none;
+  }
+
+  button {
+    cursor: pointer;
+    position: relative;
+    top: 1px;
+    margin-left: 66px;
+    width: 100px;
+    height: 50px;
+    color: $main100;
+    background: none;
+    border: 1px solid $main100;
+  }
+}
+
+.imgInput_wrapper {
+  margin-top: 40px;
+  display: flex;
+  p {
+    width: 120px;
+    font-size: 14px;
+  }
+
+  input {
+    margin-left: 159px;
+    width: 350px;
+    height: 50px;
+  }
+  input:focus {
+    outline: none;
+  }
+}
+.signUp_button {
+  cursor: pointer;
+  margin-top: 100px;
+  margin-left: 260px;
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  width: 240px;
+  height: 44px;
+  border: none;
+  background-color: $main100;
+  color: white;
+}

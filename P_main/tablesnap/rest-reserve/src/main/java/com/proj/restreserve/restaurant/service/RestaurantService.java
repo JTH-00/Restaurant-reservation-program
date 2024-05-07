@@ -293,8 +293,35 @@ public class RestaurantService {
         return selectRestaurantModifyDto;
     }
 
-    public List<RestaurantDto> restaurantAll() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
+    public List<RestaurantDto> restaurantAll(String category, String vibe,String address) {
+        List<Restaurant> restaurants;
+
+        if (category != null && vibe != null && address != null) {
+            // Filter restaurants by category, vibe, and address
+            restaurants = restaurantRepository.findByCategoryAndVibeAndAddress(category, vibe, address);
+        } else if (category != null && address != null) {
+            // Filter restaurants by category and address
+            restaurants = restaurantRepository.findByCategoryAndAddress(category, address);
+        } else if (vibe != null && address != null) {
+            // Filter restaurants by vibe and address
+            restaurants = restaurantRepository.findByVibeAndAddress(vibe, address);
+        } else if (category != null && vibe != null) {
+            // Filter restaurants by category and vibe
+            restaurants = restaurantRepository.findByCategoryAndVibe(category, vibe);
+        } else if (category != null) {
+            // Filter restaurants by category
+            restaurants = restaurantRepository.findByCategory(category);
+        } else if (vibe != null) {
+            // Filter restaurants by vibe
+            restaurants = restaurantRepository.findByVibe(vibe);
+        } else if (address != null) {
+            // Filter restaurants by address
+            restaurants = restaurantRepository.findByAddress(address);
+        } else {
+            // Fetch all restaurants if no filters are provided
+            restaurants = restaurantRepository.findAll();
+        }
+
         return restaurants.stream().map(restaurant -> {
             RestaurantDto restaurantDto = new RestaurantDto();
             restaurantDto.setRestaurantid(restaurant.getRestaurantid());

@@ -20,6 +20,8 @@ public class RestaurantDto {
     private Boolean ban;
     private String vibe;
     private String address;
+    private int reviewcount;
     private String userid;
     private List<String> restaurantimageLinks;
 }
+

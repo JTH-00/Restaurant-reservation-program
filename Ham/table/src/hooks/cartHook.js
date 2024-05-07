@@ -49,7 +49,8 @@ export const useCartHook = () => {
           params: params,
         }
       );
-      return response.data;
+
+      return getCartListHook();
     } catch (err) {
       return err;
     }
@@ -65,6 +66,7 @@ export const useCartHook = () => {
         },
         params: params,
       });
+      getCartListHook();
       return response.data;
     } catch (err) {
       return err.response.data;

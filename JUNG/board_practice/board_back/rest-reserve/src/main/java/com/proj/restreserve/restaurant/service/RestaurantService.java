@@ -148,8 +148,22 @@ public class RestaurantService {
     }
 
 
-    public List<RestaurantDto> restaurantAll() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
+    public List<RestaurantDto> restaurantAll(String category, String vibe) {
+        List<Restaurant> restaurants;
+
+        if (category != null && vibe != null) {
+            // Filter restaurants by both category and vibe
+            restaurants = restaurantRepository.findByCategoryAndVibe(category, vibe);
+        } else if (category != null) {
+            // Filter restaurants by category
+            restaurants = restaurantRepository.findByCategory(category);
+        } else if (vibe != null) {
+            // Filter restaurants by vibe
+            restaurants = restaurantRepository.findByVibe(vibe);
+        } else {
+            // Fetch all restaurants if no filters are provided
+            restaurants = restaurantRepository.findAll();
+        }
         return restaurants.stream().map(restaurant -> {
             RestaurantDto restaurantDto = new RestaurantDto();
             restaurantDto.setRestaurantid(restaurant.getRestaurantid());
@@ -159,6 +173,7 @@ public class RestaurantService {
             restaurantDto.setContent(restaurant.getContent());
             restaurantDto.setOpentime(restaurant.getOpentime());
             restaurantDto.setClosetime(restaurant.getClosetime());
+            restaurantDto.setReviewcount(restaurant.getReviewcount());
 
             // 이미지 파일들의 정보 가져오기
             List<String> imageLinks = restaurant.getRestaurantimages().stream()

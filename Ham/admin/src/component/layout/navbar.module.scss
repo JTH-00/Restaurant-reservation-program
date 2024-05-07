@@ -1,0 +1,234 @@
+@charset "utf-8";
+@import "../../scss/variables.scss";
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 55px;
+  margin-bottom: 10px;
+  a {
+    text-decoration-line: none;
+    color: black;
+  }
+}
+.navBar_wrapper {
+  width: 1200px;
+}
+
+.service_wrapper {
+  width: 1200px;
+  justify-content: end;
+  flex: 1;
+  display: flex;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  .redText {
+    color: $main100;
+  }
+  .line {
+    margin-left: 10px;
+    background-color: $main100;
+    width: 1px;
+    height: 20px;
+  }
+  button {
+    cursor: pointer;
+    position: relative;
+    top: 11px;
+    margin-left: 10px;
+    border: none;
+    background-color: white;
+    font-size: 12px;
+    font-weight: bold;
+  }
+}
+
+.header_wrapper {
+  display: flex;
+  justify-content: space-between;
+  height: 70.61px;
+}
+
+.logo_wrapper {
+  position: relative;
+  width: 205px;
+  height: 41.43px;
+  .inner_logo {
+    position: absolute;
+    top: 2px;
+    left: 5px;
+  }
+  img {
+    position: absolute;
+  }
+  p {
+    position: absolute;
+    left: 60px;
+    top: -15px;
+    height: 10px;
+    font-size: 24px;
+    color: $main100;
+    letter-spacing: 0.02em;
+    font-weight: 600;
+  }
+}
+.cart_inner {
+  position: relative;
+  span {
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    display: inline-block;
+    text-align: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 100px;
+    background-color: $main100;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+  }
+}
+.switch_wrapper {
+  display: flex;
+  justify-content: center;
+  span {
+    position: relative;
+    top: 5px;
+    left: -10px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  [type="checkbox"] {
+    appearance: none;
+    position: relative;
+    border: max(2px, 0.1em) solid gray;
+    border-radius: 50px;
+    width: 100px;
+    height: 40px;
+  }
+
+  [type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    margin-top: 3px;
+    border-radius: 50%;
+    transform: scale(0.8);
+    background-color: gray;
+    transition: left 200ms linear;
+  }
+
+  [type="checkbox"]:checked {
+    background-color: white;
+    border-color: #d9d9d9;
+  }
+
+  [type="checkbox"]:checked::before {
+    background-color: $main100;
+    left: 4.5em;
+  }
+
+  [type="checkbox"]:disabled {
+    border-color: black;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  [type="checkbox"]:disabled:before {
+    background-color: black;
+  }
+
+  [type="checkbox"]:disabled + span {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  [type="checkbox"]:focus-visible {
+    outline-offset: max(2px, 0.1em);
+    outline: max(2px, 0.1em) solid tomato;
+  }
+
+  [type="checkbox"]:enabled:hover {
+    box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+  }
+
+  /* Global CSS */
+  body {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  fieldset {
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+.nav_wrapper {
+  height: 70px;
+  a {
+    cursor: pointer;
+    margin-left: 30px;
+  }
+}
+
+.ul_wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 1000px;
+  margin-bottom: 30px;
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.02em;
+
+  img {
+    position: relative;
+    top: 1px;
+  }
+  a {
+    cursor: pointer;
+  }
+  button {
+    font-weight: 600;
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.02em;
+    background-color: white;
+    background: none;
+    border: none;
+  }
+}
+
+.box_shadow {
+  height: 1.24%;
+  width: 100%;
+  top: 98.76%;
+  right: 0;
+  bottom: 0;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.01);
+  box-sizing: border-box;
+}

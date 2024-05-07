@@ -49,13 +49,15 @@ public class MyPageService{
         return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
     }
 
-/*    @Transactional
-    public List<VisitDto> MyRegistInfo(){
+    @Transactional
+    public Page<VisitDto> MyRegistInfo(int page, int pagesize){
 
         User user = getCurrentUser();
-        List<Visit> visits = visitRepository.findByUser(user);
+        Pageable pageable = PageRequest.of(page-1, pagesize);
 
-        return visits.stream().map(visit -> {
+        Page<Visit> visits = visitRepository.findByUser(user,pageable);
+
+        return visits.map(visit -> {
             VisitDto visitDto = new VisitDto();
             visitDto.setVisitid(visit.getVisitid());
             visitDto.setVisittime(visit.getVisittime());
@@ -69,8 +71,8 @@ public class MyPageService{
             }
 
             return visitDto;
-        }).collect(Collectors.toList());
-    }*/
+        });
+    }
 
     public Page<FavoritesDto> Myfavorites(int page, int pagesize) {
 

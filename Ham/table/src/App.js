@@ -13,7 +13,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Inform from "./routes/Inform";
 import BoardDetail from "./routes/BoardDetail";
 import RestaurantList from "./routes/RestaurantList";
-
+import { CartProvider } from "./context/CartContext";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -23,7 +23,6 @@ const router = createBrowserRouter([
         path: "/",
         element: <Main />,
       },
-
       {
         path: "/login",
         element: <Login />,
@@ -38,7 +37,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/cart/:user",
-        element: <Cart />,
+        element: (
+          <CartProvider>
+            <Cart />
+          </CartProvider>
+        ),
       },
       {
         path: "/myPage/:user",

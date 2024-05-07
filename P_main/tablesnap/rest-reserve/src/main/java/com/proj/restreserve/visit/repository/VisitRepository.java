@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface VisitRepository extends JpaRepository <Visit,String> {
-    List<Visit> findByUser(User user);
+    Page<Visit> findByUser(User user,Pageable pageable);
     Boolean existsByUserAndVisittime(User user, LocalDateTime visittime);
     //방문 예약 신청 리스트
     Page<Visit> findByVisitcheckFalseAndRestaurant(Restaurant restaurant, Pageable pageable);

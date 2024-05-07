@@ -37,6 +37,7 @@ export const useInform = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data);
       return response.data;
     } catch (err) {
       console.error(err);
