@@ -35,4 +35,6 @@ public class Menu {
     @JoinColumn(name="restaurantid", nullable = false)
     private Restaurant restaurant;
 
+    @Column(name="deletecheck", nullable = false)
+    private Boolean deletecheck;
 }

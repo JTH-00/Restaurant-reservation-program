@@ -55,7 +55,7 @@ public class MenuService {
     @Transactional(readOnly = true)
     public MenuAndCategoryDto findMenu(String restaurantid){
         Restaurant restaurant =  this.restaurantRepository.getReferenceById(restaurantid);
-        List<Menu> menuList = this.menuRepository.findByRestaurant(restaurant);
+        List<Menu> menuList = this.menuRepository.findByRestaurantAndDeletecheckFalse(restaurant);
 
         Set<MenuCategoryDto> categoryList  = new HashSet<>();//총 카테고리를 저장(메뉴를 조회하면서 카테고리를 확인 후 보관, 중복x)
         List<SelectMenuDto> selectMenuDtoList = new ArrayList<>();//총 메뉴 저장

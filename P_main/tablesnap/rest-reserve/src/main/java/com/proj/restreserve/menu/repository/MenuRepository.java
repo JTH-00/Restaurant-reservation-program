@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu,String>{
         @EntityGraph(attributePaths = {"menuimages"})
-        List<Menu> findByRestaurant(Restaurant restaurant);
+        List<Menu> findByRestaurantAndDeletecheckFalse(Restaurant restaurant);
 }

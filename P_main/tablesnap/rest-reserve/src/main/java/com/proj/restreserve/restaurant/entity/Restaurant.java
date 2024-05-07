@@ -2,6 +2,7 @@ package com.proj.restreserve.restaurant.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.proj.restreserve.menu.entity.Menu;
 import com.proj.restreserve.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
