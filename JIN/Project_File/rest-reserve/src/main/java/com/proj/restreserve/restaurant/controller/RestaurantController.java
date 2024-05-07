@@ -2,12 +2,13 @@ package com.proj.restreserve.restaurant.controller;
 
 import com.proj.restreserve.detailpage.dto.DetailPageDto;
 import com.proj.restreserve.detailpage.service.DetailPageService;
+import com.proj.restreserve.menu.dto.MenuDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
+import com.proj.restreserve.restaurant.dto.SelectRestaurantModifyDto;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.service.RestaurantService;
 import com.proj.restreserve.review.dto.ReviewAndReplyDto;
-import com.proj.restreserve.review.dto.SelectReviewDto;
 import com.proj.restreserve.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,50 +38,69 @@ public class RestaurantController {
         restaurantService.addFavoriteRestaurant(restaurantid);
         return ResponseEntity.ok("Favorite restaurant added successfully.");
     }
+    @GetMapping(value = "/admin/checkpermit")
+    public ResponseEntity<Restaurant> checkPermit() {//가게 관리, 가게 승인여부 체크하는 페이지
+        return ResponseEntity.ok(restaurantService.checkPermit());
+    }
 
-    @PostMapping(value = "/admin/registration", consumes = {"multipart/form-data"})
-    public ResponseEntity<Restaurant> registrestaurant(
+    @PostMapping(value = "/registration", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> registrestaurant(
             @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
-            @RequestPart(value = "files",required = false) List<MultipartFile> files) {
-        return ResponseEntity.ok(restaurantService.regist(restaurantDto, files));
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestPart(value = "menuDtos") List<MenuDto> menuDtos,
+            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles) {
+        restaurantService.regist(restaurantDto, files, menuDtos, menuImageFiles);
+        return ResponseEntity.ok("가게 및 메뉴 등록 성공");
     }
     @PutMapping(value = "/admin/modify/myrestaurant", consumes = {"multipart/form-data"})
     public ResponseEntity<RestaurantDto> modifyrestaurant(
-            @RequestParam(name="restaurantid") String restaurantid,
             @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
             @RequestPart(value = "files",required = false) List<MultipartFile> files,
+            @RequestPart(value = "deleteMenus" ,required = false) List<String> deleteMenus,
+            @RequestPart(value = "menuDtos", required = false) List<MenuDto> menuDtos,
+            @RequestPart(value = "menuFiles",required = false) List<MultipartFile> menufiles,
             @RequestPart List<String> deleteImageLinks) {
-        return ResponseEntity.ok(restaurantService.modifyRestaurant(restaurantid,restaurantDto, files,deleteImageLinks));
+        return ResponseEntity.ok(restaurantService.modifyRestaurant(restaurantDto,deleteMenus,menuDtos,menufiles, files,deleteImageLinks));
+    }
+    @GetMapping(value = "/admin/modify/myrestaurant")
+    public ResponseEntity<SelectRestaurantModifyDto> modifyrestaurant(){
+        return ResponseEntity.ok(restaurantService.selectRestaurantModifyDto());
     }
     @GetMapping("/main")
     public ResponseEntity<List<List<SelectRestaurantDto>>> showRestaurant(){
-        return ResponseEntity.ok(restaurantService.showMainPage());//레스토랑 상세 페이지
+        return ResponseEntity.ok(restaurantService.showMainPage());//레스토랑 메인 페이지
     }
     @GetMapping("/user/restaurant/{restaurantid}")
     public ResponseEntity<DetailPageDto> showRestaurant(@PathVariable String restaurantid){
-        //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
         return ResponseEntity.ok(detailPageService.pageload(restaurantid,1,2));//레스토랑 상세 페이지, 별점 상관없이 최신순
     }
 
     @GetMapping("/user/restaurant/review/{restaurantid}")
     public ResponseEntity<Page<ReviewAndReplyDto>> ReviewSortToRestaurant(
             @RequestParam(name="sort", required = false) String sort,
-            @PathVariable String restaurantid){//테스트용
-        return ResponseEntity.ok(reviewService.Myrestaurant(restaurantid,1,5,sort));
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @PathVariable String restaurantid){//상세페이지의 리뷰부분만 다시 정렬하는 용도
+        return ResponseEntity.ok(reviewService.sortReviews(restaurantid,page,5,sort));
     }
 
     @GetMapping("/admin/myreview")
-    public ResponseEntity<Page<ReviewAndReplyDto>> myRestaurantReview(){//로그인한 유저의 id로 레스토랑 검색후 반환
-        //scopecheck에 따라 별점높은순 보여주기 true = 적용, false는 기본 정렬로 (낮은 순도 추가 시 int타입으로 할 예정)
-        return ResponseEntity.ok(reviewService.getMyrestaurant(1,10,2));
+    public ResponseEntity<Page<ReviewAndReplyDto>> myRestaurantReview(@RequestParam(required = false, defaultValue = "1") int page){//로그인한 유저의 id로 레스토랑 검색후 반환
+        //scopecheck에 int값이 들어가는 부분은 1=별점 및 날짜순, 2= 날짜순, 3=답글 작성안된 날짜순(내림차순)
+        return ResponseEntity.ok(reviewService.getMyrestaurant(page,10,2));
         //정렬 방문,포장 합쳐서 날짜순
     }
     @GetMapping("/admin/myreview/sort")
     public ResponseEntity<Page<ReviewAndReplyDto>> sortMyRestaurantReview(
-             @RequestParam(name="sort", required = false) String sort){
-        return ResponseEntity.ok(reviewService.sortMyrestaurant(1, 10, sort));
+             @RequestParam(name="sort", required = false) String sort,
+             @RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(reviewService.sortMyrestaurant(page, 10, sort));
         //sort = {"scope","visit","visitReply,"payment","paymentReply"}로 둔상태 
         //scope = 방문,포장 합쳐서 별점높은순,날짜기준 내림차순, visit = 방문만 날짜기준 내림차순, payment = 포장만 날짜기준 내림차순,
         //visitReply=방문 답글 없는거만 날짜순, paymentReply=포장 답글 없는거만 날짜순, Default = 방문,포장 합쳐서 날짜기준 내림차순
+    }
+    @PostMapping("/admin/sales/{restaurantid}")
+    public ResponseEntity<String> changeSalesStatus(@PathVariable String restaurantid){
+        return ResponseEntity.ok(restaurantService.changeSales(restaurantid));
     }
 }

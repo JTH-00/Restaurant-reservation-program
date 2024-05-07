@@ -1,5 +1,6 @@
 package com.proj.restreserve.user.controller;
 
+import com.proj.restreserve.detailpage.service.SelectReservation;
 import com.proj.restreserve.restaurant.dto.FavoritesDto;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.dto.SelectReviewDto;
@@ -11,6 +12,7 @@ import com.proj.restreserve.user.service.MyPageService;
 import com.proj.restreserve.visit.dto.VisitDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +30,9 @@ public class MyPageController {
     private final MyPageService myPageService;
 
     private final ReviewService reviewService;
+    private final SelectReservation selectReservation;
 
-    @GetMapping("/mypage/use")
+/*    @GetMapping("/mypage/use")
     public ResponseEntity<List<VisitDto>> visitRestaur(){
 
         List<VisitDto> visitDtos = myPageService.MyRegistInfo().stream()
@@ -37,15 +40,15 @@ public class MyPageController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(visitDtos);
-    }
+    }*/
 
     @GetMapping("/mypage/like")
-    public ResponseEntity<List<FavoritesDto>> favoriterests(){
-        List<FavoritesDto> favoritesDtos = myPageService.Myfavorites();
+    public ResponseEntity<Page<FavoritesDto>> favoriterests(@RequestParam(required = false, defaultValue = "1") int page){
+        Page<FavoritesDto> favoritesDtos = myPageService.Myfavorites(page,10);
         return ResponseEntity.ok(favoritesDtos);
     }
 
-    @GetMapping("/mypage/reserve")
+/*    @GetMapping("/mypage/reserve")
     public ResponseEntity<List<VisitDto>> reserveRestaur(){
 
         List<VisitDto> visitDtos = myPageService.MyRegistInfo().stream()
@@ -53,12 +56,12 @@ public class MyPageController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(visitDtos);
-    }
+    }*/
 
     @GetMapping("/mypage/review")
-    public ResponseEntity<List<ReviewDto>> reviewRestaur(){
+    public ResponseEntity<Page<ReviewDto>> reviewRestaur(@RequestParam(required = false,defaultValue = "1") int page){
 
-        List<ReviewDto> reviewDtos = myPageService.MyReviewInfo();
+        Page<ReviewDto> reviewDtos = myPageService.MyReviewInfo(page,10);
 
         return ResponseEntity.ok(reviewDtos);
     }
@@ -115,5 +118,9 @@ public class MyPageController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+    @GetMapping(value = "/mypage/reserve")
+    public ResponseEntity<Page<Object>> showReservation(@RequestParam(required = false, defaultValue = "1") int page){
+        return ResponseEntity.ok(selectReservation.showReservation(page,10));
     }
 }

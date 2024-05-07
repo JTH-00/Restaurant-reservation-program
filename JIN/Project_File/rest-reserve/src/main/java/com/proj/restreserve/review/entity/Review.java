@@ -19,7 +19,6 @@ import java.util.List;
 public class Review {
     @Id
     @Column(name= "reviewid")
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String reviewid;
 
     @Column(name = "scope")

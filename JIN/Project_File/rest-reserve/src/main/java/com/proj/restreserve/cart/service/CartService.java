@@ -120,4 +120,12 @@ public class CartService {
         // CartMenu가 삭제된 후 Cart가 비었는지 확인, 비었다면 Cart 삭제
         checkAndDeleteCartIfEmpty(cartid);
     }
+    public void removeCart(String cartid) {
+        Cart cart=cartRepository.findByCartid(cartid);
+        List<CartMenu> cartMenus = cartMenuRepository.findByCart(cart);
+        for (CartMenu cartMenu : cartMenus) {
+            cartMenuRepository.delete(cartMenu);
+        }
+        cartRepository.deleteById(cartid);
+    }
 }

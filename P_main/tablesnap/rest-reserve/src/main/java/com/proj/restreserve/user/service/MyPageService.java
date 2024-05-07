@@ -10,6 +10,7 @@ import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.review.repository.ReviewRepository;
+import com.proj.restreserve.user.dto.SelectUserDto;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
@@ -17,6 +18,10 @@ import com.proj.restreserve.visit.entity.Visit;
 import com.proj.restreserve.visit.dto.VisitDto;
 import com.proj.restreserve.visit.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +41,7 @@ public class MyPageService{
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final FavoritesRepository favoritesRepository;
+    private final ModelMapper modelMapper;
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 현재 로그인한 사용자의 인증 정보를 가져옵니다.
@@ -43,7 +49,7 @@ public class MyPageService{
         return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
     }
 
-    @Transactional
+/*    @Transactional
     public List<VisitDto> MyRegistInfo(){
 
         User user = getCurrentUser();
@@ -64,29 +70,38 @@ public class MyPageService{
 
             return visitDto;
         }).collect(Collectors.toList());
-    }
+    }*/
 
-    public List<FavoritesDto> Myfavorites() {
+    public Page<FavoritesDto> Myfavorites(int page, int pagesize) {
 
         User user = getCurrentUser();
-        List<Favorites> favoritesList = favoritesRepository.findByUser(user);
-
-        return favoritesList.stream().map(favorite -> {
+        Pageable pageable = PageRequest.of(page-1, pagesize);
+       /* List<Favorites> favoritesList = favoritesRepository.findByUser(user);*/
+        Page<Favorites> favorites = favoritesRepository.findByUser(user, pageable);
+        /*return favoritesList.stream().map(favorite -> {
             FavoritesDto favoritesDto = new FavoritesDto();
             favoritesDto.setFavoritesid(favorite.getFavoritesid());
             favoritesDto.setUser(favorite.getUser());
             favoritesDto.setRestaurant(favorite.getRestaurant());
             return favoritesDto;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList());*/
+        return favorites.map(favorite -> {
+            FavoritesDto favoritesDto = new FavoritesDto();
+            favoritesDto.setFavoritesid(favorite.getFavoritesid());
+            favoritesDto.setUser(favorite.getUser());
+            favoritesDto.setRestaurant(favorite.getRestaurant());
+            return favoritesDto;
+        });
     }
 
     @Transactional
-    public List<ReviewDto> MyReviewInfo(){
+    public Page<ReviewDto> MyReviewInfo(int page, int pagesize){
 
         User user = getCurrentUser();
-        List<Review> reviews = reviewRepository.findByUser(user);
-
-        return reviews.stream().map(review -> {
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        /*List<Review> reviews = reviewRepository.findByUser(user);*/
+        Page<Review> reviewPage = reviewRepository.findByUser(user, pageable);
+/*        return reviews.stream().map(review -> {
             ReviewDto reviewDto = new ReviewDto();
             reviewDto.setReviewid(review.getReviewid());
             reviewDto.setScope(review.getScope());
@@ -101,7 +116,23 @@ public class MyPageService{
             reviewDto.setImageLinks(imageLinks);
 
             return reviewDto;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList());*/
+        return reviewPage.map(review -> {
+            ReviewDto reviewDto = new ReviewDto();
+            reviewDto.setReviewid(review.getReviewid());
+            reviewDto.setScope(review.getScope());
+            reviewDto.setContent(review.getContent());
+            reviewDto.setDate(review.getDate());
+            reviewDto.setUserid(review.getUser().getUserid());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = review.getReviewimages().stream()
+                    .map(ReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            reviewDto.setImageLinks(imageLinks);
+
+            return reviewDto;
+        });
     }
 
     @Transactional
@@ -153,5 +184,16 @@ public class MyPageService{
         user.setPassword(newPasswordHash);
         // 사용자 정보 저장
         userRepository.save(user);
+    }
+    @Transactional(readOnly = true)
+    public Page<SelectUserDto> showBannedUser(int page, int pagesize){
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<User> users = userRepository.findByBanTrue(pageable);
+
+        Page<SelectUserDto> userDtos = users.map(user -> {
+            SelectUserDto selectUserDto = modelMapper.map(user,SelectUserDto.class);
+            return selectUserDto;
+        });
+        return userDtos;
     }
 }

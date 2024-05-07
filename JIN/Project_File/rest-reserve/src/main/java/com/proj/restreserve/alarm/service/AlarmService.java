@@ -27,11 +27,12 @@ public class AlarmService {
         String useremail = authentication.getName();
         return userRepository.findByUseremail(useremail); // 로그인한 사용자의 이메일을 사용하여 사용자 정보를 조회합니다.
     }
-    public Alarm wirteAlarm(AlarmDto alarmDto,User user){
+    public Alarm wirteAlarm(AlarmDto alarmDto,String category,User user){
         Alarm alarm = new Alarm();
         alarm.setDate(LocalDate.now());
         alarm.setUrl(alarmDto.getUrl());
         alarm.setContent(alarmDto.getContent());
+        alarm.setCategory(category);
         alarm.setUser(user);
 
         return alarm;

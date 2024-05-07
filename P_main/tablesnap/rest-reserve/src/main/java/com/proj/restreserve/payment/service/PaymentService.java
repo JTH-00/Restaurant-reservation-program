@@ -1,5 +1,7 @@
 package com.proj.restreserve.payment.service;
 
+import com.proj.restreserve.alarm.dto.AlarmDto;
+import com.proj.restreserve.alarm.service.AlarmService;
 import com.proj.restreserve.cart.entity.Cart;
 import com.proj.restreserve.cart.entity.CartMenu;
 import com.proj.restreserve.cart.repository.CartMenuRepository;
@@ -16,9 +18,13 @@ import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.repository.RestaurantRepository;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import com.proj.restreserve.visit.entity.Visit;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,12 +32,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
     private final UserRepository userRepository;
-
     private final PaymentMenuRepository paymentMenuRepository;
     private final MenuRepository menuRepository;
     private final CartRepository cartRepository;
@@ -40,6 +46,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final CartService cartService;
     private final ModelMapper modelMapper;
+    private final AlarmService alarmService;
 
     public List<PaymentMenuDto> paymentMenusSet (String paymentid){
         List<PaymentMenu> paymentMenus = this.paymentMenuRepository.findByPayment_Paymentid(paymentid);
@@ -66,8 +73,12 @@ public class PaymentService {
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
         List<CartMenu> cartMenus = cartMenuRepository.findByCart(cart);
 
+        Restaurant restaurant = restaurantRepository.findById(restaurantid)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
         if (cartMenus.isEmpty()) {
             throw new RuntimeException("CartMenu is empty");
+        }else if(restaurant.getBan() || restaurant.getStopsales()){
+            throw new RuntimeException("해당 매장은 현재 영업 중이 아닙니다.");
         }
 
         double totalAmount = cartMenus.stream()
@@ -75,15 +86,22 @@ public class PaymentService {
                 .sum();
 
         // 결제 정보 생성 및 저장
+        String paymentid= UUID.randomUUID().toString();
+
         Payment payment = new Payment();
+        payment.setPaymentid(paymentid);
         payment.setTotalprice(String.valueOf(totalAmount));
         payment.setPaymentcheck(false);
         payment.setDay(LocalDate.now());
         payment.setUser(user);
-        Restaurant restaurant = restaurantRepository.findById(restaurantid)
-                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
         payment.setRestaurant(restaurant);
         paymentRepository.save(payment);
+
+        //알람을 해당 매장 업주에게 전송
+        AlarmDto alarmDto = new AlarmDto();
+        alarmDto.setContent(user.getUsername()+"님의 새로운 포장 주문이 들어왔습니다.");
+        alarmDto.setUrl("api/admin/restaurant/payment/refuse/"+paymentid);// 업주에게 알람 리스트에 사용가능한 거절 url제공
+        alarmService.wirteAlarm(alarmDto,"포장 예약",restaurant.getUser());//레스토랑 업주에게 보내는 알람
 
         // 결제 메뉴 정보 생성 및 저장
         for (CartMenu cartMenu : cartMenus) {
@@ -95,7 +113,40 @@ public class PaymentService {
         }
         cartService.removeCart(cartid);
     }
+    @Transactional(readOnly = true)
+    public Page<Payment> showPaymentReserve(int page, int pagesize){//포장 예약 신청 리스트
+        Pageable pageable = PageRequest.of(page,pagesize);
+        User user = getCurrentUser();
+        Restaurant restaurant = restaurantRepository.findByUser(user);
+        Page<Payment> payments;
+        if(restaurant!=null){
+            payments = paymentRepository.findByPaymentcheckFalseAndRestaurant(restaurant,pageable);
+        }else{
+            throw new RuntimeException("로그인한 유저의 매장정보가 없습니다.");
+        }
+        return payments;
+    }
 
+    @Transactional
+    public void refusePayment(String paymentid){//포장 예약 거절
+        Payment payment = paymentRepository.getReferenceById(paymentid);
+        //알람을 해당 매장 업주에게 전송
+        AlarmDto alarmDto = new AlarmDto();
+        alarmDto.setContent(payment.getUser().getUsername()+"님의 포장 주문이 거절되었어요.");
+        alarmService.wirteAlarm(alarmDto,"포장 예약",payment.getUser());//예약을 신청한 사용자에게 보내는 알람
+
+        paymentRepository.deleteById(paymentid);
+    }
+
+    @Transactional
+    public void checkPayment(String paymentid){//포장 수령 확인
+        Payment payment = paymentRepository.getReferenceById(paymentid);
+        payment.setPaymentcheck(true);
+
+        AlarmDto alarmDto = new AlarmDto();
+        alarmDto.setContent(payment.getUser().getUsername()+"님의 포장 주문이 확인되었어요.");
+        alarmService.wirteAlarm(alarmDto,"포장 예약",payment.getUser());//예약을 신청한 사용자에게 보내는 알람
+    }
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

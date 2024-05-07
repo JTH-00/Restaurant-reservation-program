@@ -19,6 +19,9 @@ import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +85,7 @@ public class ReportService {
                     String imageUrl = fileCURD.uploadImageToS3(file,useServiceName.get(0),fileName);//파일 업로드 파일,파일폴더명,파일일련번호
                     // 리뷰 이미지 정보 생성
                     ReportRestaurantImage reportRestaurantImage = new ReportRestaurantImage();
+                    reportRestaurantImage.setReportrestimageid(fileName);
                     reportRestaurantImage.setReportRestaurant(reportRestaurant);
                     reportRestaurantImage.setImagelink(imageUrl);
 
@@ -89,18 +94,9 @@ public class ReportService {
                 }
             }
         }
-
         // 리뷰 정보 저장
-        reportRestaurantRepository.save(reportRestaurant);
-
-        // 리뷰 이미지 정보 저장
-        for (ReportRestaurantImage reportRestaurantImage : reportRestaurantImages) {
-            reportRestaurantImage.setReportRestaurant(reportRestaurant); // 이미지 정보에 리뷰 정보 설정
-            reportRestaurantImageRepository.save(reportRestaurantImage);
-        }
-
         reportRestaurant.setReportrestaurantimages(reportRestaurantImages);
-        reportRestaurantRepository.save(reportRestaurant);//이미지 링크를 출력하기 위해 다시 save
+        reportRestaurantRepository.save(reportRestaurant);
 
         return reportRestaurant;
     }
@@ -136,6 +132,7 @@ public class ReportService {
 
                     // 리뷰 이미지 정보 생성
                     ReportReviewImage reportReviewImage = new ReportReviewImage();
+                    reportReviewImage.setReportreviewimageid(fileName);
                     reportReviewImage.setReportReview(reportReview);
                     reportReviewImage.setImagelink(imageUrl);
 
@@ -146,18 +143,141 @@ public class ReportService {
         }
 
         // 리뷰 정보 저장
-        reportReviewRepository.save(reportReview);
-
-        // 리뷰 이미지 정보 저장
-        for (ReportReviewImage reportReviewImage : reportReviewImages) {
-            reportReviewImage.setReportReview(reportReview); // 이미지 정보에 리뷰 정보 설정
-            reportReviewImageRepository.save(reportReviewImage);
-        }
-
         reportReview.setReportreviewimages(reportReviewImages);
-        reportReviewRepository.save(reportReview);//이미지 링크를 출력하기 위해 다시 save
+        reportReviewRepository.save(reportReview);
 
         return reportReview;
     }
+    public Page<ReportRestaurantDto> reportrestaurantAll(int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<ReportRestaurant> reportrestaurants = reportRestaurantRepository.findByReportrestcheck("미확인", pageable);
+/*        return reportrestaurants.stream().map(reportRestaurant -> {
+            ReportRestaurantDto reportRestaurantDto = new ReportRestaurantDto();
+            reportRestaurantDto.setRestaurant(reportRestaurant.getRestaurant());
+            reportRestaurantDto.setContent(reportRestaurant.getContent());
+            reportRestaurantDto.setDate(reportRestaurant.getDate());
+            reportRestaurantDto.setUser(reportRestaurant.getUser());
+            reportRestaurantDto.setReportrestcheck(reportRestaurant.getReportrestcheck());
 
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportRestaurant.getReportrestaurantimages().stream()
+                    .map(ReportRestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportRestaurantDto.setReportrestaurantimages(imageLinks);
+
+            return reportRestaurantDto;
+        }).collect(Collectors.toList());*/
+        return reportrestaurants.map(reportRestaurant -> {
+            ReportRestaurantDto reportRestaurantDto = new ReportRestaurantDto();
+            reportRestaurantDto.setRestaurant(reportRestaurant.getRestaurant());
+            reportRestaurantDto.setContent(reportRestaurant.getContent());
+            reportRestaurantDto.setDate(reportRestaurant.getDate());
+            reportRestaurantDto.setUser(reportRestaurant.getUser());
+            reportRestaurantDto.setReportrestcheck(reportRestaurant.getReportrestcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportRestaurant.getReportrestaurantimages().stream()
+                    .map(ReportRestaurantImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportRestaurantDto.setReportrestaurantimages(imageLinks);
+
+            return reportRestaurantDto;
+        });
+    }
+    public Page<ReportReviewDto> reportreviewAll(int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page-1,pagesize);
+        Page<ReportReview> reportreviews = reportReviewRepository.findByReportreviewcheck("미확인", pageable);
+/*        return reportreviews.stream().map(reportReview -> {
+            ReportReviewDto reportReviewDto = new ReportReviewDto();
+            reportReviewDto.setReview(reportReview.getReview());
+            reportReviewDto.setContent(reportReview.getContent());
+            reportReviewDto.setDate(reportReview.getDate());
+            reportReviewDto.setUser(reportReview.getUser());
+            reportReviewDto.setReportreviewcheck(reportReview.getReportreviewcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportReview.getReportreviewimages().stream()
+                    .map(ReportReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportReviewDto.setReportreviewimages(imageLinks);
+
+            return reportReviewDto;
+        }).collect(Collectors.toList());*/
+        return reportreviews.map(reportReview -> {
+            ReportReviewDto reportReviewDto = new ReportReviewDto();
+            reportReviewDto.setReview(reportReview.getReview());
+            reportReviewDto.setContent(reportReview.getContent());
+            reportReviewDto.setDate(reportReview.getDate());
+            reportReviewDto.setUser(reportReview.getUser());
+            reportReviewDto.setReportreviewcheck(reportReview.getReportreviewcheck());
+
+            // 이미지 파일들의 정보 가져오기
+            List<String> imageLinks = reportReview.getReportreviewimages().stream()
+                    .map(ReportReviewImage::getImagelink)
+                    .collect(Collectors.toList());
+            reportReviewDto.setReportreviewimages(imageLinks);
+
+            return reportReviewDto;
+        });
+    }
+
+    @Transactional
+    public void confirmReportRestaurant(String reportrestaurantid) {
+        ReportRestaurant reportRestaurant = reportRestaurantRepository.findById(reportrestaurantid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported restaurant not found"));
+        reportRestaurant.setReportrestcheck("확인");
+        reportRestaurantRepository.save(reportRestaurant);
+    }
+
+    @Transactional
+    public void blockRestaurant(String restaurantid,String reportrestaurantid) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantid)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        restaurant.setBan(true);
+        restaurantRepository.save(restaurant);
+        
+        ReportRestaurant reportRestaurant = reportRestaurantRepository.findById(reportrestaurantid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported restaurant not found"));
+        reportRestaurant.setReportrestcheck("차단");
+        reportRestaurantRepository.save(reportRestaurant);
+    }
+
+    @Transactional
+    public void confirmReportReview(String reportreviewid) {
+        ReportReview reportReview = reportReviewRepository.findById(reportreviewid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported review not found"));
+        reportReview.setReportreviewcheck("확인");
+        reportReviewRepository.save(reportReview);
+    }
+
+    @Transactional
+    public void deleteReview(String reportReviewid) {
+        // 로직: 해당 ID를 가진 리뷰를 삭제합니다.
+        ReportReview reportReview = reportReviewRepository.findById(reportReviewid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported review not found"));
+
+        // Review가 null이 아닌 경우 해당 Review와 연관된 모든 reportreview를 가져와서 삭제합니다.
+        Review review = reportReview.getReview();
+        if (review != null) {
+            List<ReportReview> reportReviews = reportReviewRepository.findByReviewReviewid(review.getReviewid());
+            for (ReportReview rr : reportReviews) {
+                reportReviewRepository.deleteById(rr.getReportreviewid());
+            }
+        }
+
+        // Review를 삭제합니다.
+        reviewRepository.deleteById(review.getReviewid());
+    }
+    @Transactional
+    public void blockUser(String userid,String reportReviewid) {
+        User user = userRepository.findById(userid)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with "));
+        user.setBan(true);
+        userRepository.save(user);
+
+        ReportReview reportReview = reportReviewRepository.findById(reportReviewid)
+                .orElseThrow(() -> new IllegalArgumentException("Reported review not found"));
+        reportReview.setReportreviewcheck("확인");
+        reportReviewRepository.save(reportReview);
+    }
 }
