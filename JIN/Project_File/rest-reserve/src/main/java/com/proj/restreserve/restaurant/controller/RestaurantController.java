@@ -2,7 +2,9 @@ package com.proj.restreserve.restaurant.controller;
 
 import com.proj.restreserve.detailpage.dto.DetailPageDto;
 import com.proj.restreserve.detailpage.service.DetailPageService;
+import com.proj.restreserve.menu.dto.MenuDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
+import com.proj.restreserve.restaurant.dto.SelectRestaurantModifyDto;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.service.RestaurantService;
@@ -41,19 +43,28 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.checkPermit());
     }
 
-    @PostMapping(value = "/admin/registration", consumes = {"multipart/form-data"})
-    public ResponseEntity<Restaurant> registrestaurant(
+    @PostMapping(value = "/registration", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> registrestaurant(
             @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
-            @RequestPart(value = "files",required = false) List<MultipartFile> files) {
-        return ResponseEntity.ok(restaurantService.regist(restaurantDto, files));
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestPart(value = "menuDtos") List<MenuDto> menuDtos,
+            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles) {
+        restaurantService.regist(restaurantDto, files, menuDtos, menuImageFiles);
+        return ResponseEntity.ok("가게 및 메뉴 등록 성공");
     }
     @PutMapping(value = "/admin/modify/myrestaurant", consumes = {"multipart/form-data"})
     public ResponseEntity<RestaurantDto> modifyrestaurant(
-            @RequestParam(name="restaurantid") String restaurantid,
             @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
             @RequestPart(value = "files",required = false) List<MultipartFile> files,
+            @RequestPart(value = "deleteMenus" ,required = false) List<String> deleteMenus,
+            @RequestPart(value = "menuDtos", required = false) List<MenuDto> menuDtos,
+            @RequestPart(value = "menuFiles",required = false) List<MultipartFile> menufiles,
             @RequestPart List<String> deleteImageLinks) {
-        return ResponseEntity.ok(restaurantService.modifyRestaurant(restaurantid,restaurantDto, files,deleteImageLinks));
+        return ResponseEntity.ok(restaurantService.modifyRestaurant(restaurantDto,deleteMenus,menuDtos,menufiles, files,deleteImageLinks));
+    }
+    @GetMapping(value = "/admin/modify/myrestaurant")
+    public ResponseEntity<SelectRestaurantModifyDto> modifyrestaurant(){
+        return ResponseEntity.ok(restaurantService.selectRestaurantModifyDto());
     }
     @GetMapping("/main")
     public ResponseEntity<List<List<SelectRestaurantDto>>> showRestaurant(){

@@ -2,8 +2,10 @@ package com.proj.restreserve.restaurant.controller;
 
 import com.proj.restreserve.detailpage.dto.DetailPageDto;
 import com.proj.restreserve.detailpage.service.DetailPageService;
+import com.proj.restreserve.menu.dto.MenuDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
+import com.proj.restreserve.restaurant.dto.SelectRestaurantModifyDto;
 import com.proj.restreserve.restaurant.service.RestaurantService;
 import com.proj.restreserve.review.dto.ReviewAndReplyDto;
 import com.proj.restreserve.review.service.ReviewService;
@@ -35,14 +37,19 @@ public class RestaurantController {
         restaurantService.addFavoriteRestaurant(restaurantid);
         return ResponseEntity.ok("Favorite restaurant added successfully.");
     }
-
+    @GetMapping(value = "/admin/modify/myrestaurant")
+    public ResponseEntity<SelectRestaurantModifyDto> modifyrestaurant(){
+        return ResponseEntity.ok(restaurantService.selectRestaurantModifyDto());
+    }
     @PutMapping(value = "/admin/modify/myrestaurant", consumes = {"multipart/form-data"})
     public ResponseEntity<RestaurantDto> modifyrestaurant(
-            @RequestParam(name="restaurantid") String restaurantid,
             @Valid @RequestPart("restaurantDto") RestaurantDto restaurantDto,
             @RequestPart(value = "files",required = false) List<MultipartFile> files,
+            @RequestPart(value = "deleteMenus" ,required = false) List<String> deleteMenus,
+            @RequestPart(value = "menuDtos", required = false) List<MenuDto> menuDtos,
+            @RequestPart(value = "menuFiles",required = false) List<MultipartFile> menufiles,
             @RequestPart List<String> deleteImageLinks) {
-        return ResponseEntity.ok(restaurantService.modifyRestaurant(restaurantid,restaurantDto, files,deleteImageLinks));
+        return ResponseEntity.ok(restaurantService.modifyRestaurant(restaurantDto,deleteMenus,menuDtos,menufiles, files,deleteImageLinks));
     }
   
     @GetMapping("/main")

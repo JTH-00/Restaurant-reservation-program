@@ -13,7 +13,7 @@ public class MenuDto {
     private String name;
     private String content;
     private String price;
-    private MenuCategory menuCategory;
+    private String menuCategoryname;
     private String imageLinks;
     private Restaurant restaurant;
 }

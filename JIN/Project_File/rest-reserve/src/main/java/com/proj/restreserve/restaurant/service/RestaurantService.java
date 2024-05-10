@@ -1,8 +1,17 @@
 package com.proj.restreserve.restaurant.service;
 
 import com.proj.restreserve.detailpage.service.FileCURD;
+import com.proj.restreserve.menu.dto.MenuDto;
+import com.proj.restreserve.menu.dto.SelectMenuDto;
+import com.proj.restreserve.menu.entity.Menu;
+import com.proj.restreserve.menu.entity.MenuImage;
+import com.proj.restreserve.menu.repository.MenuImageRepository;
+import com.proj.restreserve.menu.repository.MenuRepository;
+import com.proj.restreserve.menucategory.entity.MenuCategory;
+import com.proj.restreserve.menucategory.repository.MenuCategoryRepository;
 import com.proj.restreserve.restaurant.dto.RestaurantDto;
 import com.proj.restreserve.restaurant.dto.SelectRestaurantDto;
+import com.proj.restreserve.restaurant.dto.SelectRestaurantModifyDto;
 import com.proj.restreserve.restaurant.entity.Favorites;
 import com.proj.restreserve.restaurant.entity.Restaurant;
 import com.proj.restreserve.restaurant.entity.RestaurantImage;
@@ -35,6 +44,9 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final FavoritesRepository favoritesRepository;
+    private final MenuRepository menuRepository;
+    private final MenuImageRepository menuImageRepository;
+    private final MenuCategoryRepository menuCategoryRepository;
     private final FileCURD fileCURD;
     private final String useServiceName = "restaurant";//S3 버킷 폴더명
 
@@ -45,7 +57,8 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files) {
+    public Restaurant regist(RestaurantDto restaurantDto, List<MultipartFile> files,List<MenuDto> menuDtos,
+                             List<MultipartFile> menuImageFiles) {
         // 가게 정보 저장
         Restaurant restaurant = new Restaurant();
         // 사용자 인증 정보 가져오기
@@ -72,6 +85,8 @@ public class RestaurantService {
 
         List<RestaurantImage> restaurantImages = new ArrayList<>();
 
+
+
         // 각 파일에 대한 처리
         if(files!=null){
             for (MultipartFile file : files) {
@@ -95,13 +110,58 @@ public class RestaurantService {
             }
         }
         restaurant.setRestaurantimages(restaurantImages);
+
+        // 메뉴 및 메뉴 이미지 처리
+        if (menuDtos != null) {
+            for (int i = 0; i < menuDtos.size(); i++) {
+                MenuDto menuDto = menuDtos.get(i);
+                Menu menu = new Menu();
+                menu.setName(menuDto.getName());
+                menu.setContent(menuDto.getContent());
+                menu.setPrice(menuDto.getPrice());
+                menu.setRestaurant(restaurant);
+                MenuCategory menuCategory = menuCategoryRepository.findByName(menuDto.getMenuCategoryname()).orElseGet(() -> {
+                    MenuCategory newMenuCategory = new MenuCategory();
+                    newMenuCategory.setName(menuDto.getMenuCategoryname());
+                    menuCategoryRepository.save(newMenuCategory);
+                    return newMenuCategory;
+                });
+
+                menu.setMenuCategory(menuCategory);
+
+                // 메뉴 저장
+                menuRepository.save(menu);
+
+                // 메뉴 이미지 처리
+                List<MenuImage> menuImages = new ArrayList<>();
+                if (!menuImageFiles.isEmpty()) {
+                    MultipartFile imageFile = menuImageFiles.get(i);
+                    if (!imageFile.isEmpty()) {
+
+                        UUID uuid = UUID.randomUUID();
+                        String fileName = uuid.toString();
+                        String imageUrl = fileCURD.uploadImageToS3(imageFile, useServiceName, fileName);
+                        MenuImage menuImage = new MenuImage();
+                        menuImage.setMenuimageid(fileName);
+                        menuImage.setMenuimagelink(imageUrl);
+                        menuImage.setMenu(menu); // 메뉴와의 관계 설정
+                        menuImageRepository.save(menuImage);
+                        menuImages.add(menuImage);
+                    }
+                }
+            }
+        }
+
         return restaurant;
     }
     @Transactional
-    public RestaurantDto modifyRestaurant(String restaurantid,RestaurantDto restaurantDto, List<MultipartFile> files,List<String> deleteImageLinks) {
+    public RestaurantDto modifyRestaurant(RestaurantDto restaurantDto,
+                                          List<String> deleteMenus,
+                                          List<MenuDto> menuDtos, List<MultipartFile> menuImageFiles,
+                                          List<MultipartFile> files,List<String> deleteImageLinks) {
         // 가게 정보 불러오기
-        Restaurant restaurant = restaurantRepository.getReferenceById(restaurantid);
-        if(restaurant.getBan()||!restaurant.getUser().equals(getCurrentUser())){
+        Restaurant restaurant = restaurantRepository.findByUser(getCurrentUser());
+        if(restaurant.getBan()){
             throw new RuntimeException("올바른 접근이 아닙니다");
         }
         // 가게 정보 설정
@@ -135,7 +195,7 @@ public class RestaurantService {
         }
         if(files!=null) {
             // 각 파일에 대한 처리
-            for (MultipartFile file : files) {  
+            for (MultipartFile file : files) {
                 // 이미지 파일이 비어있지 않으면 처리
                 if (!file.isEmpty()) {
                     // 이미지 파일명 생성
@@ -155,6 +215,55 @@ public class RestaurantService {
                 }
             }
         }
+        //삭제한 메뉴의 삭제체크
+        //이용내역 조회 및 리뷰에 작성한 메뉴 등의 연결을 이유로 삭제대신 boolean타입으로 수정하면서 사용
+        if(deleteMenus !=null){
+            for(String menuid : deleteMenus){
+                Optional<Menu> menu = menuRepository.findById(menuid);
+                menu.get().setDeletecheck(true);
+            }
+        }
+
+        // 메뉴 및 메뉴 이미지 처리
+        if (menuDtos != null) {
+            for (int i = 0; i < menuDtos.size(); i++) {
+                MenuDto menuDto = menuDtos.get(i);
+                Menu menu = new Menu();
+                menu.setName(menuDto.getName());
+                menu.setContent(menuDto.getContent());
+                menu.setPrice(menuDto.getPrice());
+                menu.setRestaurant(restaurant);
+                MenuCategory menuCategory = menuCategoryRepository.findByName(menuDto.getMenuCategoryname()).orElseGet(() -> {
+                    MenuCategory newMenuCategory = new MenuCategory();
+                    newMenuCategory.setName(menuDto.getMenuCategoryname());
+                    menuCategoryRepository.save(newMenuCategory);
+                    return newMenuCategory;
+                });
+                menu.setMenuCategory(menuCategory);
+
+                // 메뉴 저장
+                menuRepository.save(menu);
+
+                // 메뉴 이미지 처리
+                List<MenuImage> menuImages = new ArrayList<>();
+                if (!menuImageFiles.isEmpty()) {
+                    MultipartFile imageFile = menuImageFiles.get(i);
+                    if (!imageFile.isEmpty()) {
+
+                        UUID uuid = UUID.randomUUID();
+                        String fileName = uuid.toString();
+                        String imageUrl = fileCURD.uploadImageToS3(imageFile, useServiceName, fileName);
+                        MenuImage menuImage = new MenuImage();
+                        menuImage.setMenuimageid(fileName);
+                        menuImage.setMenuimagelink(imageUrl);
+                        menuImage.setMenu(menu); // 메뉴와의 관계 설정
+                        menuImageRepository.save(menuImage);
+                        menuImages.add(menuImage);
+                    }
+                }
+            }
+        }
+
         RestaurantDto restaurantDto1 = this.modelMapper.map(restaurant,RestaurantDto.class);
         List<String> imagelink = restaurant.getRestaurantimages().stream()
                 .map(RestaurantImage::getImagelink)
@@ -163,7 +272,26 @@ public class RestaurantService {
 
         return restaurantDto1;
     }
+    @Transactional(readOnly = true)
+    public SelectRestaurantModifyDto selectRestaurantModifyDto(){//매장 수정하기 페이지 저장된 내용 불러오기
+        Restaurant restaurant = restaurantRepository.findByUser(getCurrentUser());
+        SelectRestaurantModifyDto selectRestaurantModifyDto =modelMapper.map(restaurant,SelectRestaurantModifyDto.class);
+        //매장 이미지 링크
+        List<String> imagelink = restaurant.getRestaurantimages().stream()
+                .map(RestaurantImage::getImagelink)
+                .collect(Collectors.toList());
+        selectRestaurantModifyDto.setRestaurantimageLinks(imagelink);
+        //매장 등록된 메뉴
+        List<Menu> menuList = menuRepository.findByRestaurantAndDeletecheckFalse(restaurant);
+        List<SelectMenuDto> menuDtos = menuList.stream().map(menu -> {
+            SelectMenuDto selectMenuDto= modelMapper.map(menu, SelectMenuDto.class);
+            selectMenuDto.setImagelink(menu.getMenuimages().getMenuimagelink());
+            return selectMenuDto;
+        }).collect(Collectors.toList());
+        selectRestaurantModifyDto.setMenuDtos(menuDtos);
 
+        return selectRestaurantModifyDto;
+    }
     public List<RestaurantDto> restaurantAll() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
         return restaurants.stream().map(restaurant -> {

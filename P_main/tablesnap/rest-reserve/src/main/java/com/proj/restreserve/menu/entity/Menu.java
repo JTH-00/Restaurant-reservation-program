@@ -35,6 +35,10 @@ public class Menu {
 
     @ManyToOne
     @JoinColumn(name="restaurantid", nullable = false)
+    @JsonBackReference
     private Restaurant restaurant;
+
+    @Column(name="deletecheck", nullable = false)
+    private Boolean deletecheck;
 
 }
