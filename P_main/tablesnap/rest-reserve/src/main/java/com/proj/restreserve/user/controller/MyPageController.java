@@ -1,10 +1,10 @@
 package com.proj.restreserve.user.controller;
 
 import com.proj.restreserve.detailpage.service.SelectReservation;
+import com.proj.restreserve.payment.dto.GroupedPaymentDto;
 import com.proj.restreserve.restaurant.dto.FavoritesDto;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.dto.SelectReviewDto;
-import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.service.ReviewService;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,8 +33,7 @@ public class MyPageController {
 
     @GetMapping("/mypage/use")
     public ResponseEntity<Page<VisitDto>> visitRestaur(@RequestParam(required = false, defaultValue = "1") int page){
-        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10)
-                .filter(visitDto -> visitDto.getVisitcheck());
+        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10);
 
         return ResponseEntity.ok(visitDtos);
     }
@@ -46,12 +44,11 @@ public class MyPageController {
         return ResponseEntity.ok(favoritesDtos);
     }
 
-    @GetMapping("/mypage/reserve")
-    public ResponseEntity<Page<VisitDto>> useRestaur(@RequestParam(required = false, defaultValue = "1") int page){
-        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10)
-                .filter(visitDto -> !visitDto.getVisitcheck());
+    @GetMapping("/mypage/payment")
+    public ResponseEntity<Page<GroupedPaymentDto>> paymentRestaur(@RequestParam(required = false, defaultValue = "1") int page) {
+        Page<GroupedPaymentDto> paymentMenuDtos = myPageService.MyPaymentInfo(page, 10);
 
-        return ResponseEntity.ok(visitDtos);
+        return ResponseEntity.ok(paymentMenuDtos);
     }
 
     @GetMapping("/mypage/review")
