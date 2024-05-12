@@ -5,7 +5,6 @@ import com.proj.restreserve.businessnumber.entity.BusinessNumber;
 import com.proj.restreserve.businessnumber.repository.BusinessNumberRepository;
 import com.proj.restreserve.detailpage.service.FileCURD;
 import com.proj.restreserve.jwt.SecurityUtil;
-import com.proj.restreserve.restaurant.entity.RestaurantImage;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.Role;
 import com.proj.restreserve.user.entity.User;
@@ -32,8 +31,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final BusinessNumberRepository businessNumberRepository;
     private final FileCURD fileCURD;
-
-    private final String useServiceName = "restaurant";//S3 버킷 폴더명
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Transactional
@@ -65,19 +62,20 @@ public class UserService {
         businessNumber.setBusinessid(userDto.getBusinessid());
 
         // 이미지 파일 저장
-        if (files != null) {
+        if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
-                    // 이미지 파일명 생성
                     UUID uuid = UUID.randomUUID();
-                    String fileName = uuid.toString();
-                    String imageUrl = fileCURD.uploadImageToS3(file,useServiceName,fileName);//파일 업로드 파일,폴더명,파일일련번호
+                    String fileName = uuid.toString() + "_" + file.getOriginalFilename(); // UUID와 원본 파일 이름 사용
+
+                    String imageUrl = fileCURD.uploadImageToS3(file, "business", fileName); // S3에 파일 업로드 후 URL 획득
 
                     // BusinessNumber에 이미지 링크 저장
                     businessNumber.setImagelink(imageUrl);
                 }
             }
         }
+
         // BusinessNumber 저장
         businessNumber = businessNumberRepository.save(businessNumber);
 
