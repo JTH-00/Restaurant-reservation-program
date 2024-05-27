@@ -57,7 +57,7 @@ public class MyPageController {
     @Operation(summary = "방문 예약 이용내역 조회", description = "자신의 방문예약 이용내역을 리스트로 조회합니다.<br>" +
             "파라미터로 현재 페이지 수를 받으며, 없을 시 1페이지로 고정됩니다.")
     public ResponseEntity<Page<GroupedPaymentDto>> paymentRestaur(@RequestParam(required = false, defaultValue = "1") int page){
-        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10)
+        Page<GroupedPaymentDto> paymentMenuDtos  = myPageService.MyPaymentInfo(page,10);
         return ResponseEntity.ok(paymentMenuDtos);
     }
 
