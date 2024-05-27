@@ -16,6 +16,8 @@ import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import com.proj.restreserve.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
+@Tag(name= "User", description = "사용자 로그인 및 신고 API")
 public class UserController {
 
     private final TokenProvider tokenProvider;
@@ -47,12 +50,15 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/signup")
+    @Operation(summary = "사용자 회원가입", description = "UserDto로 자신의 정보를 작성한뒤 저장하며,<br>" +
+            "그 뒤 회원가입을 완료합니다.")
     public ResponseEntity<String> signup(@Valid @RequestBody UserDto userDto) {
         userService.signup(userDto);
         return ResponseEntity.ok().body("회원가입 완료");
     }
 
     @PostMapping("/login")
+    @Operation(summary = "사용자 로그인", description = "아이디와 비밀번호를 사용해 로그인합니다.")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody UserDto userDto) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
@@ -81,18 +87,23 @@ public class UserController {
     }
 
     @GetMapping("/user") //user 정보 출력
+    @Operation(summary = "테스트용 토큰 출력", description = "삭제할 예정인 도메인입니다. 토큰 확인용으로 사용합니다.")
     public ResponseEntity<User> getMyUserInfo() {
         return ResponseEntity.ok(userService.getMyUserWithAuthorities().get());
     }
 
 
     @PostMapping("/logout")
+    @Operation(summary = "사용자 로그아웃", description = "로그아웃을 합니다.")
     public ResponseEntity<String> logout(HttpServletRequest servletRequest){
         userService.logout();
         return ResponseEntity.ok().body("로그아웃");
     }
 
     @PostMapping(value = "/report/restaurant/{restaurantid}", consumes = {"multipart/form-data"})
+    @Operation(summary = "매장 신고", description = "매장을 신고합니다.<br>" +
+            "신고할 매장의 매장id를 파라미터로 받으며,<br>" +
+            "ReportRestaurantDto를 통해 신고내용를 작성하고, 사진을 같이 올려 저장합니다.")
     public ResponseEntity<ReportRestaurant> reportrestaurant(
             @Valid @RequestPart("reportRestaurantDto")ReportRestaurantDto reportRestaurantDto,
             @RequestPart(value = "files",required = false) List<MultipartFile> files,
@@ -100,7 +111,13 @@ public class UserController {
         return ResponseEntity.ok(reportService.reportRestaurant(reportRestaurantDto, files,restaurantid));
     }
     @PostMapping(value = "/report/review/{reviewid}", consumes = {"multipart/form-data"})
-    public ResponseEntity<ReportReview> reportreview(@Valid @RequestPart("reportReviewDto") ReportReviewDto reportReviewDto, @PathVariable("reviewid") String reviewid, @RequestPart(value = "files",required = false) List<MultipartFile> files) {
+    @Operation(summary = "리뷰 신고", description = "리뷰를 신고합니다.<br>" +
+            "신고할 리뷰의 리뷰id를 파라미터로 받으며,<br>" +
+            "ReportReviewDto를 통해 신고내용를 작성하고, 사진을 같이 올려 저장합니다.")
+    public ResponseEntity<ReportReview> reportreview(
+            @Valid @RequestPart("reportReviewDto") ReportReviewDto reportReviewDto,
+            @PathVariable("reviewid") String reviewid,
+            @RequestPart(value = "files",required = false) List<MultipartFile> files) {
         return ResponseEntity.ok(reportService.reportReview(reportReviewDto, files,reviewid));
     }
 }

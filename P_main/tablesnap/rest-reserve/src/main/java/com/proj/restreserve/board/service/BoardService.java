@@ -86,11 +86,11 @@ public class BoardService {
 
                     // 이미지 정보 저장
                     eventImages.add(eventImage);
-                    eventImageRepository.save(eventImage);
                 }
             }
         }
-        event.setEventimages(eventImages);
+        eventImageRepository.saveAll(eventImages);
+/*        event.setEventimages(eventImages);*/
         return event;
     }
 
