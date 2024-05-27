@@ -86,7 +86,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setUseremail(userDto.getUseremail());
         user.setPhone(userDto.getPhone());
-        user.setRole(Role.ROLE_USER);
+        user.setRole(Role.ROLE_ADMIN);
         user.setBan(false);
         user.setBusinessNumber(businessNumber);
 

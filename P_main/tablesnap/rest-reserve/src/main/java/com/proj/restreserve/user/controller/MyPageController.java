@@ -1,10 +1,10 @@
 package com.proj.restreserve.user.controller;
 
 import com.proj.restreserve.detailpage.service.SelectReservation;
+import com.proj.restreserve.payment.dto.GroupedPaymentDto;
 import com.proj.restreserve.restaurant.dto.FavoritesDto;
 import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.dto.SelectReviewDto;
-import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.service.ReviewService;
 import com.proj.restreserve.user.dto.PasswordDto;
 import com.proj.restreserve.user.dto.UserDto;
@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,8 +39,7 @@ public class MyPageController {
     @Operation(summary = "포장 예약 이용내역 조회", description = "자신의 포장예약 이용내역을 리스트로 조회합니다.<br>" +
             "파라미터로 현재 페이지 수를 받으며, 없을 시 1페이지로 고정됩니다.")
     public ResponseEntity<Page<VisitDto>> visitRestaur(@RequestParam(required = false, defaultValue = "1") int page){
-        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10)
-                .filter(visitDto -> visitDto.getVisitcheck());
+        Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10);
 
         return ResponseEntity.ok(visitDtos);
     }
@@ -54,14 +52,13 @@ public class MyPageController {
         return ResponseEntity.ok(favoritesDtos);
     }
 
-    @GetMapping("/mypage/reserve")
+
+    @GetMapping("/mypage/payment")
     @Operation(summary = "방문 예약 이용내역 조회", description = "자신의 방문예약 이용내역을 리스트로 조회합니다.<br>" +
             "파라미터로 현재 페이지 수를 받으며, 없을 시 1페이지로 고정됩니다.")
-    public ResponseEntity<Page<VisitDto>> useRestaur(@RequestParam(required = false, defaultValue = "1") int page){
+    public ResponseEntity<Page<GroupedPaymentDto>> paymentRestaur(@RequestParam(required = false, defaultValue = "1") int page){
         Page<VisitDto> visitDtos = (Page<VisitDto>) myPageService.MyRegistInfo(page,10)
-                .filter(visitDto -> !visitDto.getVisitcheck());
-
-        return ResponseEntity.ok(visitDtos);
+        return ResponseEntity.ok(paymentMenuDtos);
     }
 
     @GetMapping("/mypage/review")
@@ -145,7 +142,7 @@ public class MyPageController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @GetMapping(value = "/mypage/reserve2")
+    @GetMapping(value = "/mypage/reserve")
     @Operation(summary = "현재 예약접수 조회", description = "자신의 접수된 예약(방문,포장)을 리스트로 조회합니다.<br>" +
             "파라미터로 현재 페이지 수를 받으며, 없을 시 1페이지로 고정됩니다.")
     public ResponseEntity<Page<Object>> showReservation(@RequestParam(required = false, defaultValue = "1") int page){
