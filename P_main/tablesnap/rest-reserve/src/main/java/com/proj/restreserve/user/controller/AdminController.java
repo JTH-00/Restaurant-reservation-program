@@ -11,6 +11,8 @@ import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import com.proj.restreserve.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
+@Tag(name= "Admin", description = "업주 로그인 및 리뷰답글 API")
 public class AdminController {
     private final UserService userService;
     private final TokenProvider tokenProvider;
@@ -40,12 +43,16 @@ public class AdminController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> signupadmin(@Valid @RequestPart("userDto") UserDto userDto, @RequestPart(value = "files",required = false) List<MultipartFile> files) {
+    @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
+    @Operation(summary = "업주 회원가입", description = "UserDto로 자신의 정보를 작성한뒤 저장하며,<br>" +
+            "사진파일들을 통해 사업자등록번호를 증빙할 서류를 확인하게합니다.<br>" +
+            "그 뒤 회원가입을 완료합니다.")
+    public ResponseEntity<String> signupadmin(@Valid @RequestPart("userDto") UserDto userDto, @RequestPart(value = "files") List<MultipartFile> files) {
         userService.signupadmin(userDto,files);
         return ResponseEntity.ok().body("회원가입 완료");
     }
     @PostMapping("/login")
+    @Operation(summary = "업주 로그인", description = "아이디와 비밀번호를 사용해 로그인합니다.")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody UserDto userDto) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
@@ -73,23 +80,32 @@ public class AdminController {
         }
     }
     @PostMapping("/logout")
+    @Operation(summary = "업주 로그아웃", description = "로그아웃을 합니다.")
     public ResponseEntity<String> logout(HttpServletRequest servletRequest){
         userService.logout();
         return ResponseEntity.ok().body("로그아웃");
     }
     @PostMapping(value = "/write/reply")
+    @Operation(summary = "업주 리뷰 답글", description = "리뷰 답글을 작성합니다.<br>" +
+            "답글을 작성할 리뷰의 id를 파라미터로 받으며,<br>" +
+            "ReviewDto를 통해 리뷰를 작성합니다.")
     public ResponseEntity<ReviewReply> writeReviewReply(
             @RequestParam(name="reviewid") String reviewid,
             @Valid @RequestBody ReviewDto reviewDto){
         return ResponseEntity.ok(reviewService.writeReply(reviewid,reviewDto));
     }
     @PutMapping (value = "/modify/reply")
+    @Operation(summary = "업주 리뷰 답글", description = "리뷰 답글을 수정합니다.<br>" +
+            "답글의 id를 파라미터로 받으며,<br>" +
+            "ReviewDto를 통해 리뷰를 수정합니다.")
     public ResponseEntity<ReviewReply> modifyReviewReply(
             @RequestParam(name="replyid") String replyid,
             @Valid @RequestBody ReviewDto reviewDto){
         return ResponseEntity.ok(reviewService.modifyReply(replyid,reviewDto));
     }
     @PostMapping(value = "/delete/reply")
+    @Operation(summary = "업주 리뷰 답글", description = "리뷰 답글을 삭제합니다.<br>" +
+            "답글의 id를 파라미터로 받습니다")
     public ResponseEntity<String> deleteReviewReply(@RequestParam(name="replyid") String replyid) {
         try {
             reviewService.deleteReply(replyid);

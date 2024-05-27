@@ -10,6 +10,7 @@ import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.entity.Review;
 import com.proj.restreserve.review.entity.ReviewImage;
 import com.proj.restreserve.review.repository.ReviewRepository;
+import com.proj.restreserve.user.dto.PasswordDto;
 import com.proj.restreserve.user.dto.SelectUserDto;
 import com.proj.restreserve.user.dto.UserDto;
 import com.proj.restreserve.user.entity.User;
@@ -165,7 +166,7 @@ public class MyPageService{
     }
 
 
-    public void modifyUserPassword(String currentPassword, String newPassword, String newPasswordConfirm) {
+    public void modifyUserPassword(PasswordDto passwordDto) {
 
         User user = getCurrentUser();
 
@@ -173,16 +174,16 @@ public class MyPageService{
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
         // 현재 비밀번호가 일치하는지 확인
-        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+        if (!passwordEncoder.matches(passwordDto.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
         // 새 비밀번호와 새 비밀번호 확인이 일치하는지 확인
-        if (!newPassword.equals(newPasswordConfirm)) {
+        if (!passwordDto.getNewPassword().equals(passwordDto.getNewPasswordConfirm())) {
             throw new IllegalArgumentException("새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
         }
 
         // 새 비밀번호를 해시화하여 설정
-        String newPasswordHash = passwordEncoder.encode(newPassword);
+        String newPasswordHash = passwordEncoder.encode(passwordDto.getNewPassword());
         user.setPassword(newPasswordHash);
         // 사용자 정보 저장
         userRepository.save(user);
@@ -192,10 +193,6 @@ public class MyPageService{
         Pageable pageable = PageRequest.of(page-1,pagesize);
         Page<User> users = userRepository.findByBanTrue(pageable);
 
-        Page<SelectUserDto> userDtos = users.map(user -> {
-            SelectUserDto selectUserDto = modelMapper.map(user,SelectUserDto.class);
-            return selectUserDto;
-        });
-        return userDtos;
+        return users.map(user -> modelMapper.map(user,SelectUserDto.class));
     }
 }

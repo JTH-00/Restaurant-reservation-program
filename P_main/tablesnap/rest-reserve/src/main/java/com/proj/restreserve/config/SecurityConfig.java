@@ -46,6 +46,8 @@ public class SecurityConfig {
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션을 사용하지 않기 때문에 STATELESS로 설정
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**")
+                        .permitAll()
                         .requestMatchers("/api/user/signup","api/admin/signup").permitAll() //사용자 전체 혀용
                         .requestMatchers("/api/user/login","api/admin/login").permitAll() //사용자 전체 혀용
                         .requestMatchers("api/user/restaurant/{restaurantid}").permitAll()//레스토랑
