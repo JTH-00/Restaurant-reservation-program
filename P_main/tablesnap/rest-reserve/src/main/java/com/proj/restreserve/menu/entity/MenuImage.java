@@ -1,13 +1,8 @@
 package com.proj.restreserve.menu.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.proj.restreserve.restaurant.entity.RestaurantImage;
+
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -21,7 +16,7 @@ public class MenuImage {
     @Column(name = "menuimagelink", nullable = false)
     private String menuimagelink;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+/*    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "menuid")
-    private Menu menu;
+    private Menu menu;*/
 }

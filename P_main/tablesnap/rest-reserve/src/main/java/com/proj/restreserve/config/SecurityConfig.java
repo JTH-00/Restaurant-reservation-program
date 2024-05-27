@@ -46,12 +46,11 @@ public class SecurityConfig {
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션을 사용하지 않기 때문에 STATELESS로 설정
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**")
-                        .permitAll()
+                        .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/user/signup","api/admin/signup").permitAll() //사용자 전체 혀용
                         .requestMatchers("/api/user/login","api/admin/login").permitAll() //사용자 전체 혀용
-                        .requestMatchers("api/user/restaurant/{restaurantid}").permitAll()//레스토랑
-                        .requestMatchers("api/main").permitAll()//레스토랑
+                        .requestMatchers("/api/user/restaurant/{restaurantid}").permitAll()//레스토랑
+                        .requestMatchers("/api/main").permitAll()//레스토랑
                         .anyRequest().authenticated() // 그 외 인증 없이 접근X
                 )
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {}); //filterChain 등록

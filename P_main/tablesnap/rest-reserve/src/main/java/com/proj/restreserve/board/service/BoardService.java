@@ -89,8 +89,7 @@ public class BoardService {
                 }
             }
         }
-        eventImageRepository.saveAll(eventImages);
-/*        event.setEventimages(eventImages);*/
+        event.setEventimages(eventImages);
         return event;
     }
 

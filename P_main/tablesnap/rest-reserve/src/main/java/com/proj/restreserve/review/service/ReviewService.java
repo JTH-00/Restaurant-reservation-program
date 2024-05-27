@@ -3,6 +3,7 @@ package com.proj.restreserve.review.service;
 import com.proj.restreserve.alarm.dto.AlarmDto;
 import com.proj.restreserve.alarm.service.AlarmService;
 import com.proj.restreserve.detailpage.service.FileCURD;
+import com.proj.restreserve.payment.dto.MappingPaymentMenuDto;
 import com.proj.restreserve.payment.dto.PaymentMenuDto;
 import com.proj.restreserve.payment.entity.Payment;
 import com.proj.restreserve.payment.repository.PaymentRepository;
@@ -246,7 +247,7 @@ public class ReviewService {
         Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
             ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
             if(review.getPayment()!=null){
-                List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
+                List<MappingPaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
                 reviewAndReplyDto.setPaymentMenuDtos(paymentMenus);//조회한 주문 메뉴를 주입
             }
             //리뷰 이미지 가져오기
@@ -281,7 +282,7 @@ public class ReviewService {
         Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
             ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
             if(review.getPayment()!=null){
-                List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
+                List<MappingPaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
                 reviewAndReplyDto.setPaymentMenuDtos(paymentMenus);//조회한 주문 메뉴를 주입
             }
             //리뷰 이미지 가져오기
@@ -317,7 +318,7 @@ public class ReviewService {
         }
         Page<ReviewAndReplyDto> reviewDtos = reviewPage.map(review -> {
             ReviewAndReplyDto reviewAndReplyDto = modelMapper.map(review, ReviewAndReplyDto.class);// DTO변환 (주문 메뉴 목록을 포함하지 않음)
-            List<PaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
+            List<MappingPaymentMenuDto> paymentMenus = paymentService.paymentMenusSet(review.getPayment().getPaymentid());//리뷰의 결제아이디를 가져와 해당 결제의 주문 메뉴 조회
             reviewAndReplyDto.setPaymentMenuDtos(paymentMenus);//조회한 주문 메뉴를 주입
 
             //리뷰 이미지 가져오기

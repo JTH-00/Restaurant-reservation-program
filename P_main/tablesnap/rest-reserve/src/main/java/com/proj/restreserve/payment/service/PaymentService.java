@@ -9,6 +9,7 @@ import com.proj.restreserve.cart.repository.CartRepository;
 import com.proj.restreserve.cart.service.CartService;
 import com.proj.restreserve.menu.entity.Menu;
 import com.proj.restreserve.menu.repository.MenuRepository;
+import com.proj.restreserve.payment.dto.MappingPaymentMenuDto;
 import com.proj.restreserve.payment.dto.PaymentMenuDto;
 import com.proj.restreserve.payment.entity.Payment;
 import com.proj.restreserve.payment.entity.PaymentMenu;
@@ -48,13 +49,13 @@ public class PaymentService {
     private final ModelMapper modelMapper;
     private final AlarmService alarmService;
 
-    public List<PaymentMenuDto> paymentMenusSet (String paymentid){
+    public List<MappingPaymentMenuDto> paymentMenusSet (String paymentid){
         List<PaymentMenu> paymentMenus = this.paymentMenuRepository.findByPayment_Paymentid(paymentid);
 
-        List<PaymentMenuDto> paymentMenusDto = new ArrayList<>();//총 메뉴 저장
+        List<MappingPaymentMenuDto> paymentMenusDto = new ArrayList<>();//총 메뉴 저장
 
         for (PaymentMenu menu : paymentMenus) {
-            PaymentMenuDto paymentMenuDto = modelMapper.map(menu, PaymentMenuDto.class);//DTO로 변환
+            MappingPaymentMenuDto paymentMenuDto = modelMapper.map(menu, MappingPaymentMenuDto.class);//DTO로 변환
 
             Menu image = this.menuRepository.getReferenceById(paymentMenuDto.getMenu().getMenuid());//메뉴 이미지 링크 null떠서 추가함
             if(image.getMenuimages()!=null){

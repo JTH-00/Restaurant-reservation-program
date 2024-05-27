@@ -144,7 +144,7 @@ public class RestaurantService {
                         MenuImage menuImage = new MenuImage();
                         menuImage.setMenuimageid(fileName);
                         menuImage.setMenuimagelink(imageUrl);
-                        menuImage.setMenu(menu); // 메뉴와의 관계 설정
+/*                        menuImage.setMenu(menu); // 메뉴와의 관계 설정*/
                         menuImageRepository.save(menuImage);
                         menuImages.add(menuImage);
                     }
@@ -256,7 +256,7 @@ public class RestaurantService {
                         MenuImage menuImage = new MenuImage();
                         menuImage.setMenuimageid(fileName);
                         menuImage.setMenuimagelink(imageUrl);
-                        menuImage.setMenu(menu); // 메뉴와의 관계 설정
+/*                        menuImage.setMenu(menu); // 메뉴와의 관계 설정*/
                         menuImageRepository.save(menuImage);
                         menuImages.add(menuImage);
                     }

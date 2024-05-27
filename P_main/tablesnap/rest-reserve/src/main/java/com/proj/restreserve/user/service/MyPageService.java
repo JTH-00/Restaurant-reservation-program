@@ -130,27 +130,20 @@ public class MyPageService{
             groupedPaymentDto.setDay(firstDto.getDay());
             groupedPaymentDto.setRestaurant(firstDto.getRestaurant().getRestaurantid());
             groupedPaymentDto.setPaymentcheck(firstDto.getPaymentcheck());
-            // ...
+
             groupedPaymentDtos.add(groupedPaymentDto);
         });
 
         // GroupedPaymentDto 리스트를 페이지로 변환
-        // 여기서는 단순 예시로, 실제 페이지 처리는 복잡할 수 있습니다.
         return new PageImpl<>(groupedPaymentDtos, pageable, paymentMenus.getTotalElements());
     }
     public Page<FavoritesDto> Myfavorites(int page, int pagesize) {
 
         User user = getCurrentUser();
         Pageable pageable = PageRequest.of(page-1, pagesize);
-       /* List<Favorites> favoritesList = favoritesRepository.findByUser(user);*/
+
         Page<Favorites> favorites = favoritesRepository.findByUser(user, pageable);
-        /*return favoritesList.stream().map(favorite -> {
-            FavoritesDto favoritesDto = new FavoritesDto();
-            favoritesDto.setFavoritesid(favorite.getFavoritesid());
-            favoritesDto.setUser(favorite.getUser());
-            favoritesDto.setRestaurant(favorite.getRestaurant());
-            return favoritesDto;
-        }).collect(Collectors.toList());*/
+
         return favorites.map(favorite -> {
             FavoritesDto favoritesDto = new FavoritesDto();
             favoritesDto.setFavoritesid(favorite.getFavoritesid());
@@ -165,24 +158,9 @@ public class MyPageService{
 
         User user = getCurrentUser();
         Pageable pageable = PageRequest.of(page-1,pagesize);
-        /*List<Review> reviews = reviewRepository.findByUser(user);*/
+
         Page<Review> reviewPage = reviewRepository.findByUser(user, pageable);
-/*        return reviews.stream().map(review -> {
-            ReviewDto reviewDto = new ReviewDto();
-            reviewDto.setReviewid(review.getReviewid());
-            reviewDto.setScope(review.getScope());
-            reviewDto.setContent(review.getContent());
-            reviewDto.setDate(review.getDate());
-            reviewDto.setUserid(review.getUser().getUserid());
 
-            // 이미지 파일들의 정보 가져오기
-            List<String> imageLinks = review.getReviewimages().stream()
-                    .map(ReviewImage::getImagelink)
-                    .collect(Collectors.toList());
-            reviewDto.setImageLinks(imageLinks);
-
-            return reviewDto;
-        }).collect(Collectors.toList());*/
         return reviewPage.map(review -> {
             ReviewDto reviewDto = new ReviewDto();
             reviewDto.setReviewid(review.getReviewid());
