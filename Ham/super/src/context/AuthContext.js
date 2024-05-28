@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { createContext, useState } from "react";
 
+export const baseUrl = "http://localhost:8090";
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
