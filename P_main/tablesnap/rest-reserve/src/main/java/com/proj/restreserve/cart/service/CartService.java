@@ -67,7 +67,18 @@ public class CartService {
     public CartMenu addMenuToCart(String menuid, Integer count) {
         Cart cart = createOrGetCart(); // 현재 사용자의 장바구니를 가져오거나 새로 생성
         Menu menu = menuRepository.findById(menuid)
-                .orElseThrow(() -> new RuntimeException("CartMenu not found"));
+                .orElseThrow(() -> new RuntimeException("Menu not found"));
+
+        // 현재 장바구니에 있는 메뉴들 가져오기
+        List<CartMenu> cartMenus = cartMenuRepository.findByCart(cart);
+        if (!cartMenus.isEmpty()) {
+            // 장바구니에 메뉴가 있을 경우, 모든 메뉴의 restaurantid를 가져와서 새로 추가하려는 메뉴와 비교
+            String currentRestaurantId = cartMenus.get(0).getMenu().getRestaurant().getRestaurantid();
+            if (!menu.getRestaurant().getRestaurantid().equals(currentRestaurantId)) {
+                throw new RuntimeException("Cannot add menu from a different restaurant");
+            }
+        }
+
         Optional<CartMenu> existingCartMenu = cartMenuRepository.findByCartAndMenu(cart, menu);
         CartMenu cartMenu;
 
@@ -75,7 +86,7 @@ public class CartService {
             // 이미 존재하는 경우, 수량만 증가
             cartMenu = existingCartMenu.get();
             cartMenu.setMenucount(cartMenu.getMenucount() + count);
-        } else{
+        } else {
             cartMenu = new CartMenu();
             cartMenu.setCart(cart);
             cartMenu.setMenu(menu);
@@ -83,7 +94,6 @@ public class CartService {
         }
         return cartMenuRepository.save(cartMenu);
     }
-
     private void checkAndDeleteCartIfEmpty(String cartid) {
         // cartId를 사용하여 관련된 CartMenu 항목이 있는지 확인
         boolean isEmpty = !cartMenuRepository.existsByCart_Cartid(cartid);
