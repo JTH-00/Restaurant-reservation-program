@@ -8,6 +8,7 @@ import com.proj.restreserve.review.dto.ReviewDto;
 import com.proj.restreserve.review.entity.ReviewReply;
 import com.proj.restreserve.review.service.ReviewService;
 import com.proj.restreserve.user.dto.UserDto;
+import com.proj.restreserve.user.entity.Role;
 import com.proj.restreserve.user.entity.User;
 import com.proj.restreserve.user.repository.UserRepository;
 import com.proj.restreserve.user.service.UserService;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -72,8 +74,19 @@ public class AdminController {
 
             User user = userRepository.findByUseremail(userDto.getUseremail());
             String username = user.getUsername();
+
+            // Set redirect URI based on user role
+            String redirectUri;
+            Set<Role> userRoles = user.getRoles(); // 사용자의 역할 집합을 가져옴
+
+            if (userRoles.contains(Role.ROLE_ADMIN)) {
+                redirectUri = "/api/admin/registration";
+            } else {
+                redirectUri = "/api/admin/login"; // Default redirect if role is not recognized
+            }
+
             // Return token in response body
-            return new ResponseEntity<>(new TokenDto(jwt,username), httpHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(new TokenDto(jwt,username,redirectUri), httpHeaders, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Authentication failed: ", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

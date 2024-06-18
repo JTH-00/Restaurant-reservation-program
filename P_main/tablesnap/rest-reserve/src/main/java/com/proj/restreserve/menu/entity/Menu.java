@@ -40,5 +40,4 @@ public class Menu {
 
     @Column(name="deletecheck", nullable = false)
     private Boolean deletecheck;
-
 }
