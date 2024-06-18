@@ -70,7 +70,7 @@ public class BoardController {
             @RequestPart List<String> deleteImageLinks) {
         return ResponseEntity.ok(boardService.modifyNotice(noticeid,noticeDto , files,deleteImageLinks));
     }
-    @DeleteMapping(value = "/superadmin/delete/event")
+    @DeleteMapping(value = "/superadmin/event")
     @Operation(summary = "이벤트 게시글 삭제", description = "이벤트 게시글을 삭제합니다.<br>" +
             "파라미터로 삭제할 이벤트의 id값을 가져온 뒤 삭제합니다.<br>" +
             "삭제할 경우 해당 이벤트 게시글과 업로드된 사진들을 삭제합니다.")
@@ -82,7 +82,7 @@ public class BoardController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @DeleteMapping(value = "/superadmin/delete/notice")
+    @DeleteMapping(value = "/superadmin/notice")
     @Operation(summary = "공지사항 게시글 삭제", description = "공지사항 게시글을 삭제합니다.<br>" +
             "파라미터로 삭제할 공지사항의 id값을 가져온 뒤 삭제합니다.<br>" +
             "삭제할 경우 해당 공지사항 게시글과 업로드된 사진들을 삭제합니다.")

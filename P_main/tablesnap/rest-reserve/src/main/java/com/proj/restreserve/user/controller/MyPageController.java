@@ -130,7 +130,7 @@ public class MyPageController {
             @RequestPart List<String> deleteImageLinks) {
         return ResponseEntity.ok(reviewService.modifyReview(reviewid,reviewDto, files,deleteImageLinks));
     }
-    @PostMapping(value = "/mypage/delete/review")
+    @DeleteMapping(value = "/mypage/review")
     @Operation(summary = "리뷰 삭제", description = "리뷰를 삭제합니다.<br>" +
             "파라미터로 삭제할 리뷰의 id값을 가져온 뒤 삭제합니다.<br>" +
             "삭제할 경우 해당 리뷰와 업로드된 사진들을 삭제합니다.")

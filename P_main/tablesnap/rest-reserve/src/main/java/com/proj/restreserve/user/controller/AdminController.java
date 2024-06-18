@@ -116,7 +116,7 @@ public class AdminController {
             @Valid @RequestBody ReviewDto reviewDto){
         return ResponseEntity.ok(reviewService.modifyReply(replyid,reviewDto));
     }
-    @PostMapping(value = "/delete/reply")
+    @DeleteMapping(value = "/reply")
     @Operation(summary = "업주 리뷰 답글", description = "리뷰 답글을 삭제합니다.<br>" +
             "답글의 id를 파라미터로 받습니다")
     public ResponseEntity<String> deleteReviewReply(@RequestParam(name="replyid") String replyid) {

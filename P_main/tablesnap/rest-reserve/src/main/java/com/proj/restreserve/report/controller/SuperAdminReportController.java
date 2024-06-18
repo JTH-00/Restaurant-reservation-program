@@ -75,7 +75,7 @@ public class SuperAdminReportController {
         return ResponseEntity.ok("Reported user blocked successfully.");
     }
 
-    @DeleteMapping("/reportreview/{reportreviewid}/delete")
+    @DeleteMapping("/reportreview/{reportreviewid}")
     @Operation(summary = "신고받은 리뷰 삭제", description = "해당 리뷰를 삭제합니다.<br>" +
             "신고접수 리스트에 조회되지 않도록합니다.<br>" +
             "파라미터로 해당 신고 id를 받습니다.")
